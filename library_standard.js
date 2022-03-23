@@ -1,30 +1,19 @@
 /**
- * @package   Puvox.software - reusable PHP class
- * @author    T.Todua <support@puvox.software>
- * @license   GPL-3.0+
- * @link      https://github.com/Puvox/useful-library-files/
- * @copyright Puvox.software
  *
- *
- *
- *
- *		 #################################################################
- *		 ############### Puvox.software [ Coder: T.Todua ] ############### 
- *		 ########## Base Library & Classes for all our plugins. ##########
- *		 #################################################################
- *		 
- *       This is main library file for our development, where we collect frequently used  methods. There are two classes:
- *		     1) Library of useful Javascript functions
- *		     2) Library of useful Node.js functions 
+ *		 ##########################################################################################
+ *		 ###################################  Our PHP Library   ###################################
+ *		 ########## Here we collect frequently used methods across our JS applications.  ##########
+ *		 ########## (Some of them are generic javascript functions, some are for NodeJS) ##########
+ *		 ##########################################################################################
  *
  *	     ########## Example usage: ##########
- *			 const helpers = new PuvoxLibrary();
+ *			 const helpers = new LibraryPuvox();
  *			 ..  helpers.get_visitor_ip();
  *			 ..  helpers.get_last_child_of_array( array );
  *
 */
 
-let standard_js_library =
+const library_js_puvox =
 {
 	APPNAME:'',
 
@@ -2624,13 +2613,6 @@ let standard_js_library =
 
 };
 
-
-//let standard_nodejs_library ={};
-
-
-
-const PuvoxLibrary = standard_js_library; //Object.assign(standard_js_library, standard_nodejs_library);
-
 if (typeof module != "undefined" && module.hasOwnProperty("exports")) {
-	module.exports = PuvoxLibrary;
+	module.exports = library_js_puvox;
 }
