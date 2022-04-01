@@ -13,7 +13,7 @@
  *
 */
 
-const library_js_puvox =
+const library_puvox =
 {
 	APPNAME:'',
 
@@ -63,12 +63,9 @@ const library_js_puvox =
 		}
 		return newArr;
 	},
-	arrayLastItem(arr){
-		return arr[arr.length-1];
-	},
-	arrayRemoveEmpty(array){
-		return array.filter(item => item);
-	},
+	arrayRemoveEmpty(array){  return array.filter(item => item); },
+	arrayLastMember(arr){  return arr[arr.length-1]; },
+	arrayLastItem(arr){ return this.arrayLastMember(arr); },
 	removeKeys(obj, keysArr){
 		let newObj ={};
 		for (let [key,val] of Object.entries(obj)){
@@ -2614,5 +2611,5 @@ const library_js_puvox =
 };
 
 if (typeof module != "undefined" && module.hasOwnProperty("exports")) {
-	module.exports = library_js_puvox;
+	module.exports = library_puvox;
 }
