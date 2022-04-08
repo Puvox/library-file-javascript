@@ -1875,7 +1875,8 @@ const library_puvox =
 	parsePOST(request, callback)
 	{
 		if (request.method == 'POST') {
-			var qs = require('querystring');
+			let name='querystring';
+			var qs = require(name);
 			let stringData = '';
 			request.on('data', function (data) {
 				stringData += data;
@@ -2366,7 +2367,8 @@ const library_puvox =
 	openUrlInBrowser(url)
 	{
 		var cmd = (process.platform == 'darwin'? `open ${url}`: process.platform == 'win32'? `start ${url}`: `xdg-open ${url}`); 
-		require('child_process').exec(cmd);
+		let name='child_process';
+		require(name).exec(cmd);
 	},
 
 	stringify(obj_or_str){
@@ -2504,7 +2506,8 @@ const library_puvox =
 			return this._fs_instance;
 		} 
 		else {
-			this._fs_instance = require('fs');
+			let name='fs';
+			this._fs_instance = require(name);
 			return this._fs_instance;
 		}
 	},
