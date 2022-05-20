@@ -13,7 +13,7 @@
  *
 */
 
-const library_puvox =
+const puvox_library =
 {
 	APPNAME:'',
 
@@ -433,6 +433,11 @@ const library_puvox =
 		}
 		return hasEmpty;
 	},
+
+	filterObject(obj, callback) {
+		return Object.fromEntries(Object.entries(obj).
+		  filter(([key, val]) => callback(val, key)));
+	},
 	// #####################################$$$$$################
 	
 	
@@ -850,8 +855,6 @@ const library_puvox =
 		if (offset==null) offset = this.getOffsetFromUtc();
 		if (datee==null) datee = new Date();
 		return ((((new Date( datee )).getTime()) / 1000) + 14400 - offset * 60* 60) * 1000; 
-		//	var offset = offset || 0;  
-		//return ((((new Date( datee  )).getTime()) / 1000) + 14400 + offset * 60* 60) * 1000; 
 	},
 	//i.e. input:  1650000000000 (milliseconds)   |  output : "2021-03-08 11:59:00"
 	date_epochToDatetime(epochtime, offset){
@@ -2614,5 +2617,5 @@ const library_puvox =
 };
 
 if (typeof module != "undefined" && module.hasOwnProperty("exports")) {
-	module.exports = library_puvox;
+	module.exports = puvox_library;
 }
