@@ -461,7 +461,13 @@ const puvox_library =
 		})
 		return false;
 	},
-	
+	startLetters(str, amountOfLetters){
+		return str.substr(0, amountOfLetters);
+	},
+	endLetters(str, amountOfLetters){
+		return str.substr(str.length - amountOfLetters);
+	},
+
 	ConvertNumbToRoman(num){
 		num= num.replace('40','XXXX');	num= num.replace('39','XXXIX');	num= num.replace('38','XXXVIII');	num= num.replace('37','XXXVII');
 		num= num.replace('36','XXXVI');	num= num.replace('35','XXXV');	num= num.replace('34','XXXIV');		num= num.replace('33','XXXII');
@@ -874,11 +880,12 @@ const puvox_library =
 		var d = new Date(epochtime);
 		return d.toISOString();
 	},
-	date_epoch(secondOrMs){
-		const now = new Date()  
-		const utcMilllisecondsSinceEpoch = now.getTime() + (now.getTimezoneOffset() * 60 * 1000)  
-		const utcSecondsSinceEpoch = Math.round(utcMilllisecondsSinceEpoch / 1000);
-		return (secondOrMs ? utcSecondsSinceEpoch : utcMilllisecondsSinceEpoch);
+	date_epoch(secondOrMs=false){
+		const now = new Date();
+		// removed timezone things already second time,idk why ;
+		// ( previous comment was:  changed the below into minus (from plus), because the timezone offset is negative, as .getTime() gets milliseconds count from epoch but for your timezone )
+		const utcMilllisecondsSinceEpoch = now.getTime();// - (now.getTimezoneOffset() * 60 * 1000)  
+		return secondOrMs ? Math.floor(utcMilllisecondsSinceEpoch / 1000) : utcMilllisecondsSinceEpoch;
 	},
 
 	// ####### STRINGS #######
