@@ -787,137 +787,126 @@ const puvox_library =
 		);
     },
 
-	// ################## DATETIMES ################## //
-	date_stringToDate(str){
-		return new Date( Date.parse(str) );
-	},
-	// php like "time()"
-	time(){ return Math.floor(new Date().getTime()/1000); },
 
-	dateUTC(){
-		var now = new Date();
-		var utc = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
-		return utc;
-	},
-	
-	datetime(your_or_utc){
-		let now = new Date();
-		let your_TZ = your_or_utc || true;
-		if (your_TZ){
-			return now;
-		}
-		else{
-			let utc = new Date(now.getTime() + (yourTZ ? now.getTimezoneOffset() * 60000 :  0) );
+	DateUtils : {
+		//  0940 type time-ints
+		isBetweenHMS(target, start,  end,  equality) { }, // datetime, int/datetime, int/datetime, bool
+		equalDays(d1,d2) { }, // DateTime, DateTime
+		IsTodayStart(dt) { }, // DateTime
+		GetWeekOfMonth(dt) { }, // DateTime
+		GetWeekOfYear(dt) { }, // DateTime
+		GetQuarter(dt) { }, // DateTime
+		NumberToHMSstring(hhmmss) { }, // int
+		DatetimeToHMSstring(dt) { }, // DateTime
+		// HMSToTimeSpan(hhmmss) { }, // int
+		addNumberToHMS(hhmmss, added_or_subtracted) { }, // int, int
+		DatetimeToString(dt, withTZ) { 
+			let str = this.DatetimeToString(dt, withTZ);
+			return str.split('.')[0]; //2022-07-09 19:25:00
+		}, // DateTime, bool
+		DatetimeToStringMS(dt, withTZ) { 
+			var d = new Date(dt);
+			let str =d.toISOString();
+			let finalStr = (withTZ ? str : str.replace("T", " ").replace("Z", ""));
+			return finalStr; //2022-07-09 19:25:00.276
+		}, 
+		StringToDatetime(str, format, culture) { }, // DateTime, bool, str
+		UtcDatetime() {  
+			var now = new Date();
+			var utc = new Date(now.getTime()); // + now.getTimezoneOffset() * 60000 is not needed !!!!!!
 			return utc;
-		}
-	},
-	datetimeUTC(){
-		return this.datetime(false);
-	},	
-	
-	dateMillisecondsGone(date){
-		return (new Date()-date);
-	},
+		},
+		UtcDatetimeFrom(dt) { }, // DateTime
+		// UTC
+		UtcTimestamp() { 
+			return Math.floor(new Date().getTime()); 
+		},
+		//i.e. input:  "2021-03-08 11:59:00"      |  output : 1650000000000 (milliseconds)  
+		// [DONT CHANGE THIS FUNC, I'VE REVISED]
+		UtcTimestampFrom(dt) { 
+			let offset = this.getOffsetFromUtc();
+			return ((((new Date( dt )).getTime()) / 1000) + 14400 - offset * 60* 60) * 1000; 
+		},
+		UtcTimestampToUtcDatetime(ts) {
+			var d = new Date(ts);
+			d.setHours(d.getHours());
+			return d;
+		},
+		// shorthands
+		MaxDate(d1, d2, d3=null) {},
+		MinDate(d1, d2, d3=null) {},
+		localDatetimeToUtcString(dt){ },
+		areSameDays(d1, d2){ },
 
-	// https://stackoverflow.com/questions/8579861/how-to-convert-milliseconds-into-a-readable-date
-	dateParse(dateString){ // i.. "2021-04-05 15:59:55 GMT+4"
-		return new Date( Date.parse(dateString) );
-	},
-	// this approach is correct, the other one: https://pastebin_com/GwsScXx1  has strange bug in node
-	dateAddSeconds(date, seconds){ 
-		return new Date( Date.parse(date) + seconds*1000 );
-	},
-	currentDatetimeIs(targetDate){ //"2021-03-30 13:33:45 GMT+0300"
-		var curr_dt = new Date( Date.now() ); 
-		var target_dt= new Date( Date.parse(targetDate) );
-        return curr_dt.getYear() ==target_dt.getYear() && curr_dt.getMonth() ==target_dt.getMonth() && curr_dt.getDay() ==target_dt.getDay() && curr_dt.getHours() ==target_dt.getHours() && curr_dt.getMinutes() ==target_dt.getMinutes() && curr_dt.getSeconds() ==target_dt.getSeconds();
-	},
-	dateCompare(date1, date2){ 
-		var date1 = this.isString(date1) ? Date.parse(date1) : date1;
-			date1 = new Date( date1 );
-		var date2 = date2 || new Date(Date.now());  
-		return (+date1 > +date2 ? 1 : +date1 < +date2 ? -1 : 0);
-	},
-	dateTill(date1, date2){ 
-		var date1 = this.isString(date1) ? Date.parse(date1) : date1;
-		date1 = new Date( date1 );
-		var date2 = date2 || new Date(Date.now()); 
-		var diff = new Date(date1.getTime()-date2.getTime());
-		return diff;
-	},
-	secondsTill(date1, date2){ 
-		var date1 = this.isString(date1) ? Date.parse(date1) : date1;
-		date1 = new Date( date1 );
-		var date2 = date2 || new Date(Date.now()); 
-		var diffS = date1.getTime()-date2.getTime();
-		var seconds =  Math.round(diffS/1000);
-		return seconds;
-	},
-	
 
-	//i.e. input:  "2021-03-08 11:59:00"          |  output : 1650000000000 (milliseconds)  
-	// [DONT CHANGE THIS FUNC, I'VE REVISED]
-	date_datetimeToEpoch(datee, offset){
-		if (offset==null) offset = this.getOffsetFromUtc();
-		if (datee==null) datee = new Date();
-		return ((((new Date( datee )).getTime()) / 1000) + 14400 - offset * 60* 60) * 1000; 
-	},
-	//i.e. input:  1650000000000 (milliseconds)   |  output : "2021-03-08 11:59:00"
-	date_epochToDatetime(epochtime, offset){
-		if (offset==null) offset = this.getOffsetFromUtc(); 
-		var d = new Date(epochtime);
-		d.setHours(d.getHours()+offset);
-		return d;
-		// if (offset==null) offset = this.getOffsetFromUtc(); 
-		// var d = new Date(time); 
-		// var utc = d.getTime() + (d.getTimezoneOffset() * 60000);  //This converts to UTC 00:00
-		// var nd = new Date(utc + (3600000*offset));    
-		// return nd;
-	},
-	//i.e. input:  1650000000000 (milliseconds)   |  output : "2021-07-14T21:08:00.000Z"
-	// [DONT CHANGE THIS FUNC, I'VE REVISED]
-	date_epochToStringTZ(epochtime){
-		var d = new Date(epochtime);
-		return d.toISOString();
-	},
-	date_epoch(secondOrMs=false){
-		const now = new Date();
-		// removed timezone things already second time,idk why ;
-		// ( previous comment was:  changed the below into minus (from plus), because the timezone offset is negative, as .getTime() gets milliseconds count from epoch but for your timezone )
-		const utcMilllisecondsSinceEpoch = now.getTime();// - (now.getTimezoneOffset() * 60 * 1000)  
-		return secondOrMs ? Math.floor(utcMilllisecondsSinceEpoch / 1000) : utcMilllisecondsSinceEpoch;
-	},
-
-	// ####### STRINGS #######
-	//i.e. input:  165000000000 (milliseconds)   |  output : 2020/3/4 14:42:31
-	convertEpochToDateStr(time, offset){  
-		if (offset==null) {  offset = this.getOffsetFromUtc();  }
-		var d = new Date(time);    
-		var utc = d.getTime() + (d.getTimezoneOffset() * 60000);   //This converts to UTC 00:00
-		var nd = new Date( utc + (3600000*offset) );    
-		return nd.toLocaleString();
-	},
-	currentDatetime(date){
-		var dx = date || Date.now();
-		var d = new Date(dx);
-		return d.toISOString().replace("T"," ").replace("Z"," "); //.format("yyyy-MM-dd HH:mm:ss^fff");  //
-	},
-	currentDatetime_HMS(date){
-		var dx = date || Date.now();
-		var d = new Date(dx);
-		return d.toLocaleString(); // 7/25/2016, 1:35:07 PM
-	},
-
-	utcOffsetVar : null,
-	getOffsetFromUtc(){
-		if (this.utcOffsetVar ==null)
-		{
+		// #######################
+		// ##### added to JS #####
+		// #######################
+		//i.e. input:  1650000000000 (milliseconds)   |  output : "2021-03-08 11:59:00"
+		UtcTimestampToLocalDatetime(ts) {
+			var d = new Date(ts);
+			d.setHours(d.getHours()); // + (offset==null) offset = this.getOffsetFromUtc(); 
+			return d;
+			// if (offset==null) offset = this.getOffsetFromUtc(); 
+			// var d = new Date(time); 
+			// var utc = d.getTime() + (d.getTimezoneOffset() * 60000);  //This converts to UTC 00:00
+			// var nd = new Date(utc + (3600000*offset));    
+			// return nd; return nd.toLocaleString();
+		},
+		//i.e. input:  1650000000000 (milliseconds)   |  output : "2021-07-14T21:08:00.000Z"
+		// [DONT CHANGE THIS FUNC, I'VE REVISED]
+		UtcTimestampToUtcDatetimeString_OLD_CORRECT(epochtime, withTZ){
+			let d = new Date(epochtime);
+			let str =d.toISOString();
+			return (withTZ ? str : str.replace("T", " ").replace("Z", ""));
+		}, 
+		UtcTimestampToUtcDatetimeString(epochtime, withTZ){
+			let d = this.UtcTimestampToUtcDatetime(epochtime);
+			return this.DatetimeToString(d, withTZ);
+		}, 
+		getOffsetFromUtc(){
 			var dt = new Date();
-			var gmtHours = -dt.getTimezoneOffset()/60;
-			this.utcOffsetVar = gmtHours;
-		}
-		return this.utcOffsetVar;
+			return -dt.getTimezoneOffset()/60;
+		},
+		// https://stackoverflow.com/questions/8579861/how-to-convert-milliseconds-into-a-readable-date
+		stringToDate(str){  // i.. "2021-04-05 15:59:55 GMT+4"
+			return new Date( Date.parse(str) );
+		},
+		msGoneAfter(date){
+			return (new Date()-date);
+		},
+		// this approach is correct, the other one: https://pastebin_com/GwsScXx1  has strange bug in node
+		addSeconds(date, seconds){ 
+			return new Date( Date.parse(date) + seconds*1000 );
+		},
+		currentDatetimeIs(targetDate){ //"2021-03-30 13:33:45 GMT+0300"
+			var curr_dt = new Date( Date.now() ); 
+			var target_dt= new Date( Date.parse(targetDate) );
+			return curr_dt.getYear() ==target_dt.getYear() && curr_dt.getMonth() ==target_dt.getMonth() && curr_dt.getDay() ==target_dt.getDay() && curr_dt.getHours() ==target_dt.getHours() && curr_dt.getMinutes() ==target_dt.getMinutes() && curr_dt.getSeconds() ==target_dt.getSeconds();
+		},
+		dateCompare(date1, date2){ 
+			var date1 = this.isString(date1) ? Date.parse(date1) : date1;
+				date1 = new Date( date1 );
+			var date2 = date2 || new Date(Date.now());  
+			return (+date1 > +date2 ? 1 : +date1 < +date2 ? -1 : 0);
+		},
+		dateTill(date1, date2){ 
+			var date1 = this.isString(date1) ? Date.parse(date1) : date1;
+			date1 = new Date( date1 );
+			var date2 = date2 || new Date(Date.now()); 
+			var diff = new Date(date1.getTime()-date2.getTime());
+			return diff;
+		},
+		secondsTill(date1, date2){ 
+			var date1 = this.isString(date1) ? Date.parse(date1) : date1;
+			date1 = new Date( date1 );
+			var date2 = date2 || new Date(Date.now()); 
+			var diffS = date1.getTime()-date2.getTime();
+			var seconds =  Math.round(diffS/1000);
+			return seconds;
+		},	  
 	},
+
 
 
 	spinner(action)
