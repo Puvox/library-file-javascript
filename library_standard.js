@@ -801,7 +801,7 @@ const puvox_library =
 		// HMSToTimeSpan(hhmmss) { }, // int
 		addNumberToHMS(hhmmss, added_or_subtracted) { }, // int, int
 		DatetimeToString(dt, withTZ) { 
-			let str = this.DatetimeToString(dt, withTZ);
+			let str = this.DatetimeToStringMS(dt, withTZ);
 			return str.split('.')[0]; //2022-07-09 19:25:00
 		}, // DateTime, bool
 		DatetimeToStringMS(dt, withTZ) { 
