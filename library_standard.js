@@ -792,7 +792,7 @@ const puvox_library =
 		//  0940 type time-ints
 		isBetweenHMS(target, start,  end,  equality) { }, // datetime, int/datetime, int/datetime, bool
 		equalDays(d1,d2) { 
-			return d1.getYear()==d2.getyear() && d1.getMonth()==d2.getMonth() && d1.getDay()==d2.getDay();
+			return d1.getYear()==d2.getyear() && d1.getMonth()==d2.getMonth() && d1.getDate()==d2.getDate();
 		}, // DateTime, DateTime
 		IsTodayStart(dt) { }, // DateTime
 		GetWeekOfMonth(dt) { }, // DateTime
@@ -887,7 +887,7 @@ const puvox_library =
 			return result;
 		},
 		getYMDHISFfromDate(dt){
-			return [1900 + dt.getYear(), dt.getMonth(), dt.getDay(), dt.getHours(), dt.getMinutes(), dt.getSeconds(), dt.getMilliseconds()];
+			return [1900 + dt.getYear(), dt.getMonth()+1, dt.getDate(), dt.getHours(), dt.getMinutes(), dt.getSeconds(), dt.getMilliseconds()];
 		}, 
 		prefixWithZero(num, digits){
 			return (digits===1 ? num : (digits===2 ? (num < 10 ? "0"+num : num ) : (digits===3 ? (num < 10 ? "00"+num : (num < 100 ? "0"+num : num ) ) : num ) ) ).toString();
@@ -895,7 +895,7 @@ const puvox_library =
 		currentDatetimeIs(targetDate){ //"2021-03-30 13:33:45 GMT+0300"
 			var curr_dt = new Date( Date.now() ); 
 			var target_dt= new Date( Date.parse(targetDate) );
-			return curr_dt.getYear() ==target_dt.getYear() && curr_dt.getMonth() ==target_dt.getMonth() && curr_dt.getDay() ==target_dt.getDay() && curr_dt.getHours() ==target_dt.getHours() && curr_dt.getMinutes() ==target_dt.getMinutes() && curr_dt.getSeconds() ==target_dt.getSeconds();
+			return curr_dt.getYear() ==target_dt.getYear() && curr_dt.getMonth() ==target_dt.getMonth() && curr_dt.getDate() ==target_dt.getDate() && curr_dt.getHours() ==target_dt.getHours() && curr_dt.getMinutes() ==target_dt.getMinutes() && curr_dt.getSeconds() ==target_dt.getSeconds();
 		},
 		dateCompare(date1, date2){ 
 			var date1 = this.isString(date1) ? Date.parse(date1) : date1;
