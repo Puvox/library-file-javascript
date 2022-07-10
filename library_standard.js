@@ -877,15 +877,6 @@ const puvox_library =
 		msGoneAfter(date){
 			return (new Date()-date);
 		},
-		// this approach is correct, the other one: https://pastebin_com/GwsScXx1  has strange bug in node, might relate to: https://stackoverflow.com/a/19691491/2377343
-		addSeconds(date, seconds){ 
-			return new Date( Date.parse(date) + seconds*1000 );
-		},
-		addDays(date, days){ 
-			var result = new Date(date);
-			result.setDate(result.getDate() + days);
-			return result;
-		},
 		getYMDHISFfromDate(dt){
 			return [1900 + dt.getYear(), dt.getMonth()+1, dt.getDate(), dt.getHours(), dt.getMinutes(), dt.getSeconds(), dt.getMilliseconds()];
 		}, 
@@ -918,6 +909,43 @@ const puvox_library =
 			var seconds =  Math.round(diffS/1000);
 			return seconds;
 		},	  
+		
+		/**
+		* Adds time to a date. Modelled after MySQL DATE_ADD function.
+		* Example: dateAdd(new Date(), 'minute', 30)  //returns 30 minutes from now.
+		* https://stackoverflow.com/a/1214753/18511
+		* 
+		* @param date  Date to start with
+		* @param interval  One of: year, quarter, month, week, day, hour, minute, second
+		* @param units  Number of units of the given interval to add.
+		*/
+	   	add(date, interval, units) {
+			if(!(date instanceof Date))
+				return undefined;
+			var ret = new Date(date); //don't change original date
+			var checkRollover = function() { if(ret.getDate() != date.getDate()) ret.setDate(0);};
+			switch(String(interval).toLowerCase()) {
+				case 'year'   :  ret.setFullYear(ret.getFullYear() + units); checkRollover();  break;
+				case 'quarter':  ret.setMonth(ret.getMonth() + 3*units); checkRollover();  break;
+				case 'month'  :  ret.setMonth(ret.getMonth() + units); checkRollover();  break;
+				case 'week'   :  ret.setDate(ret.getDate() + 7*units);  break;
+				case 'day'    :  ret.setDate(ret.getDate() + units);  break;
+				case 'hour'   :  ret.setTime(ret.getTime() + units*3600000);  break;
+				case 'minute' :  ret.setTime(ret.getTime() + units*60000);  break;
+				case 'second' :  ret.setTime(ret.getTime() + units*1000);  break;
+				default       :  ret = undefined;  break;
+			}
+			return ret;
+	    },
+		// this approach is correct, the other one: https://pastebin_com/GwsScXx1  has strange bug in node, might relate to: https://stackoverflow.com/a/19691491/2377343
+		addSeconds(date, seconds){ 
+			return new Date( Date.parse(date) + seconds*1000 );
+		},
+		addDays(date, days){ 
+			var result = new Date(date);
+			result.setDate(result.getDate() + days);
+			return result;
+		},
 	},
 
 
