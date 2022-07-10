@@ -791,7 +791,9 @@ const puvox_library =
 	DateUtils : {
 		//  0940 type time-ints
 		isBetweenHMS(target, start,  end,  equality) { }, // datetime, int/datetime, int/datetime, bool
-		equalDays(d1,d2) { }, // DateTime, DateTime
+		equalDays(d1,d2) { 
+			return d1.getYear()==d2.getyear() && d1.getMonth()==d2.getMonth() && d1.getDay()==d2.getDay();
+		}, // DateTime, DateTime
 		IsTodayStart(dt) { }, // DateTime
 		GetWeekOfMonth(dt) { }, // DateTime
 		GetWeekOfYear(dt) { }, // DateTime
@@ -875,9 +877,20 @@ const puvox_library =
 		msGoneAfter(date){
 			return (new Date()-date);
 		},
-		// this approach is correct, the other one: https://pastebin_com/GwsScXx1  has strange bug in node
+		// this approach is correct, the other one: https://pastebin_com/GwsScXx1  has strange bug in node, might relate to: https://stackoverflow.com/a/19691491/2377343
 		addSeconds(date, seconds){ 
 			return new Date( Date.parse(date) + seconds*1000 );
+		},
+		addDays(date, days){ 
+			var result = new Date(date);
+			result.setDate(result.getDate() + days);
+			return result;
+		},
+		getYMDHISFfromDate(dt){
+			return [1900 + dt.getYear(), dt.getMonth(), dt.getDay(), dt.getHours(), dt.getMinutes(), dt.getSeconds(), dt.getMilliseconds()];
+		}, 
+		prefixWithZero(num, digits){
+			return (digits===1 ? num : (digits===2 ? (num < 10 ? "0"+num : num ) : (digits===3 ? (num < 10 ? "00"+num : (num < 100 ? "0"+num : num ) ) : num ) ) ).toString();
 		},
 		currentDatetimeIs(targetDate){ //"2021-03-30 13:33:45 GMT+0300"
 			var curr_dt = new Date( Date.now() ); 
