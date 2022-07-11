@@ -889,20 +889,20 @@ const puvox_library =
 			return curr_dt.getYear() ==target_dt.getYear() && curr_dt.getMonth() ==target_dt.getMonth() && curr_dt.getDate() ==target_dt.getDate() && curr_dt.getHours() ==target_dt.getHours() && curr_dt.getMinutes() ==target_dt.getMinutes() && curr_dt.getSeconds() ==target_dt.getSeconds();
 		},
 		dateCompare(date1, date2){ 
-			var date1 = this.isString(date1) ? Date.parse(date1) : date1;
+			var date1 = puvox_library.isString(date1) ? Date.parse(date1) : date1;
 				date1 = new Date( date1 );
 			var date2 = date2 || new Date(Date.now());  
 			return (+date1 > +date2 ? 1 : +date1 < +date2 ? -1 : 0);
 		},
 		dateTill(date1, date2){ 
-			var date1 = this.isString(date1) ? Date.parse(date1) : date1;
+			var date1 = puvox_library.isString(date1) ? Date.parse(date1) : date1;
 			date1 = new Date( date1 );
 			var date2 = date2 || new Date(Date.now()); 
 			var diff = new Date(date1.getTime()-date2.getTime());
 			return diff;
 		},
 		secondsTill(date1, date2){ 
-			var date1 = this.isString(date1) ? Date.parse(date1) : date1;
+			var date1 = puvox_library.isString(date1) ? Date.parse(date1) : date1;
 			date1 = new Date( date1 );
 			var date2 = date2 || new Date(Date.now()); 
 			var diffS = date1.getTime()-date2.getTime();
