@@ -803,14 +803,8 @@ const puvox_library =
 		// HMSToTimeSpan(hhmmss) { }, // int
 		addNumberToHMS(hhmmss, added_or_subtracted) { }, // int, int
 		DatetimeToString(dt, withTZ) { 
-			let str = this.DatetimeToStringMS(dt, withTZ);
-			return str.split('.')[0]; //2022-07-09 19:25:00
-		}, // DateTime, bool
+		},
 		DatetimeToStringMS(dt, withTZ) { 
-			var d = new Date(dt);
-			let str =d.toISOString();
-			let finalStr = (withTZ ? str : str.replace("T", " ").replace("Z", ""));
-			return finalStr; //2022-07-09 19:25:00.276
 		}, 
 		StringToDatetime(str, format, culture) { }, // DateTime, bool, str
 		UtcDatetime() {  
@@ -844,6 +838,15 @@ const puvox_library =
 		// #######################
 		// ##### added to JS #####
 		// #######################
+		DatetimeToStringLocal(dt) {
+			return (dt || new Date()).toLocaleString('sv', {year:'numeric', month:'numeric', day:'numeric', hour:'numeric', minute:'numeric', second:'numeric', fractionalSecondDigits: 3}).replace(',', '.');
+		},
+		DatetimeToStringUtc(dt, withMS, withTZ) {
+			var d = new Date( dt || new Date() );
+			let str =d.toISOString();
+			let finalStr = (withTZ ? str : str.replace("T", " ").replace("Z", ""));
+			return withMS ? str : str.split('.')[0]; //2022-07-09 19:25:00.276
+		},
 		//i.e. input:  1650000000000 (milliseconds)   |  output : "2021-03-08 11:59:00"
 		UtcTimestampToLocalDatetime(ts) {
 			var d = new Date(ts);
