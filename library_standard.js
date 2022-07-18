@@ -1412,7 +1412,9 @@ const puvox_library =
 		let count = array_.length;
 		return count<=amount_ ? array_ :  ( from=='start' ? array_.slice(0, amount_) :  array_.slice(-amount_) );
 	},
-
+	arrayInsertAt(array, index, value){
+		return array.splice(index, 0, value);
+	},
 	executeAfterTry(el, func, num)
 	{
 		var num=num || 0;
