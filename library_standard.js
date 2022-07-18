@@ -864,7 +864,7 @@ const puvox_library =
 		}, 
 		UtcTimestampToUtcDatetimeString(epochtime, withTZ){
 			let d = this.UtcTimestampToUtcDatetime(epochtime);
-			return this.DatetimeToString(d, withTZ);
+			return this.DatetimeToStringUtc(d, withTZ);
 		}, 
 		getOffsetFromUtc(){
 			var dt = new Date();
