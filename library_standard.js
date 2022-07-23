@@ -788,7 +788,7 @@ const puvox_library =
     },
 
 
-	DateUtils : {
+	dateUtils : {
 		//  0940 type time-ints
 		isBetweenHMS(target, start,  end,  equality) { }, // datetime, int/datetime, int/datetime, bool
 		equalDays(d1,d2) { 
@@ -946,6 +946,7 @@ const puvox_library =
 			result.setDate(result.getDate() + days);
 			return result;
 		},
+		readableDate(dt) { return this.UtcTimestampToUtcDatetimeString(dt).replace('T', ' ').replace('Z', ''); },
 	},
 
 
@@ -1163,7 +1164,10 @@ const puvox_library =
 		Object.keys(obj).forEach(key => this.isEmptyValue(obj[key]) && delete obj[key]);
 		return obj;
 	},
-
+	isIterable(obj) {
+		if (obj == null) { return false; }
+		return typeof obj[Symbol.iterator] === 'function';
+	},
 	insertRedErrorLine(array_){
 		var array = array_;
 		array["position"] = array["position"] || "before";
