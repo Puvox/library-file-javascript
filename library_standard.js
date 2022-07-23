@@ -864,7 +864,7 @@ const puvox_library =
 		}, 
 		UtcTimestampToUtcDatetimeString(epochtime, withTZ){
 			let d = this.UtcTimestampToUtcDatetime(epochtime);
-			return this.DatetimeToStringUtc(d, withTZ);
+			return this.DatetimeToStringUtc(d, true, withTZ);
 		}, 
 		getOffsetFromUtc(){
 			var dt = new Date();
@@ -945,8 +945,7 @@ const puvox_library =
 			var result = new Date(date);
 			result.setDate(result.getDate() + days);
 			return result;
-		},
-		readableDate(dt) { return this.UtcTimestampToUtcDatetimeString(dt).replace('T', ' ').replace('Z', ''); },
+		}
 	},
 
 
