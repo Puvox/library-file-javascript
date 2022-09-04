@@ -15,8 +15,6 @@
 
 const puvox_library =
 {
-	APPNAME:'',
-
 	// ########## ARRAY ########## //
 	arrayValue(obj_arr, key, default_){
 		return (key in obj_arr ? obj_arr[key] : default_);
@@ -812,7 +810,9 @@ const puvox_library =
 			let finalStr = (withT ? str.replace(' ', 'T') : str);
 			return withMS ? finalStr : finalStr.split('.')[0]; //2022-07-09 19:25:00.276
 		},
-		StringToDatetime(str, format, culture) { }, // DateTime, bool, str
+		// in some langs, the date object has distinctions, so the two below needs separated methods
+		StringToDatetimeUtc(str, format, culture) { return new Date(str); }, // DateTime, bool, str
+		StringToDatetimeLocal(str, format, culture) { return new Date(str); }, // DateTime, bool, str
 		UtcDatetime() {  
 			var now = new Date();
 			var utc = new Date(now.getTime()); // + now.getTimezoneOffset() * 60000 is not needed !!!!!!
@@ -844,6 +844,9 @@ const puvox_library =
 		// #######################
 		// ##### added to JS #####
 		// #######################
+		StringToUtcString(str) {
+			return str.indexOf ('Z') > -1 || str.indexOf ('GMT') > -1 ? str : str  + ' GMT+0000';
+		},
 		//i.e. input:  1650000000000 (milliseconds)   |  output : "2021-03-08 11:59:00"
 		UtcTimestampToLocalDatetime(ts) {
 			var d = new Date(ts);
@@ -1563,7 +1566,7 @@ const puvox_library =
 	basename(path) {   return path.split('/').reverse()[0];	},
 
 		
-	// ===================== simple POPUP  ===================== https://github.com/ttodua/useful-javascript/ =====================
+	// ========= simple POPUP  =========== https://github.com/ttodua/useful-javascript/ =====================
 	show_my_popup(TEXTorID, AdditionalStyles ){
 			TEXTorID=TEXTorID.trim(); var FirstChar= TEXTorID.charAt(0); var eName = TEXTorID.substr(1); if ('#'==FirstChar || '.'==FirstChar){	if('#'==FirstChar){var x=document.getElementById(eName);} else{var x=document.getElementsByClassName(eName)[0];}} else { var x=document.createElement('div');x.innerHTML=TEXTorID;} var randm_id=Math.floor((Math.random()*100000000));
 		var DivAA = document.createElement('div');    DivAA.id = "blkBackgr_"+randm_id;  DivAA.className = "MyJsBackg";   DivAA.setAttribute("style", 'background:black; height:5000px; left:0px; opacity:0.9; position:fixed; top:0px; width:100%; z-index:99995;'); document.body.appendChild(DivAA);      AdditionalStyles= AdditionalStyles || '';
@@ -2284,6 +2287,12 @@ const puvox_library =
 	// ================================================================================================================//
 
 
+	getCharsFromStart(str, amount){
+		return str.substring(0, amount);
+	},
+	getCharsFromEnd(str, amount){
+		return str.substring(str.length-amount, str.length);
+	},
 		
 	// ============================================= Position ============================================================//
 	GetTopLeft(myyElement) {
@@ -2546,6 +2555,7 @@ const puvox_library =
 
 
 	// for node packs:
+	_fs_instance :null,
 	fs(){
 		if (this._fs_instance){
 			return this._fs_instance;
@@ -2596,26 +2606,20 @@ const puvox_library =
 	
 
 	
-	// CACHEs
-	// ############
-	cacheGet(itemName, defaultValue){
+
+	// ######## CACHE ITEMS (client-side JS) ########
+	cacheStorageGet(itemName, defaultValue){
 		let curr= window.localStorage.getItem('puvox_'+itemName);
 		return (curr==null ? defaultValue : curr);
 	},
-	cacheGetItem(arrayName, itemName, defaultValue){
-		let curr = this.cacheGet(arrayName, '{}' );
+	cacheStorageGetItem(arrayName, itemName, defaultValue){
+		let curr = this.cacheStorageGet(arrayName, '{}' );
 		let parsed = JSON.parse(curr);
 		return (itemName in parsed ? parsed.itemName : defaultValue);
 	},
-	cacheSet(itemName, value){
-		try{
-			window.localStorage.setItem('puvox_'+itemName, value);
-			return true;
-		}
-		catch(ex){
-			alert("Cache storage quote exceeded. can't save value. err598");
-			return false;
-		}
+	cacheStorageSet(itemName, value){
+		try{ window.localStorage.setItem('puvox_'+itemName, value); return true; }
+		catch(ex){ alert("Cache storage quote exceeded. can't save value. err598"); return false; }
 	},
 	cacheSetItem(arrayName, itemName, value){ 
 		let curr = this.cacheGet(arrayName, '{}' );
@@ -2623,38 +2627,94 @@ const puvox_library =
 		parsed.itemName =defaultValue;
 		return this.cacheSet( arrayName, JSON.stringify(parsed) );
 	},
-	// ##############
+	// ################################################
 
-	cachedMemory:{},
-	tempDir(){ let name='os'; return require(name).tmpdir(); },
-	cacheSetDir(dir){if (!dir) dir=this.tempDir()+'/'+this.APPNAME; this.cacheDir=dir;},
-	cacheDirGet(){ 
-		if (!this.cacheDir) 
-			this.cacheSetDir();
-		// cwd() better, because __dirname returns symlinked location !  //require.main.paths //fs.mkdtemp(
-		return this.cacheDir ? this.cacheDir : process.cwd() +'/_cache'; 
+
+	createDirIfNotExists(dirPath){
+		if (!this.fs().existsSync(dirPath)){
+			this.fs().mkdirSync(dirPath);
+		}
+	},
+	fileExists(filePath){
+		return this.fs().existsSync(filePath);
+	},
+	filemtime(filePath){
+		return (this.fs().statSync(filePath)).mtime;
+	},
+	unlink(filePath){
+		return (this.fs().unlinkSync(filePath));
+	},
+	fileGetContents(filePath, defaultt = ''){
+		if (!this.fileExists(filePath)){
+			return defaultt;
+		}
+		return (this.fs().readFileSync(filePath));
+	},
+	saveFile(filePath, content){ this.fs().writeFileSync(filePath,content, 'utf8', function(err){
+			if (err) throw err;
+		});
+	},
+
+
+	
+	// ########## CACHE DIRS (server-side JS) ##########
+	getDirTempOS(){ let name='os'; return require(name).tmpdir(); },
+	customCacheDir:null,
+	cacheDirGet(appName){  
+		if (!this.customCacheDir){ 
+			this.customCacheDir = this.getDirTempOS() + '/_cache_dir_px/';
+		}
+		let finaldir = this.customCacheDir + appName + '/';
+		this.createDirIfNotExists(finaldir);
+		return finaldir; 
 	},
 	cacheFileLocation(uniqFileName){
 		uniqFileName = this.isString(uniqFileName) || this.isNumeric(uniqFileName) ? uniqFileName : JSON.stringify(uniqFileName);
-		uniqFileName = this.sanitize_key_dashed(uniqFileName.substring(0, 10)) + "_"+this.md5(uniqFileName);
-		return this.cacheDirGet() + uniqFileName;
+		uniqFileName = this.sanitize_key_dashed(this.getCharsFromStart(uniqFileName, 15)) + "_"+ this.md5($uniqFileName);
+		filePath= this.cacheDirGet() + uniqFileName + "_tmp"; //"/". 
+		return filePath;
 	},
-	cacheGetFile(fileName, defaultVal){  
-		try{
-			let data= this.fs().readFileSync( this.cacheFileLocation(fileName), 'utf8');
-			return data;
+	//
+	cacheGetFile(uniqFileName, defaultt ='', expire_seconds=8640000, decode = true)
+	{
+		let filePath = this.cacheFileLocation(uniqFileName);
+		if ( filePath.length < 3) return "too tiny filename";
+
+		if ( this.fileExists(filePath) ){
+			if (this.filemtime(filePath)+expire_seconds<time() ){
+				this.unlink(filePath);
+				return defaultt;
+			}
+			else{	
+				cont = this.fileGetContents(filePath, null);
+				// if specifically array, then on empty, reckon as array
+				if (cont===null)
+				{
+					return defaultt;
+				}
+				if (decode){
+					try{
+						return JSON.parse(cont);
+					}
+					catch(ex){
+						return cont;
+					}
+				}
+				else{
+					return cont;
+				}
+			}
 		}
-		catch(ex){
-			//console.log(ex);
-			return defaultVal;
-		} 
+		else {
+			return defaultt;
+		}
 	},
-	cacheSetFile(uniqFileName, data, timelength){
-		return this.fs().writeFileSync( this.cacheFileLocation(uniqFileName), data, 'utf8', function(err){
-			if (err) throw err;
-			//console.log('The file has been saved!');
-		} );
-	},
+	cacheSetFile(uniqFileName, content, encode=true)
+	{
+		let filePath= this.cacheFileLocation(uniqFileName);
+		let contentFinal = (encode && (this.isArray(content) || this.isObject(content)) ) ? JSON.stringify($content): content;
+		return this.saveFile(filePath, contentFinal);
+	} 
 
 };
 
