@@ -1,7 +1,7 @@
 /**
  *
  *		 ##########################################################################################
- *		 ###################################  Our PHP Library   ###################################
+ *		 ###################################  Our JS Library   ###################################
  *		 ########## Here we collect frequently used methods across our JS applications.  ##########
  *		 ########## (Some of them are generic javascript functions, some are for NodeJS) ##########
  *		 ##########################################################################################
@@ -1303,6 +1303,9 @@ const puvox_library =
 		return result;
 	},
 	
+	fixEntitiedJson(json_data){
+		return json_data.replace(/&#34;/g,'"');
+	},
 	
 	
 	setSelectByOptionName(selectEl, optName){
