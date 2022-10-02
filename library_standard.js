@@ -72,7 +72,7 @@ const puvox_library =
 		}
 		return newObj;
 	},
-	ArrayWithKeys(obj, keysArr){
+	removeKeysExcept (obj, keys){
 		let newObj ={};
 		for (let [key,val] of Object.entries(obj)){
 			if (this.inArray(keysArr,key))
@@ -567,12 +567,12 @@ const puvox_library =
 
     argvsString(){ return process.argv[2]; },
     argvsArray(){ return process.argv.slice(2); },
-	argv(which){
+	argv(which, def = undefined){
 		var which = which || undefined; 
 		let argvs= this.argvsArray();
 		if (argvs.length <= 0)
 		{
-			return undefined;
+			return def;
 		}
 		else{
 			let KeyValues= {};
@@ -1320,9 +1320,13 @@ const puvox_library =
 		}, 1000, func);
 	},
 	sleep(ms) {
-		return new Promise(resolve => setTimeout(resolve, ms));
+		return new Promise(resolve => this.setTimeout_safe(resolve, ms));
 	},
-	  
+	// immitating ccxt setTimeout
+	setTimeout_safe (done, ms) {
+		const targetTime = Date.now() + ms; if (ms >= 2147483647) { throw new Error ('setTimeout() function was called with unrealistic value of ' + ms.toString ()); }  let clearInnerTimeout = () => {}; let active = true; const id = setTimeout (() => { active = true; const rest = targetTime - now (); if (rest > 0) { clearInnerTimeout = setTimeout_safe (done, rest, setTimeout, targetTime); } else { done (); } }, ms); return function clear () { if (active) { active = false; clearTimeout (id); } clearInnerTimeout (); };
+	},
+
 	scrollToBottom2(el)  //setHashInAddress
 	{
 		if (el && el[0])
