@@ -72,7 +72,7 @@ const puvox_library =
 		}
 		return newObj;
 	},
-	removeKeysExcept (obj, keys){
+	removeKeysExcept (obj, keysArr){
 		let newObj ={};
 		for (let [key,val] of Object.entries(obj)){
 			if (this.inArray(keysArr,key))
