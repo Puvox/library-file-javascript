@@ -80,15 +80,22 @@ const puvox_library =
 		}
 		return newObj;
 	},
-	arrayDiff(source, comparedTo, reverse){
-		return (reverse ? comparedTo.filter(x => !source.includes(x)) : source.filter(x => !comparedTo.includes(x)));
+	arrayDiff(source, comparedTo){
+		return source.filter(x => !comparedTo.includes(x));
 	},
 	arrayIntersect(source, comparedTo){
 		return source.filter(x => comparedTo.includes(x));
 	},
 	arrayDiffFull(o1,o2) {
+		const self = this;
 		const typeObject = function(o){
 			return typeof o === 'object';
+		};
+		const bothAreObjects = (o1,o2) =>{
+			return (typeObject(o1) && typeObject(o2));
+		};
+		const bothAreArrays = (o1,o2) =>{
+			return (this.isArray(o1) && this.isArray(o2));
 		};
 		const diff = function (o1, o2) {
 			const result = {};
@@ -103,12 +110,14 @@ const puvox_library =
 			// if they are equal
 			else if (Object.is(o1, o2)) {
 				return undefined;
+			} else if (bothAreArrays(o1,o2)){
+				return self.arrayDiff(o1,o2);
 			}
 			const keys = Object.keys(o2);
 			for (let i=0; i<keys.length; i++) {
 				const key = keys[i];
 				// if both are objects
-				if ( typeObject(o1[key]) && typeObject(o2[key])) {
+				if ( bothAreObjects(o1[key],o2[key])) {
 					// if equal, return nothing
 					if ( Object.is(o1[key], o2[key]) ) {
 						// do nothing
@@ -117,6 +126,8 @@ const puvox_library =
 					} else {
 						result[key] = diff(o1[key],o2[key]);
 					}
+				} else if (bothAreArrays(o1[key],o2[key])) {
+					result[key] = diff(o1[key],o2[key]);
 				} else if (o1[key] !== o2[key]) {
 					result[key] = o2[key];
 				} else {
