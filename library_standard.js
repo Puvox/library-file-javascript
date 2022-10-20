@@ -359,6 +359,7 @@ const puvox_library =
 		else if (this.isDecimal(x))	return "float";
 		else if (this.isBoolean(x))	return "boolean";	//at first, priority to bool, because of "true" and "false" strings
 		else if (this.isString(x))	return "string";
+		else if (this.isArray(x))	return "array";
 		else if (this.isObject(x))	return "object";
 		return typeof x;
 	},
