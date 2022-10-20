@@ -359,7 +359,8 @@ const puvox_library =
 		else if (this.isDecimal(x))	return "float";
 		else if (this.isBoolean(x))	return "boolean";	//at first, priority to bool, because of "true" and "false" strings
 		else if (this.isString(x))	return "string";
-		return "object";
+		else if (this.isObject(x))	return "object";
+		return typeof x;
 	},
 	isInteger(x)	{ return Number.isInteger(x); },
 	isNumeric(x)	{ return Number.isFinite(x); },
@@ -1335,7 +1336,7 @@ const puvox_library =
 	},
 	// immitating ccxt setTimeout
 	setTimeout_safe (done, ms) {
-		const self = this; const targetTime = Date.now() + ms; if (ms >= 2147483647) { throw new Error ('setTimeout() function was called with unrealistic value of ' + ms.toString ()); }  let clearInnerTimeout = () => {}; let active = true; const id = setTimeout (() => { active = true; const rest = targetTime - now (); if (rest > 0) { clearInnerTimeout = self.setTimeout_safe (done, rest, setTimeout, targetTime); } else { done (); } }, ms); return function clear () { if (active) { active = false; clearTimeout (id); } clearInnerTimeout (); };
+		const self = this; const targetTime = Date.now() + ms; if (ms >= 2147483647) { throw new Error ('setTimeout() function was called with unrealistic value of ' + ms.toString ()); }  let clearInnerTimeout = () => {}; let active = true; const id = setTimeout (() => { active = true; const rest = targetTime - Date.now (); if (rest > 0) { clearInnerTimeout = self.setTimeout_safe (done, rest, setTimeout, targetTime); } else { done (); } }, ms); return function clear () { if (active) { active = false; clearTimeout (id); } clearInnerTimeout (); };
 	},
 
 	scrollToBottom2(el)  //setHashInAddress
