@@ -365,7 +365,7 @@ const puvox_library =
 	},
 	isInteger(x)	{ return Number.isInteger(x); },
 	isNumeric(x)	{ return Number.isFinite(x); },
-	isDecimal(x)	{ return (!isNaN(parseFloat(x))); },
+	isDecimal(x)	{ return this.isNumeric(x) && (!isNaN(parseFloat(x))); }, // avoid occasions like "1abc"
 	isBoolean(x)	{ return this.isBooleanReal(x) || (this.isString(x) && (x.toLowerCase() =="true" || x.toLowerCase() =="false")); },
 	isBooleanReal(x)	{ return x === true || x === false || toString.call(x) === '[object Boolean]'; },
 	isString(x)	{ return Object.prototype.toString.call(x) === "[object String]"; }, // return (typeof content === 'string' || content instanceof String);
@@ -380,8 +380,8 @@ const puvox_library =
 	
 	isSimpleVariableType(obj){ return this.isSimpleVariableTypeName(typeof obj); },
 	isSimpleVariableTypeName(type_){ return this.inArray( [ "boolean", "integer", "float", "double", "decimal", "string"], type_);  },
+	isNumericVariableTypeName(type_){ return this.inArray( [ "integer", "float", "double", "decimal"], type_); },
 
-	isNakedVariableType(type_){ return this.isSimpleVariableType(type_);  },
 	stringToBoolean(string){
 		switch(string.toLowerCase().trim()){
 			case "true": case "yes": case "1": return true;
