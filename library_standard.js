@@ -164,7 +164,7 @@ const puvox_library =
     },
 	// https://stackoverflow.com/a/41474987/2377343
     cloneObjectWithPrototype(orig){
-        const clone = Object.assign( Object.create(instanceOfBlah), instanceOfBlah );
+        const clone = Object.assign( Object.create(orig), orig );
 		Object.setPrototypeOf( clone, Blah.prototype );
 		return clone;
     },
@@ -1460,6 +1460,18 @@ const puvox_library =
 		else setTimeout( function(){ this_.waitExecute(el, func); }, 700 );
 	}, 
 	
+	// https://stackoverflow.com/a/41407246/2377343
+	consoleLogColor (text, color, backgroundOrForeground = false) {
+		const prefix = '\x1b[';
+		const suffix = 'm';
+		const objectTree = {
+			types: { reset: "0", bright: "1", dim: "2", underscore: "4", blink: "5", reverse: "7", hidden: "8", },
+			background: { black: "30", red: "31", green: "32", yellow: "33", blue: "34", magenta: "35", cyan: "36", white: "37", },
+			foreground: { black: "40", red: "41", green: "42", yellow: "43", blue: "44", magenta: "45", cyan: "46", white: "47", }
+		};
+		const bfKeyname = backgroundOrForeground ? 'background' : 'foreground';
+		console.log (prefix + objectTree[bfKeyname][color] + suffix + "%s" + prefix + objectTree.types.reset + suffix, text);
+	},
 	
 	toggleWindowsMessages_WindowConfirm() { return window.confirm },
 	toggleWindowsMessages_WindowAlert() { return window.alert },
