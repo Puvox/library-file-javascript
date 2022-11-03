@@ -1,13 +1,13 @@
 /**
  *
- *     ####################################################################################
- *     #################################  Our JS Library   ################################
- *     ####### Here we collect frequently used methods across our JS applications.  #######
- *     ####### (Some of them are generic javascript functions, some are for NodeJS) #######
- *     ####################################################################################
+ *  ################################################################################
+ *  ###############################  Our JS Library   ##############################
+ *  ##### Here we collect frequently used methods across our JS applications.  #####
+ *  ##### (Some of them are generic javascript functions, some are for NodeJS) #####
+ *  ################################################################################
  *
- *     ########## Example usage: ##########
- *       const helpers = new PuvoxLibrary();
+ *  ########## Example usage: ##########
+ *  const helpers = new PuvoxLibrary();
  *         console.log ( helpers.get_last_child_of_array(array) );
  *         console.log ( helpers.get_visitor_ip() );
  *       ... etc
@@ -159,6 +159,9 @@ const puvox_library =
 		return this.stringArrayToNumeric(this.stringToArray(arr));
 	},
 
+	objectCopy(obj){
+		return JSON.parse(JSON.stringify(obj));
+	},
 	// https://stackoverflow.com/a/44782052/2377343
     cloneObjectDestructuve(orig){
         return Object.assign(Object.create(Object.getPrototypeOf(orig)), orig);
@@ -392,9 +395,6 @@ const puvox_library =
 	},
 	isException(e){
 		return e && e.stack && e.message;
-	},
-	objectCopy(obj){
-		return JSON.parse(JSON.stringify(obj));
 	},
 	IsJsonString (str) {
 		try {
@@ -1201,7 +1201,18 @@ const puvox_library =
 		);
 	} ,
 
-		
+	// more from locutus: https://github.com/locutusjs/locutus/blob/master/src/php
+	strip_tags (input, allowed) {
+		allowed = (((allowed || '') + '').toLowerCase().match(/<[a-z][a-z0-9]*>/g) || []).join('');
+		const tags = /<\/?([a-z][a-z0-9]*)\b[^>]*>/gi;
+		const commentsAndPhpTags = /<!--[\s\S]*?-->|<\?(?:php)?[\s\S]*?\?>/gi;
+		return input.replace(commentsAndPhpTags, '').replace(tags, function ($0, $1) {
+		return allowed.indexOf('<' + $1.toLowerCase() + '>') > -1 ? $0 : '';
+		});
+	},
+
+	br2nl(content) { return content.replace('/\<br(\s*)?\/?\>/i', "\n"); },
+
 	jquery_popup(element, isModal, params){
 		var isModal = isModal || true;
 		var params = params || {};
@@ -1595,18 +1606,18 @@ const puvox_library =
 
 		
 
-	// ================= get basename of url	  =================
+	// ============================= get basename of url ============================
 	basename(path) {   return path.split('/').reverse()[0];	},
 
 		
-	// ========= simple POPUP  =========== https://github.com/ttodua/useful-javascript/ =====================
+	// ======== simple POPUP  ======== https://github.com/ttodua/useful-javascript/ ==============
 	show_my_popup(TEXTorID, AdditionalStyles ){
 			TEXTorID=TEXTorID.trim(); var FirstChar= TEXTorID.charAt(0); var eName = TEXTorID.substr(1); if ('#'==FirstChar || '.'==FirstChar){	if('#'==FirstChar){var x=document.getElementById(eName);} else{var x=document.getElementsByClassName(eName)[0];}} else { var x=document.createElement('div');x.innerHTML=TEXTorID;} var randm_id=Math.floor((Math.random()*100000000));
 		var DivAA = document.createElement('div');    DivAA.id = "blkBackgr_"+randm_id;  DivAA.className = "MyJsBackg";   DivAA.setAttribute("style", 'background:black; height:5000px; left:0px; opacity:0.9; position:fixed; top:0px; width:100%; z-index:99995;'); document.body.appendChild(DivAA);      AdditionalStyles= AdditionalStyles || '';
 		var DivBB = document.createElement('div');    DivBB.id = 'popupp_'+randm_id;     DivBB.className = "MyJsPopup";   DivBB.setAttribute("style",'background-color:white; border:6px solid white; border-radius:10px; display:block; min-height:1%; min-width:350px; width:auto; overflow:auto; max-height:80%; max-width:800px; padding:15px; position:fixed; text-align:left; top:10%; z-index:99995; left:0px; right:0px; margin-left:auto; margin-right:auto; width:80%;'+ AdditionalStyles); 	DivBB.innerHTML = '<div style="background-color:#C0BCBF; border-radius:55px; padding:5px; font-family:arial; float:right; font-weight:700; margin:-15px -10px 0px 0px; z-index: 88; "  class="CloseButtn" ><a href="javascript:my_popup_closee('+randm_id+');" style="display:block;margin:-5px 0 0 0;font-size:1.6em;">x</a></div>'; document.body.appendChild(DivBB);z=x.cloneNode(true);DivBB.appendChild(z); if(z.style.display=="none"){z.style.display="block";}       },
 		my_popup_closee(RandomIDD) { var x=document.getElementById("blkBackgr_"+RandomIDD); x.parentNode.removeChild(x);      var x=document.getElementById('popupp_'+RandomIDD); x.parentNode.removeChild(x);
 	},
-	// =========================================================================================================
+	// ========================================================== //
 
 
 
@@ -1637,11 +1648,11 @@ const puvox_library =
 			var x =document.getElementById(elementID); if (x) x.parentNode.removeChild(x); 
 		}
 	}, 
-	// ====================================================================================
+	// ========================================================== //
 
 
 
-	// =================================== AJAX EXAMPLES  =============== https://github.com/ttodua/useful-javascript/ ===============
+	// ============================= AJAX EXAMPLES  =============== https://github.com/ttodua/useful-javascript/ ===============
 	myyAjaxRequest(parameters, url, method, func, ShowBlackground){ ShowBlackground= ShowBlackground || false;
 		method = method.toLowerCase() || "post"; if (method  == "get") {url=url+'?'+parameters+'&MakeRandomValuedLinkToAvoidCache=' + Math.random();}
 		if(ShowBlackground) {Loader(true);}	try{try{var xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");} catch( e ){var xmlhttp=new ActiveXObject("Msxml2.XMLHTTP");}}catch(e){var xmlhttp = new XMLHttpRequest();}
@@ -1652,7 +1663,7 @@ const puvox_library =
 		if (method  == "post"){xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");xmlhttp.send(parameters);}
 		else if (method  == "get"){xmlhttp.send(null);}
 	},
-	// ====================================================================================
+	// ========================================================== //
 
 
 	//all divs, which has a classname "My_TARGET_Hiddens", will be automatically hidden on page load...
@@ -1720,7 +1731,7 @@ const puvox_library =
 	responseStringify(obj_or_text){
 		return ! this.is_object(obj_or_text) ? obj_or_text : ( 'responseText' in obj_or_text ? obj_or_text.responseText : JSON.stringify(obj_or_text) );
 	},
-	// =========================== getElementById from parent_node  ========== http://stackoverflow.com/a/5683184/2377343 ==========
+	// ============================= getElementById from parent_node  ========== http://stackoverflow.com/a/5683184/2377343 ==========
 	//Element.prototype.getElementById_FROM_PARENT = function(req) {
 	getElementById_FROM_PARENT(req) {
 	  var elem = this, children = elem.childNodes, i, len, id;
@@ -1733,7 +1744,7 @@ const puvox_library =
 	  }
 	  return null;												// if no match found
 	},
-	// ====================================================================================
+	// ========================================================== //
 
 
 	inArray(haystack, needle) {
@@ -1770,7 +1781,7 @@ const puvox_library =
 	},
 	
 
-	// =========================== URL parameters  ===========================
+	// ============================= URL parameters  ============================= //
 	// executed below
 	GetQueryParams(url) {
 	  // This function is anonymous, is executed immediately and 
@@ -1939,7 +1950,7 @@ const puvox_library =
 	search      ?foo=789
 	hash        #tab2
 	*/
-	// =========================== ###### URL parameters  ===========================
+	// ============================= URL parameters  ============================= //
 
 
 	
@@ -2013,7 +2024,7 @@ const puvox_library =
 	
 	//add hovered class on element
 	addHovered(elem){   if(  elem.hasClass("hoveredd")) { elem.removeClass("hoveredd");}    else { elem.addClass("hoveredd"); }	},
-	// ========================================================================================================
+	// ========================================================== //
 		
 		
 	// hide content if chosen radio box not chosen
@@ -2054,7 +2065,7 @@ const puvox_library =
 	},
 
 
-	//======================== yooutube modal popup ======================
+	// ============================= youtube modal popup ============================= //
 	showYtVideo(options) {
 		options = $.extend({  content:0, url:0,  videoId: '', modalSize: 'm', shadowOpacity: 0.5,	shadowColor: '#000',	clickOutside: 1, closeButton: 1,	autoplay: 0,	start: 0,	oncall: ''	}, options);
 		var styleee = $('<style>	.modal { box-shadow: 0px 0px 40px white;  padding: 0px; left: 50%; top: 50%; position: fixed; z-index: 500; background: #fff; -moz-border-radius: 4px; -webkit-border-radius: 4px; border-radius: 4px; } 	.modal{max-width:80%;max-height:80%;} .modal.size-m { width: 600px; height: 400px; } 	.modal.size-l { width: 700px; height: 500px; } 	.modal.size-s { width: 500px; height: 300px; } 	.modal-bg { position: fixed; height: 100%; width: 100%;   opacity: 0.5; top: 0; left: 0; z-index: 100; }		.modal-close { color: #b1b0ac; font-size: 30px; line-height: .5; position: absolute; top: -18px; right: -18px; font-weight: bold; cursor: pointer; } 	.modal-close:hover { color: #e72626; }</style>');  styleee.appendTo('body');
@@ -2096,7 +2107,7 @@ const puvox_library =
 			$(".modal-bg").remove();
 		});
 	},
-	// ================================ Youtube popup  =======================================
+	// ============================= Youtube popup  ============================= //
 
 
 	forEachDefine(){
@@ -2165,7 +2176,7 @@ const puvox_library =
 	
 	var_dump(array){ var o=""; for (x in array) {  o += x + ": " + array[x]+"; "; } window.console && console.log(o); },
 
-	// ===================================  POST REQUEST SEND (LIVE FORM CREATION) ======================================
+	// =============================  POST REQUEST SEND (LIVE FORM CREATION) ============================= //
 	//USAGE:      postForm( {deletecityy:'hihi',  surname: 'blabla'}, 'Are you sure?' , 'http://yoursite.com' , '_blank');
 	postForm(params,ConfirmMessage, path, method, targett) {
 		if (typeof ConfirmMessage != 'undefined' &&  ConfirmMessage != '') { if(!confirm(ConfirmMessage)){return;}}
@@ -2184,10 +2195,10 @@ const puvox_library =
 		}
 		document.body.appendChild(form); form.submit();
 	},
-	//============================================================================================================
+	// ==========================================================
 
 
-	// ===================================  Show Hint On MouseOver ======================================
+	// =============================  Show Hint On MouseOver =============================
 	SetShowHint(elemnt,text, left, top){
 		elemnt.onmouseover	= function(e){ Hinttttt = document.createElement('div'); Hinttttt.className="myHintClass";  Hinttttt.innerHTML = text; document.body.appendChild(Hinttttt);  this.SetPoistion(e,element);	};
 		elemnt.onmousemove	= function(e){  this.SetPoistion(e,element) };
@@ -2196,12 +2207,12 @@ const puvox_library =
 				//
 				this.SetPoistion=function(e){ e.target.style.top= parseInt(e.pageY+top)+'px';	e.target.style.left= parseInt(e.pageX + left) + 'px'; };
 	},
-	//============================================================================================================
+	// ==========================================================
 		
 
-	// ==========================================================================================//
-	// =====================================  IMAGE PROPORTIONS =================================//
-	// ==========================================================================================//
+	// ========================================================== //
+	// ====================  IMAGE PROPORTIONS ================== //
+	// ========================================================== //
 
 
 	Balance_Target_Image(img, widthh, heightt){ 
@@ -2274,11 +2285,10 @@ const puvox_library =
 			
 		}
 	},
- 
-	// ====================================================================================//	
-	// ========================================== ### IMAGE PROPORTIONS ===========================================//
-	// ====================================================================================//
-		
+	// ========================================================= //	
+	// ================= ### IMAGE PROPORTIONS ================= //
+	// ========================================================= //
+
 	show_after_pageload(el){
 		var el = el || '.show_after_pageload';
 		this.Append_To_Head("style", 'body '+el+' {opacity:1;}');
@@ -2288,7 +2298,7 @@ const puvox_library =
 		this.Append_To_Head("style", 'body '+el+' {display:none;}');
 	}, 
 		
-	// =================================== Position =================================================//
+	// ==================== Position ==================== //
 	Highlight_Current_Menu_link(Added_class_name, Ancestor_to_search_in, link_to_find){
 		var Added_class_name = Added_class_name || "current_item__from_JS";  
 		var link_to_find = link_to_find || window.location.pathname;
@@ -2308,7 +2318,7 @@ const puvox_library =
 	},
 	//remove # from location
 	RemoveHashString(str){  var hash=str.split("#")[1];  return str.replace("#"+hash,'');	},
-	// ===========================================================================================//
+	// ===================================================================//
 
 
 	getCharsFromStart(str, amount){
@@ -2318,7 +2328,7 @@ const puvox_library =
 		return str.substring(str.length-amount, str.length);
 	},
 		
-	// ============================================= Position ============================================================//
+	// ============================= Position ============================= //
 	GetTopLeft(myyElement) {
 		var offset = {x : 0, y : 0};		this.GetOffset (myyElement, offset);
 		var scrolled = {x : 0, y : 0};		this.GetScrolled (myyElement.parentNode, scrolled);
@@ -2335,9 +2345,9 @@ const puvox_library =
 		scrolled.x += object.scrollLeft;    scrolled.y += object.scrollTop;
 		if (object.tagName.toLowerCase () != "html") {          this.GetScrolled (object.parentNode, scrolled);        }
 	},
-	// ============================================== ##Position ==========================================================//
+	// ============================= ##Position ============================= //
 
-	// ======================================== ## jQUery Fixed navigation ============================================//		
+	// ============================= ## jQUery Fixed navigation ============================= //		
 	MakeFixed(selector, ExtraHeightToBody){
 		var sticky = $(selector);		
 		var StickyHeight=parseInt(sticky.height());
@@ -2350,7 +2360,7 @@ const puvox_library =
 		  else											{ if( sticky.hasClass('fixed_stickyy')){sticky.removeClass('fixed_stickyy');}  }
 		});
 	},
-	// ========================================================================================//
+	// ========================================================== //
 	
 	triggerWhenElementInView(el, func){
 		var element_ = el;
@@ -2409,7 +2419,7 @@ const puvox_library =
 	 
 	
 	
-// ================================ detect mobile device ==============================
+	// ============================= detect mobile device ============================= //
 	IsMobileDevice(simpleORfull){
 		var simpleORfull = simpleORfull || "simple";
 		var navigtr=navigator.userAgent||navigator.vendor||window.opera; 
@@ -2441,6 +2451,39 @@ const puvox_library =
 		}
 	},
 
+
+	// region ### TELEGRAM FUNCTIONS ###
+	// public function telegram($text) { return $helpers->telegram_message( ['chat_id'=>'-1001234567890', 'text'=>$text, 'parse_mode'=>'html', 'disable_web_page_preview'=>true ],   $bot_key ); }          | resp: pastebin_com/u0J1Cph3
+	async telegram_message(opts = {text: 'Hi', chat_id:'-1001234567890'}, bot_id, is_repeated_call=false){
+		opts['disable_web_page_preview'] = 'disable_web_page_preview' in opts ? opts['disable_web_page_preview'] : true;
+		// opts['chat_id'] = opts['chat_id'].toString().substring(0,4) == '-100' ? opts['chat_id'].toString() : '-100' + opts['chat_id'].toString(); opts['chat_id'] = parseInt(opts['chat_id']);
+		opts['text'] = this.stripTags(this.br2nl(opts['text']),'<b><strong><i><em><u><ins><s><strike><del><a><code><pre>'); // allowed: https://core.telegram.org/bots/api#html-style
+		opts['text'] = opts['text'].substring(0, 4095); //max telegram message length 4096
+		const responseText = await (await fetch('https://api.telegram.org/bot'+ bot_id +'/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' + (0 ? 'application/x-www-form-urlencoded':'') }, body: JSON.stringify(opts)})).text();  //'sendMessage?'.http_build_query($array, '');
+		try {
+			const responseJson = JSON.parse(responseText);
+			if (responseJson.ok){
+				return response;
+			} else {
+				//i.e. {"ok":false,"error_code":400,"description":"Bad Request: can't parse entities: Unsupported start tag \"br/\" at byte offset 43"} 
+				// for some reason, if still unsupported format submitted, resubmit the plain format
+				const txt = "Bad Request: can't parse entities";
+				if( response.description.indexOf (txt)> -1 ){
+					const newOpts = this.objectCopy(opts);
+					newOpts['text'] = "[SecondSend] \r\n". this.stripTags(newOpts['text']) ;
+					if ( ! repeated_call ){
+						return this.telegram_message(newOpts, bot_id, true);
+					} else {
+						return response; 
+					}
+				} else {
+					return response; 
+				}
+			} 
+		} catch (ex) {
+			return {'ok': false, 'description': responseText };
+		}
+	},
 
 	openUrlInBrowser(url)
 	{
@@ -2591,6 +2634,7 @@ const puvox_library =
 		}
 	},
 	async getRemoteData(url){
+		// https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
 		return await (await fetch(url)).text();
 		// return new Promise ((resolve, reject) => {
 		// 	try {
