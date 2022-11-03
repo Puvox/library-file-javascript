@@ -1202,7 +1202,7 @@ const puvox_library =
 	} ,
 
 	// more from locutus: https://github.com/locutusjs/locutus/blob/master/src/php
-	strip_tags (input, allowed) {
+	stripTags (input, allowed) {
 		allowed = (((allowed || '') + '').toLowerCase().match(/<[a-z][a-z0-9]*>/g) || []).join('');
 		const tags = /<\/?([a-z][a-z0-9]*)\b[^>]*>/gi;
 		const commentsAndPhpTags = /<!--[\s\S]*?-->|<\?(?:php)?[\s\S]*?\?>/gi;
