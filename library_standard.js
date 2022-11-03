@@ -1,15 +1,16 @@
 /**
  *
- *		 ##########################################################################################
- *		 ###################################  Our JS Library   ###################################
- *		 ########## Here we collect frequently used methods across our JS applications.  ##########
- *		 ########## (Some of them are generic javascript functions, some are for NodeJS) ##########
- *		 ##########################################################################################
+ *     ####################################################################################
+ *     #################################  Our JS Library   ################################
+ *     ####### Here we collect frequently used methods across our JS applications.  #######
+ *     ####### (Some of them are generic javascript functions, some are for NodeJS) #######
+ *     ####################################################################################
  *
- *	     ########## Example usage: ##########
- *			 const helpers = new LibraryPuvox();
- *			 ..  helpers.get_visitor_ip();
- *			 ..  helpers.get_last_child_of_array( array );
+ *     ########## Example usage: ##########
+ *       const helpers = new PuvoxLibrary();
+ *         console.log ( helpers.get_last_child_of_array(array) );
+ *         console.log ( helpers.get_visitor_ip() );
+ *       ... etc
  *
 */
 
@@ -1605,7 +1606,7 @@ const puvox_library =
 		var DivBB = document.createElement('div');    DivBB.id = 'popupp_'+randm_id;     DivBB.className = "MyJsPopup";   DivBB.setAttribute("style",'background-color:white; border:6px solid white; border-radius:10px; display:block; min-height:1%; min-width:350px; width:auto; overflow:auto; max-height:80%; max-width:800px; padding:15px; position:fixed; text-align:left; top:10%; z-index:99995; left:0px; right:0px; margin-left:auto; margin-right:auto; width:80%;'+ AdditionalStyles); 	DivBB.innerHTML = '<div style="background-color:#C0BCBF; border-radius:55px; padding:5px; font-family:arial; float:right; font-weight:700; margin:-15px -10px 0px 0px; z-index: 88; "  class="CloseButtn" ><a href="javascript:my_popup_closee('+randm_id+');" style="display:block;margin:-5px 0 0 0;font-size:1.6em;">x</a></div>'; document.body.appendChild(DivBB);z=x.cloneNode(true);DivBB.appendChild(z); if(z.style.display=="none"){z.style.display="block";}       },
 		my_popup_closee(RandomIDD) { var x=document.getElementById("blkBackgr_"+RandomIDD); x.parentNode.removeChild(x);      var x=document.getElementById('popupp_'+RandomIDD); x.parentNode.removeChild(x);
 	},
-	// ==============================================================================================================================
+	// =========================================================================================================
 
 
 
@@ -1636,7 +1637,7 @@ const puvox_library =
 			var x =document.getElementById(elementID); if (x) x.parentNode.removeChild(x); 
 		}
 	}, 
-	// =========================================================================================================
+	// ====================================================================================
 
 
 
@@ -1651,7 +1652,7 @@ const puvox_library =
 		if (method  == "post"){xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");xmlhttp.send(parameters);}
 		else if (method  == "get"){xmlhttp.send(null);}
 	},
-	// =========================================================================================================
+	// ====================================================================================
 
 
 	//all divs, which has a classname "My_TARGET_Hiddens", will be automatically hidden on page load...
@@ -1711,15 +1712,6 @@ const puvox_library =
 		}); // .then(function(data) { callback_error(data);  });
 	},
 
-	async fetchCustom(url) {
-		return new Promise ((resolve, reject) => {
-			try {
-				// const https = require('https');
-				https.get (url, { 'agent': new https.Agent ({ 'rejectUnauthorized': false }) }, (res) => { let body = ''; res.setEncoding ('utf8'); res.on ('data', (data) => { body += data; }); res.on ('end', () => resolve (body)); res.on ('error', (e) => { reject (e); });
-				}).on ('error', (ex) => { reject (ex); });
-			} catch (ex) { reject (ex); }
-		});
-	},
 
 	stringifyPretty(obj){
 		return JSON.stringify(obj, null, 2);
@@ -1741,7 +1733,7 @@ const puvox_library =
 	  }
 	  return null;												// if no match found
 	},
-	// =========================================================================================================
+	// ====================================================================================
 
 
 	inArray(haystack, needle) {
@@ -2283,9 +2275,9 @@ const puvox_library =
 		}
 	},
  
-	// =========================================================================================================//	
+	// ====================================================================================//	
 	// ========================================== ### IMAGE PROPORTIONS ===========================================//
-	// =========================================================================================================//
+	// ====================================================================================//
 		
 	show_after_pageload(el){
 		var el = el || '.show_after_pageload';
@@ -2316,7 +2308,7 @@ const puvox_library =
 	},
 	//remove # from location
 	RemoveHashString(str){  var hash=str.split("#")[1];  return str.replace("#"+hash,'');	},
-	// ================================================================================================================//
+	// ===========================================================================================//
 
 
 	getCharsFromStart(str, amount){
@@ -2358,7 +2350,7 @@ const puvox_library =
 		  else											{ if( sticky.hasClass('fixed_stickyy')){sticky.removeClass('fixed_stickyy');}  }
 		});
 	},
-	// =============================================================================================================//
+	// ========================================================================================//
 	
 	triggerWhenElementInView(el, func){
 		var element_ = el;
@@ -2598,21 +2590,14 @@ const puvox_library =
 			return this._fs_instance;
 		}
 	},
-	async get_remote_data(url){
-		let name = 'node-fetch';// avoid node-js compiler dependency warning by puttin gin variable   [OR]  avoid warning by: https://stackoverflow.com/a/65857316/2377343 
-		const fetch = require(name);  
-		return fetch(url);
-		// return new Promise((resolve, reject) => {
-		// 	let client = 0;
-		// 	if (url.indexOf("https://") === 0) { client = require('https'); }
-		// 	else { client = require('http'); }
-		// 	client.get(url, (resp) => {
-		// 		let data = '';
-		// 		resp.on('data', (chunk) => { data += chunk; });
-		// 		resp.on('end', () => { resolve(data); });
-		// 	}).on("error", (err) => {
-		// 		reject(err);
-		// 	});
+	async getRemoteData(url){
+		return await (await fetch(url)).text();
+		// return new Promise ((resolve, reject) => {
+		// 	try {
+		// 		// const https = require('https');
+		// 		https.get (url, { 'agent': new https.Agent ({ 'rejectUnauthorized': false }) }, (res) => { let body = ''; res.setEncoding ('utf8'); res.on ('data', (data) => { body += data; }); res.on ('end', () => resolve (body)); res.on ('error', (e) => { reject (e); });
+		// 		}).on ('error', (ex) => { reject (ex); });
+		// 	} catch (ex) { reject (ex); }
 		// });
 	},
     writeFileAppendJson(filePath, jsonContent, callback){
@@ -2747,9 +2732,13 @@ const puvox_library =
 		let contentFinal = (encode && (this.isArray(content) || this.isObject(content)) ) ? JSON.stringify($content): content;
 		return this.saveFile(filePath, contentFinal);
 	} 
-
 };
 
+
+// export to outside world
 if (typeof module != "undefined" && module.hasOwnProperty("exports")) {
 	module.exports = puvox_library;
+}
+if (window != undefined) {
+	window['PuvoxLibrary'] = puvox_library;
 }
