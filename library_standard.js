@@ -2780,9 +2780,9 @@ const puvox_library =
 
 
 // export to outside world
-if (typeof module != "undefined" && module.hasOwnProperty("exports")) {
+if (typeof module != 'undefined' && module.hasOwnProperty('exports')) {
 	module.exports = puvox_library;
 }
-if (window != undefined) {
+if (typeof window != 'undefined') {
 	window['PuvoxLibrary'] = puvox_library;
 }
