@@ -1,10 +1,10 @@
 /**
  *
- *  ################################################################################
- *  ###############################  Our JS Library   ##############################
- *  ##### Here we collect frequently used methods across our JS applications.  #####
- *  ##### (Some of them are generic javascript functions, some are for NodeJS) #####
- *  ################################################################################
+ *  ############################################################################
+ *  #############################  Our JS Library   ############################
+ *  ### Here we collect frequently used methods across our JS applications.  ###
+ *  ### (Some of them are generic javascript functions, some are for NodeJS) ###
+ *  ############################################################################
  *
  *  ########## Example usage: ##########
  *  const helpers = new PuvoxLibrary();
@@ -1287,6 +1287,14 @@ const puvox_library =
 		return obj1;
 	},
 
+	// returns a new object with the values at each key mapped using mapFn(value)
+	objectMap(obj, fn) {
+		return Object.fromEntries(
+			Object.entries(obj).map(
+				([k, v], i) => [k, fn(v, k, i)]
+			)
+		)
+	},
 
 	fancyTimeFormat(time)
 	{   
@@ -1473,7 +1481,7 @@ const puvox_library =
 	}, 
 	
 	// https://stackoverflow.com/a/41407246/2377343
-	consoleLogColor (text, color, backgroundOrForeground = false) {
+	consoleLogColor (text, backgroundColor=null, foregroundColor=null) {
 		const prefix = '\x1b[';
 		const suffix = 'm';
 		const objectTree = {
@@ -1481,8 +1489,15 @@ const puvox_library =
 			foreground: { black: "30", red: "31", green: "32", yellow: "33", blue: "34", magenta: "35", cyan: "36", white: "37", },
 			background: { black: "40", red: "41", green: "42", yellow: "43", blue: "44", magenta: "45", cyan: "46", white: "47", }
 		};
-		const bfKeyname = backgroundOrForeground ? 'background' : 'foreground';
-		console.log (prefix + objectTree[bfKeyname][color] + suffix + "%s" + prefix + objectTree.types.reset + suffix, text);
+		let backColorString = '';
+		let foreColorString = '';
+		if (backgroundColor) {
+			backColorString = prefix + objectTree['background'][backgroundColor] + suffix;
+		}
+		if (foregroundColor) {
+			foreColorString = prefix + objectTree['foreground'][foregroundColor] + suffix;
+		}
+		console.log (backColorString + foreColorString + "%s" + prefix + objectTree.types.reset + suffix, text);
 	},
 	
 	toggleWindowsMessages_WindowConfirm() { return window.confirm },
