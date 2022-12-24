@@ -2636,17 +2636,8 @@ const puvox_library =
 
 
 
-	// for node packs:
-	_fs_instance :null,
-	fs(){
-		if (this._fs_instance){
-			return this._fs_instance;
-		} 
-		else {
-			let name='fs';
-			this._fs_instance = require(name);
-			return this._fs_instance;
-		}
+	async fetch(url, postOptions = null, opts = {}){
+		return await this.getRemoteData(url, postOptions, opts);
 	},
 	async getRemoteData(url, postOptions = null, opts = {}){
 		// https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
@@ -2657,7 +2648,7 @@ const puvox_library =
 		}
 		options['headers'] = ('headers' in opts) ? opts.headers : {'Content-Type': 'application/json'};
 		const fetched = await fetch(url, options);
-		return await (fetched).text();
+		return (await (fetched).text());
 		// return new Promise ((resolve, reject) => {
 		// 	try {
 		// 		// const https = require('https');
@@ -2666,34 +2657,8 @@ const puvox_library =
 		// 	} catch (ex) { reject (ex); }
 		// });
 	},
-    writeFileAppendJson(filePath, jsonContent, callback){
-        try{
-            var callback = callback || function(){};
-			var self = this;
-            this.fs().readFile(filePath, 'utf8', function(err,data) {
-                let json = {};
-                if (typeof data !="undefined" && data!=''){
-                    json=JSON.parse(data);
-				}
-                let jsonNew = self.jsonConcat(json, jsonContent);
-                let content = JSON.stringify(jsonNew);
-                self.fs().writeFile(filePath, content, 'utf8', function(callback_) {
-                }); 
-            });
-        }
-        catch(e){
-            console.log("writeFileAppendJson", e); 
-        }
-    },
-	getFilesListFromDir (dir) {
-		const filesList = [];
-		this.fs().readdirSync(dir, (err, files) => {
-			files.forEach(file => {
-				filesList.push(file);
-			});
-		});
-		return filesList;
-	},
+
+	
 	//  if(setHashInAddress) {	window.location.hash = id_or_Name;	}
 	
 
@@ -2719,94 +2684,149 @@ const puvox_library =
 		parsed.itemName =defaultValue;
 		return this.cacheSet( arrayName, JSON.stringify(parsed) );
 	},
+
 	// ################################################
-
-
-	createDirIfNotExists(dirPath){
-		if (!this.fs().existsSync(dirPath)){
-			this.fs().mkdirSync(dirPath);
+	// for node packs:_fs_instance :null,
+	_required_instances : {},
+	modules(name){
+		if (name in this._required_instances){
+			return this._required_instances[name];
+		} else {
+			this._required_instances[name] = require(name);
+			return this._required_instances[name];
 		}
-	},
-	fileExists(filePath){
-		return this.fs().existsSync(filePath);
-	},
-	filemtime(filePath){
-		return (this.fs().statSync(filePath)).mtime;
-	},
-	unlink(filePath){
-		return (this.fs().unlinkSync(filePath));
-	},
-	fileGetContents(filePath, defaultt = ''){
-		if (!this.fileExists(filePath)){
-			return defaultt;
-		}
-		return (this.fs().readFileSync(filePath));
-	},
-	saveFile(filePath, content){ this.fs().writeFileSync(filePath,content, 'utf8', function(err){
-			if (err) throw err;
-		});
-	},
+	}, 
+	file : {
+		parent() {return puvox_library;},
+		fs() {return puvox_library.modules('fs');},
+		os() {return puvox_library.modules('os');},
+		path() {return puvox_library.modules('path');},
+		//
+		getTempDir(){ return this.os().tmpdir(); },
 
-
-	
-	// ########## CACHE DIRS (server-side JS) ##########
-	getDirTempOS(){ let name='os'; return require(name).tmpdir(); },
-	customCacheDir:null,
-	cacheDirGet(appName){  
-		if (!this.customCacheDir){ 
-			this.customCacheDir = this.getDirTempOS() + '/_cache_dir_px/';
-		}
-		let finaldir = this.customCacheDir + appName + '/';
-		this.createDirIfNotExists(finaldir);
-		return finaldir; 
-	},
-	cacheFileLocation(uniqFileName){
-		uniqFileName = this.isString(uniqFileName) || this.isNumeric(uniqFileName) ? uniqFileName : JSON.stringify(uniqFileName);
-		uniqFileName = this.sanitize_key_dashed(this.getCharsFromStart(uniqFileName, 15)) + "_"+ this.md5($uniqFileName);
-		filePath= this.cacheDirGet() + uniqFileName + "_tmp"; //"/". 
-		return filePath;
-	},
-	//
-	cacheGetFile(uniqFileName, defaultt ='', expire_seconds=8640000, decode = true)
-	{
-		let filePath = this.cacheFileLocation(uniqFileName);
-		if ( filePath.length < 3) return "too tiny filename";
-
-		if ( this.fileExists(filePath) ){
-			if (this.filemtime(filePath)+expire_seconds<time() ){
-				this.unlink(filePath);
-				return defaultt;
+		exists(filePath){
+			return this.fs().existsSync(filePath);
+		},
+		mtime(filePath){
+			if (this.exists(filePath)) {
+				return (this.fs().statSync(filePath)).mtimeMs;
+			} else {
+				return null;
 			}
-			else{	
-				cont = this.fileGetContents(filePath, null);
-				// if specifically array, then on empty, reckon as array
-				if (cont===null)
-				{
-					return defaultt;
+		},
+		unlink(filePath){
+			return (this.fs().unlinkSync(filePath));
+		},
+		createDirectory(dirPath, force = false){
+			if (!this.exists(dirPath) || force){
+				this.fs().mkdirSync(dirPath, { recursive: true });
+			}
+		},
+		read(filePath, defaultContent = ''){
+			if (!this.exists(filePath)){
+				return defaultContent;
+			}
+			return this.fs().readFileSync(filePath);
+		},
+		write(filePath, content){
+			const dir = this.path().dirname(filePath);
+			this.createDirectory(dir);
+			this.fs().writeFileSync(filePath, content, 'utf8', function(err){
+				if (err) throw err;
+			});
+		},
+		getFilesListFromDir (dir) {
+			const filesList = [];
+			this.fs().readdirSync(dir, (err, files) => {
+				files.forEach(file => {
+					filesList.push(file);
+				});
+			});
+			return filesList;
+		},
+
+
+		// ########## CACHE DIRS (server-side JS) ##########
+		customCacheDir:null,
+		cacheDirGet(appName = ''){  
+			if (!this.customCacheDir){ 
+				this.customCacheDir = this.getTempDir() + '/_cache_dir_px/';
+			}
+			let finaldir = this.customCacheDir + appName + '/';
+			return finaldir; 
+		},
+		cacheFilePath(uniqFileName){
+			const parent = this.parent();
+			uniqFileName = parent.isString(uniqFileName) || parent.isNumeric(uniqFileName) ? uniqFileName : JSON.stringify(uniqFileName);
+			uniqFileName = parent.sanitize_key_dashed(parent.getCharsFromStart(uniqFileName, 15)) + "_"+ parent.md5(uniqFileName);
+			filePath= this.cacheDirGet() + uniqFileName + "_tmp"; //"/". 
+			return filePath;
+		},
+		//
+		cacheGet(uniqFileName, defaultContent ='', expire_seconds=8640000, decode = true)
+		{
+			let filePath = this.cacheFilePath(uniqFileName);
+			if ( filePath.length < 3) return "too tiny filename";
+
+			if ( this.exists(filePath) ){
+				if ( this.mtime(filePath) + expire_seconds *1000 < (new Date()).getTime() ){
+					this.unlink(filePath);
+					return defaultContent;
 				}
-				if (decode){
-					try{
-						return JSON.parse(cont);
+				else{	
+					cont = this.read(filePath, null);
+					// if specifically array, then on empty, reckon as array
+					if (cont===null)
+					{
+						return defaultContent;
 					}
-					catch(ex){
+					if (decode){
+						try{
+							return JSON.parse(cont);
+						}
+						catch(ex){
+							return cont;
+						}
+					}
+					else{
 						return cont;
 					}
 				}
-				else{
-					return cont;
-				}
 			}
-		}
-		else {
-			return defaultt;
-		}
+			else {
+				return defaultContent;
+			}
+		},
+		cacheSet(uniqFileName, content, encode=true)
+		{
+			const parent = this.parent();
+			let filePath= this.cacheFilePath(uniqFileName);
+			let contentFinal = (encode && (parent.isArray(content) || parent.isObject(content)) ) ? JSON.stringify(content) : content;
+			return this.write(filePath, contentFinal);
+		},
+		
+		//
+		// writeFileAppendJson(filePath, jsonContent, callback){
+		// 	try{
+		// 		var callback = callback || function(){};
+		// 		var self = this;
+		// 		puvox_library.modules('fs').readFile(filePath, 'utf8', function(err,data) {
+		// 			let json = {};
+		// 			if (typeof data !="undefined" && data!=''){
+		// 				json=JSON.parse(data);
+		// 			}
+		// 			let jsonNew = self.jsonConcat(json, jsonContent);
+		// 			let content = JSON.stringify(jsonNew);
+		// 			puvox_library.modules('fs').writeFile(filePath, content, 'utf8', function(callback_) {
+		// 			}); 
+		// 		});
+		// 	}
+		// 	catch(e){
+		// 		console.log("writeFileAppendJson", e); 
+		// 	}
+		// },
+
 	},
-	cacheSetFile(uniqFileName, content, encode=true)
-	{
-		let filePath= this.cacheFileLocation(uniqFileName);
-		let contentFinal = (encode && (this.isArray(content) || this.isObject(content)) ) ? JSON.stringify($content): content;
-		return this.saveFile(filePath, contentFinal);
-	} 
 };
 
 
