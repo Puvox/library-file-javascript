@@ -2648,9 +2648,16 @@ const puvox_library =
 			return this._fs_instance;
 		}
 	},
-	async getRemoteData(url){
+	async getRemoteData(url, postOptions = null, opts = {}){
 		// https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
-		return await (await fetch(url)).text();
+		const options = {};
+		if (postOptions) {
+			options['method'] = 'POST';
+			options['body'] = JSON.stringify(postOptions);
+		}
+		options['headers'] = ('headers' in opts) ? opts.headers : {'Content-Type': 'application/json'};
+		const fetched = await fetch(url, options);
+		return await (fetched).text();
 		// return new Promise ((resolve, reject) => {
 		// 	try {
 		// 		// const https = require('https');
@@ -2670,7 +2677,7 @@ const puvox_library =
 				}
                 let jsonNew = self.jsonConcat(json, jsonContent);
                 let content = JSON.stringify(jsonNew);
-                this.fs().writeFile(filePath, content, 'utf8', function(callback_) {
+                self.fs().writeFile(filePath, content, 'utf8', function(callback_) {
                 }); 
             });
         }
@@ -2678,6 +2685,15 @@ const puvox_library =
             console.log("writeFileAppendJson", e); 
         }
     },
+	getFilesListFromDir (dir) {
+		const filesList = [];
+		this.fs().readdirSync(dir, (err, files) => {
+			files.forEach(file => {
+				filesList.push(file);
+			});
+		});
+		return filesList;
+	},
 	//  if(setHashInAddress) {	window.location.hash = id_or_Name;	}
 	
 

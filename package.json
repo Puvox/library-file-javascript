@@ -1,6 +1,6 @@
 {
   "name": "puvox-library",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "library-class-javascript",
   "main": "library_standard.js",
   "scripts": {
