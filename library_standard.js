@@ -2665,25 +2665,152 @@ const puvox_library =
 	
 
 	// ######## CACHE ITEMS (client-side JS) ########
-	cacheStorageGet(itemName, defaultValue){
-		let curr= window.localStorage.getItem('puvox_'+itemName);
-		return (curr==null ? defaultValue : curr);
-	},
-	cacheStorageGetItem(arrayName, itemName, defaultValue){
-		let curr = this.cacheStorageGet(arrayName, '{}' );
-		let parsed = JSON.parse(curr);
-		return (itemName in parsed ? parsed.itemName : defaultValue);
-	},
-	cacheStorageSet(itemName, value){
-		try{ window.localStorage.setItem('puvox_'+itemName, value); return true; }
-		catch(ex){ alert("Cache storage quote exceeded. can't save value. err598"); return false; }
-	},
-	cacheSetItem(arrayName, itemName, value){ 
-		let curr = this.cacheGet(arrayName, '{}' );
-		let parsed = JSON.parse(curr);
-		parsed.itemName =defaultValue;
-		return this.cacheSet( arrayName, JSON.stringify(parsed) );
-	},
+	AppName : 'puvox_', //override with anything you want
+	setAppName (name){ this.AppName = name; },
+
+	cache : {
+		localStorage : {
+			parent(){ return puvox_library; },
+			AppName(){ return puvox_library.AppName; },
+
+			storage: window.localStorage,
+
+			get(name, defaultValue, expireSeconds = 0){
+				let appName = this.AppName();
+				let val = this.storage.getItem(appName + '_' + name);
+				let expireVal = this.storage.getItem(appName + '_createtime_' + name);
+				if (val === null) {
+					return defaultValue;
+				} else {
+					if (expireSeconds === 0){
+						return val;
+					} else {
+						let now = (new Date()).getTime();
+						if (now - expireVal > expireSeconds*1000){
+							this.storage.removeItem(appName + '_' + name);
+							this.storage.removeItem(appName + '_createtime_' + name);
+							return defaultValue;
+						}
+					}
+				}
+			},
+			set(name, value){
+				try{ 
+					this.storage.setItem(this.AppName() + '_' +name, value); 
+					this.storage.setItem(this.AppName() + '_createtime_' +name, (new Date()).getTime()); 
+					return true; 
+				}
+				catch(ex){ alert("Cache storage quote exceeded. can't save value. err598"); return false; }
+			},
+			remove(name, value){
+				this.storage.removeItem(this.AppName() + '_' +name); 
+				this.storage.removeItem(this.AppName() + '_createtime_' +name);
+			},
+			getItem(name, subItemName, defaultValue){
+				let val = this.get(name, '{}');
+				let parsed = JSON.parse(val);
+				return (subItemName in parsed ? parsed[subItemName] : defaultValue);
+			},
+			setItem(name, subItemName, value){ 
+				let curr = this.get(name, '{}' );
+				let parsed = JSON.parse(curr);
+				parsed[subItemName] = value;
+				return this.set(name, JSON.stringify(parsed) );
+			},
+			removeItem(name, subItemName, value){ 
+				let curr = this.get(name, '{}' );
+				let parsed = JSON.parse(curr);
+				if (subItemName in parsed)
+					delete parsed[subItemName];
+				return this.set(name, JSON.stringify(parsed) );
+			}
+		},
+		file : {
+			// ########## CACHE DIRS (server-side JS) ##########
+			parent(){ return puvox_library; },
+			AppName(){ return puvox_library.AppName; },
+
+			customCacheDir:null,
+			dirPath(){  
+				if (!this.customCacheDir){ 
+					this.customCacheDir = parent().file.getTempDir() + '/';
+				}
+				let finaldir = this.customCacheDir + '_cache' + this.AppName() + '/';
+				return finaldir; 
+			},
+			filePath(uniqFileName){
+				const parent = this.parent();
+				uniqFileName = parent.isString(uniqFileName) || parent.isNumeric(uniqFileName) ? uniqFileName : JSON.stringify(uniqFileName);
+				uniqFileName = parent.sanitize_key_dashed(parent.getCharsFromStart(uniqFileName, 15)) + "_"+ parent.md5(uniqFileName);
+				filePath= this.dirPath() + uniqFileName + "_tmp"; //"/". 
+				return filePath;
+			},
+			//
+			get(uniqFileName, defaultContent ='', expire_seconds=8640000, decode = true)
+			{
+				const parent = this.parent();
+				let filePath = this.filePath(uniqFileName);
+				if ( filePath.length < 3) return "too tiny filename";
+
+				if ( parent.file.exists(filePath) ){
+					if ( parent.file.mtime(filePath) + expire_seconds *1000 < (new Date()).getTime() ){
+						parent.file.unlink(filePath);
+						return defaultContent;
+					}
+					else{	
+						cont = parent.file.read(filePath, null);
+						// if specifically array, then on empty, reckon as array
+						if (cont===null)
+						{
+							return defaultContent;
+						}
+						if (decode){
+							try{
+								return JSON.parse(cont);
+							}
+							catch(ex){
+								return cont;
+							}
+						}
+						else{
+							return cont;
+						}
+					}
+				}
+				else {
+					return defaultContent;
+				}
+			},
+			set(uniqFileName, content, encode=true)
+			{
+				const parent = this.parent();
+				let filePath= this.filePath(uniqFileName);
+				let contentFinal = (encode && (parent.isArray(content) || parent.isObject(content)) ) ? JSON.stringify(content) : content;
+				return parent.file.write(filePath, contentFinal);
+			},
+			
+			//
+			// writeFileAppendJson(filePath, jsonContent, callback){
+			// 	try{
+			// 		var callback = callback || function(){};
+			// 		var self = this;
+			// 		puvox_library.modules('fs').readFile(filePath, 'utf8', function(err,data) {
+			// 			let json = {};
+			// 			if (typeof data !="undefined" && data!=''){
+			// 				json=JSON.parse(data);
+			// 			}
+			// 			let jsonNew = self.jsonConcat(json, jsonContent);
+			// 			let content = JSON.stringify(jsonNew);
+			// 			puvox_library.modules('fs').writeFile(filePath, content, 'utf8', function(callback_) {
+			// 			}); 
+			// 		});
+			// 	}
+			// 	catch(e){
+			// 		console.log("writeFileAppendJson", e); 
+			// 	}
+			// },
+		}
+	}, 
 
 	// ################################################
 	// for node packs:_fs_instance :null,
@@ -2744,88 +2871,6 @@ const puvox_library =
 			});
 			return filesList;
 		},
-
-
-		// ########## CACHE DIRS (server-side JS) ##########
-		customCacheDir:null,
-		cacheDirGet(appName = ''){  
-			if (!this.customCacheDir){ 
-				this.customCacheDir = this.getTempDir() + '/_cache_dir_px/';
-			}
-			let finaldir = this.customCacheDir + appName + '/';
-			return finaldir; 
-		},
-		cacheFilePath(uniqFileName){
-			const parent = this.parent();
-			uniqFileName = parent.isString(uniqFileName) || parent.isNumeric(uniqFileName) ? uniqFileName : JSON.stringify(uniqFileName);
-			uniqFileName = parent.sanitize_key_dashed(parent.getCharsFromStart(uniqFileName, 15)) + "_"+ parent.md5(uniqFileName);
-			filePath= this.cacheDirGet() + uniqFileName + "_tmp"; //"/". 
-			return filePath;
-		},
-		//
-		cacheGet(uniqFileName, defaultContent ='', expire_seconds=8640000, decode = true)
-		{
-			let filePath = this.cacheFilePath(uniqFileName);
-			if ( filePath.length < 3) return "too tiny filename";
-
-			if ( this.exists(filePath) ){
-				if ( this.mtime(filePath) + expire_seconds *1000 < (new Date()).getTime() ){
-					this.unlink(filePath);
-					return defaultContent;
-				}
-				else{	
-					cont = this.read(filePath, null);
-					// if specifically array, then on empty, reckon as array
-					if (cont===null)
-					{
-						return defaultContent;
-					}
-					if (decode){
-						try{
-							return JSON.parse(cont);
-						}
-						catch(ex){
-							return cont;
-						}
-					}
-					else{
-						return cont;
-					}
-				}
-			}
-			else {
-				return defaultContent;
-			}
-		},
-		cacheSet(uniqFileName, content, encode=true)
-		{
-			const parent = this.parent();
-			let filePath= this.cacheFilePath(uniqFileName);
-			let contentFinal = (encode && (parent.isArray(content) || parent.isObject(content)) ) ? JSON.stringify(content) : content;
-			return this.write(filePath, contentFinal);
-		},
-		
-		//
-		// writeFileAppendJson(filePath, jsonContent, callback){
-		// 	try{
-		// 		var callback = callback || function(){};
-		// 		var self = this;
-		// 		puvox_library.modules('fs').readFile(filePath, 'utf8', function(err,data) {
-		// 			let json = {};
-		// 			if (typeof data !="undefined" && data!=''){
-		// 				json=JSON.parse(data);
-		// 			}
-		// 			let jsonNew = self.jsonConcat(json, jsonContent);
-		// 			let content = JSON.stringify(jsonNew);
-		// 			puvox_library.modules('fs').writeFile(filePath, content, 'utf8', function(callback_) {
-		// 			}); 
-		// 		});
-		// 	}
-		// 	catch(e){
-		// 		console.log("writeFileAppendJson", e); 
-		// 	}
-		// },
-
 	},
 };
 
