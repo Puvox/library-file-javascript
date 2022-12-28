@@ -2648,7 +2648,8 @@ const puvox_library =
 		}
 		options['headers'] = ('headers' in opts) ? opts.headers : {'Content-Type': 'application/json'};
 		const fetched = await fetch(url, options);
-		return (await (fetched).text());
+		const text = (await (fetched).text());
+		return text;
 		// return new Promise ((resolve, reject) => {
 		// 	try {
 		// 		// const https = require('https');
@@ -2673,7 +2674,7 @@ const puvox_library =
 			parent(){ return puvox_library; },
 			AppName(){ return puvox_library.AppName; },
 
-			storage: window.localStorage,
+			storage: typeof window !== 'undefined' ? window.localStorage : null,
 
 			get(name, defaultValue, expireSeconds = 0){
 				let appName = this.AppName();
@@ -2733,7 +2734,7 @@ const puvox_library =
 			customCacheDir:null,
 			dirPath(){  
 				if (!this.customCacheDir){ 
-					this.customCacheDir = parent().file.getTempDir() + '/';
+					this.customCacheDir = this.parent().file.getTempDir() + '/';
 				}
 				let finaldir = this.customCacheDir + '_cache' + this.AppName() + '/';
 				return finaldir; 
@@ -2781,11 +2782,11 @@ const puvox_library =
 					return defaultContent;
 				}
 			},
-			set(uniqFileName, content, encode=true)
+			set(uniqFileName, content)
 			{
 				const parent = this.parent();
 				let filePath= this.filePath(uniqFileName);
-				let contentFinal = (encode && (parent.isArray(content) || parent.isObject(content)) ) ? JSON.stringify(content) : content;
+				let contentFinal = parent.isString(content) ? content : ((parent.isArray(content) || parent.isObject(content)) ? JSON.stringify(content) : content);
 				return parent.file.write(filePath, contentFinal);
 			},
 			
