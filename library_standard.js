@@ -18,7 +18,7 @@ const puvox_library =
 {
 	// ########## ARRAY ########## //
 	arrayValue(obj_arr, key, default_){
-		return (key in obj_arr ? obj_arr[key] : default_);
+		return (obj_arr && key in obj_arr ? obj_arr[key] : default_);
 	},
 	arrayValueLower(obj_arr, key, default_){
 		const val = this.arrayValue(obj_arr, key, default_);
