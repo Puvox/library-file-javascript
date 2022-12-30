@@ -22,20 +22,11 @@ const puvox_library =
 	},
 	arrayValueLower(obj_arr, key, default_){
 		const val = this.arrayValue(obj_arr, key, default_);
-		return (vale===null ? null : val.toLowerCase());
+		return (val===null ? null : val.toLowerCase());
 	},
 	arrayValueUpper(obj_arr, key, default_){
 		const val = this.arrayValue(obj_arr, key, default_);
-		return (vale===null ? null : val.toUpperCase());
-	},
-	case(val, case_upper_lower){
-		let case_ = case_upper_lower || null;
-		if (case_ == null) return val;
-		else return ( case_ ? val.toUpperCase() : val.toLowerCase() );
-	},
-	arrayValueCased(obj_arr, key, default_, case_upper_lower){
-		let res = this.arrayValue(obj_arr, key, default_);
-		return ( res==null ? null : this.case(res, case_upper_lower) );
+		return (val===null ? null : val.toUpperCase());
 	},
 	stringToArray(str, splitChar){
 		var splitChar= splitChar || '|';
