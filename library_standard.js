@@ -20,6 +20,14 @@ const puvox_library =
 	arrayValue(obj_arr, key, default_){
 		return (key in obj_arr ? obj_arr[key] : default_);
 	},
+	arrayValueLower(obj_arr, key, default_){
+		const val = this.arrayValue(obj_arr, key, default_);
+		return (vale===null ? null : val.toLowerCase());
+	},
+	arrayValueUpper(obj_arr, key, default_){
+		const val = this.arrayValue(obj_arr, key, default_);
+		return (vale===null ? null : val.toUpperCase());
+	},
 	case(val, case_upper_lower){
 		let case_ = case_upper_lower || null;
 		if (case_ == null) return val;
