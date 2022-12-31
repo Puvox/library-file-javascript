@@ -382,8 +382,9 @@ const puvox_library =
 	isArray(x)	{ return ( (!!x) && (x.constructor === Array) ) || (Array.isArray(x)); },	
 	
 	isSimpleVariableType(obj){ return this.isSimpleVariableTypeName(typeof obj); },
-	isSimpleVariableTypeName(type_){ return this.inArray( [ "boolean", "integer", "float", "double", "decimal", "string"], type_);  },
-	isNumericVariableTypeName(type_){ return this.inArray( [ "integer", "float", "double", "decimal"], type_); },
+	isSimpleVariableTypeName(typeName_){ return this.inArray( [ "boolean", "integer", "float", "double", "decimal", "string"], typeName_);  },
+	isNumericVariableType(obj){ return this.isNumericVariableTypeName(typeof obj); },
+	isNumericVariableTypeName(typeName_){ return this.inArray( [ "integer", "float", "double", "decimal"], typeName_); },
 
 	stringToBoolean(string){
 		switch(string.toLowerCase().trim()){
@@ -460,11 +461,17 @@ const puvox_library =
 	trimOnlyFromEnd(content){
 		return content.replace(/\s*$/,"");
 	},
+	startsWith(content, what){
+		return content.startsWith(what);
+	},
 	startsWithArray(content,array){
 		array.forEach(function(val){
 			if (content.startsWith(val)) return true;
 		})
 		return false;
+	},
+	endsWith(content, what){
+		return content.endsWith(what);
 	},
 	endsWithArray(content,array){
 		array.forEach(function(val){
@@ -1294,6 +1301,8 @@ const puvox_library =
 			)
 		)
 	},
+
+	milliseconds(){ return (new Date().getTime()); },
 
 	fancyTimeFormat(time)
 	{   
@@ -2467,38 +2476,72 @@ const puvox_library =
 
 
 	// region ### TELEGRAM FUNCTIONS ###
-	// public function telegram($text) { return $helpers->telegram_message( ['chat_id'=>'-1001234567890', 'text'=>$text, 'parse_mode'=>'html', 'disable_web_page_preview'=>true ],   $bot_key ); }          | resp: pastebin_com/u0J1Cph3
-	async telegram_message(opts = {text: 'Hi', chat_id:'-1001234567890'}, bot_id, is_repeated_call=false){
-		opts['disable_web_page_preview'] = 'disable_web_page_preview' in opts ? opts['disable_web_page_preview'] : true;
-		// opts['chat_id'] = opts['chat_id'].toString().substring(0,4) == '-100' ? opts['chat_id'].toString() : '-100' + opts['chat_id'].toString(); opts['chat_id'] = parseInt(opts['chat_id']);
-		opts['text'] = this.stripTags(this.br2nl(opts['text']),'<b><strong><i><em><u><ins><s><strike><del><a><code><pre>'); // allowed: https://core.telegram.org/bots/api#html-style
-		opts['text'] = opts['text'].substring(0, 4095); //max telegram message length 4096
-		const responseText = await (await fetch('https://api.telegram.org/bot'+ bot_id +'/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' + (0 ? 'application/x-www-form-urlencoded':'') }, body: JSON.stringify(opts)})).text();  //'sendMessage?'.http_build_query($array, '');
+	async telegramMessage(text, chat_id, bot_key, extra_opts={}){
+		const is_repeated_call = 'is_repeated_call' in extra_opts;
+		const use_cache = 'cache' in extra_opts;
+		if (! ('parse_mode' in extra_opts)){
+			extra_opts['parse_mode'] = 'html';
+		}
+		if (! ('disable_web_page_preview' in extra_opts)){
+			extra_opts['disable_web_page_preview'] = true;
+		}
+		// whether it's without `-100` prefix
+		chat_id = chat_id.toString();
+		if (!this.startsWith(chat_id, '-100')) chat_id = '-100' + chat_id;
+		text = this.br2nl(text);
+		text = this.stripTags(text,'<b><strong><i><em><u><ins><s><strike><del><a><code><pre>'); // allowed: https://core.telegram.org/bots/api#html-style
+		text = text.substring(0, 4095); //max telegram message length 4096
+		const requestOpts = Object.assign({'chat_id':chat_id, 'text':text}, extra_opts);
+		delete requestOpts['cache'];
+		delete requestOpts['is_repeated_call'];
+		const responseText = await this.getRemoteData('https://api.telegram.org/bot'+ bot_key +'/sendMessage', requestOpts);  // pastebin_com/u0J1Cph3 //'sendMessage?'.http_build_query(opts, ''); 
 		try {
 			const responseJson = JSON.parse(responseText);
 			if (responseJson.ok){
 				return response;
-			} else {
-				//i.e. {"ok":false,"error_code":400,"description":"Bad Request: can't parse entities: Unsupported start tag \"br/\" at byte offset 43"} 
-				// for some reason, if still unsupported format submitted, resubmit the plain format
-				const txt = "Bad Request: can't parse entities";
-				if( response.description.indexOf (txt)> -1 ){
-					const newOpts = this.objectCopy(opts);
-					newOpts['text'] = "[SecondSend] \r\n". this.stripTags(newOpts['text']) ;
-					if ( ! repeated_call ){
-						return this.telegram_message(newOpts, bot_id, true);
-					} else {
-						return response; 
+			} 
+			// for some reason, if still unsupported format submitted, resubmit the plain format
+			//i.e. {"ok":false,"error_code":400,"description":"Bad Request: can't parse entities: Unsupported start tag \"br/\" at byte offset 43"} 
+			else {
+				if( responseJson.description.indexOf ('Bad Request: can\'t parse entities')> -1 ){
+					if ( ! is_repeated_call ){
+						const extraOpts2 = this.objectCopy(opts);
+						text = "[SecondSend with stipped tags] \r\n" + this.stripTags(text) ;
+						extraOpts2['is_repeated_call'] = true;
+						return this.telegram_message(text, chat_id, bot_key, extraOpts2);
 					}
-				} else {
-					return response; 
 				}
+				return responseJson;
 			} 
 		} catch (ex) {
-			return {'ok': false, 'description': responseText };
+			return {'ok': false, 'description': ex.message + ':::' + responseText };
 		}
 	},
 
+	telegram_interval_ms: 50, // telegram seems to accept around 30 times per second, so we'd better wait around that milliseconds
+	telegram_last_sent_time: 0,
+
+	async telegramMessageCached(text, chat_id, bot_key, extra_opts={}){
+		const curMS  = this.milliseconds();
+		const goneMS = curMS - this.telegram_last_sent_time;
+		if ( goneMS < this.telegram_interval_ms ){
+			await this.sleep (this.telegram_interval_ms - goneMS);
+		}
+		this.telegram_last_sent_time = curMS;
+		key = this.cache.key( text +'_'+ chat_id +'_'+ bot_key +'_'+ JSON.stringify(extra_opts) );
+		if ( ! this.cache.exists('function__telegram_message_cached', $key) ){
+			$res= $this->telegram_message($array, $botid);
+			$ok='true';
+		}
+		else {
+			$res= (object)( ["ok"=>true, "success"=>false, 'reason'=>"$key was cached", 'content'=> json_encode($array) ] );
+			$ok='false';
+		}
+		if(is_callable([$this,'notifications_db_entry'])) 
+			$this->notifications_db_entry($key, $array['chat_id'], $this->stringify($res), time(), $ok );
+		return $res;
+	}
+  
 	openUrlInBrowser(url)
 	{
 		var cmd = (process.platform == 'darwin'? `open ${url}`: process.platform == 'win32'? `start ${url}`: `xdg-open ${url}`); 
@@ -2657,8 +2700,6 @@ const puvox_library =
 		// 	} catch (ex) { reject (ex); }
 		// });
 	},
-
-	
 	//  if(setHashInAddress) {	window.location.hash = id_or_Name;	}
 	
 
@@ -2668,7 +2709,82 @@ const puvox_library =
 	AppName : 'puvox_', //override with anything you want
 	setAppName (name){ this.AppName = name; },
 
-	cache : {
+	cache: {
+		key(content){
+			return puvox_library.md5(puvox_library.isSimpleVariableType(content) ? content : JSON.stringify(content)); 
+		},
+		exists(key){
+
+		},
+	private function cache_ids_parentname($containerHint){ return "_px_cached_ids_".$containerHint;} 
+	private function get_cached_ids_array($containerHint){
+		$ContainerName = $this->cache_ids_parentname($containerHint);
+		if ($this->cached_IDS_type=='file'){
+			$filePath =$this->cache_dir_get() . $ContainerName;
+			if ( empty($this->temp_cacheIdsArray) || empty($this->temp_cacheIdsArray[$filePath]) ) {
+				$cont = $this->file_get_contents( $filePath );
+				if ( empty($cont) ) {
+					$this->temp_cacheIdsArray[$filePath] = [];
+				}
+				else {
+					$this->temp_cacheIdsArray[$filePath] = json_decode($cont,true);
+					//if error happened
+					if (is_null($this->temp_cacheIdsArray[$filePath])){
+						//if contains broken array due to rare overwrite problem, i.e. ["id_1"],"id2","id3"]
+						if ($this->contains($cont, $delimiter = '"')){
+							$arrs=$this->string_to_array($cont, $delimiter);
+							$this->temp_cacheIdsArray[$filePath]=$arrs;
+						}
+					}
+				}
+			}
+			$existing_ids = $this->temp_cacheIdsArray[$filePath];
+		}
+		elseif ($this->cached_IDS_type=='wp'){
+			$existing_ids = get_option( $ContainerName, [] );
+		}
+		elseif ($this->cached_IDS_type=='object'){
+			$existing_ids = $this->cache_get( $ContainerName, [] );
+		}
+		return $existing_ids;
+	}
+	private function set_cached_ids_array($containerHint, $existing_ids){
+		$ContainerName = $this->cache_ids_parentname($containerHint);
+		if ($this->cached_IDS_type=='file'){
+			$filePath = $this->cache_dir_get() . $ContainerName;
+			$this->temp_cacheIdsArray[$filePath] = $existing_ids;
+			$this->localdata_set( $filePath, json_encode($existing_ids) );
+		}
+		elseif ($this->cached_IDS_type=='wp'){
+			update_option( $ContainerName, $existing_ids );
+		}
+		elseif ($this->cached_IDS_type=='redis'){
+			$this->cache_set( $ContainerName, $existing_ids);
+		}
+	}
+
+	private function add_cached_id($containerHint, $cache_id){
+		$ContainerName = $this->cache_ids_parentname($containerHint);
+		//to ensure to preserve any overwrites happened within last few milliseconds
+		$latest_current_ids = $this->get_cached_ids_array($containerHint); //
+		//$recently_added_ids = array_diff($latest_current_ids, $added_ids);
+		//$up_to_date_IDS = array_merge($existing_ids, $recently_added_ids); 
+		$latest_current_ids[]=$cache_id;
+		$this->set_cached_ids_array($containerHint, $latest_current_ids);
+	}
+
+	public function is_cached_id($cache_parent_key, $item_key_or_params){  
+		$key = is_array($item_key_or_params) ? json_encode($item_key_or_params) : $item_key_or_params;
+		$key = strlen($key) <=35 ? $key : md5($key); //if same length as md5, then prefer original readable key
+		if( in_array($key, $this->get_cached_ids_array($cache_parent_key) ) )
+		{
+			return true;
+		}
+		else{
+			$this->add_cached_id($cache_parent_key, $key);
+			return false;
+		}
+	}
 		localStorage : {
 			parent(){ return puvox_library; },
 			AppName(){ return puvox_library.AppName; },
