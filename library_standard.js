@@ -2520,14 +2520,14 @@ const puvox_library =
 	telegram_interval_ms: 50, // telegram seems to accept around 30 times per second, so we'd better wait around that milliseconds
 	telegram_last_sent_time: 0,
 
-	async telegramMessageCached(text, chat_id, bot_key, extra_opts={}){
+	async telegramMessageCached(text, chat_id, bot_key, extra_opts={}, customCacheId=null){
 		const curMS  = this.milliseconds();
 		const goneMS = curMS - this.telegram_last_sent_time;
 		if ( goneMS < this.telegram_interval_ms ){
 			await this.sleep (this.telegram_interval_ms - goneMS);
 		}
 		this.telegram_last_sent_time = curMS;
-		const cacheId = this.cache.file.idForContent( text +'_'+ chat_id +'_'+ bot_key +'_'+ JSON.stringify(extra_opts) );
+		const cacheId = customCacheId ? customCacheId : this.cache.file.idForContent( text +'_'+ chat_id +'_'+ bot_key +'_'+ JSON.stringify(extra_opts) );
 		if (this.cache.file.addIdIfNotExists('function_telegram_message', cacheId) ){
 			return this.telegramMessage(text, chat_id, bot_key, extra_opts);
 		}
