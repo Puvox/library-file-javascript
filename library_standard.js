@@ -10,6 +10,7 @@
  *  const helpers = new PuvoxLibrary();
  *         console.log ( helpers.get_last_child_of_array(array) );
  *         console.log ( helpers.get_visitor_ip() );
+ *         console.log ( helpers.telegramMessage("hello world", "1234567890", "BOTKEY123:456789") );
  *       ... etc
  *
 */
@@ -2498,7 +2499,7 @@ const puvox_library =
 		try {
 			const responseJson = JSON.parse(responseText);
 			if (responseJson.ok){
-				return response;
+				return responseJson;
 			} 
 			// for some reason, if still unsupported format submitted, resubmit the plain format
 			//i.e. {"ok":false,"error_code":400,"description":"Bad Request: can't parse entities: Unsupported start tag \"br/\" at byte offset 43"} 
@@ -2520,7 +2521,7 @@ const puvox_library =
 
 	telegram_interval_ms: 50, // telegram seems to accept around 30 times per second, so we'd better wait around that milliseconds
 	telegram_last_sent_time: 0,
-/*
+
 	async telegramMessageCached(text, chat_id, bot_key, extra_opts={}){
 		const curMS  = this.milliseconds();
 		const goneMS = curMS - this.telegram_last_sent_time;
@@ -2528,20 +2529,18 @@ const puvox_library =
 			await this.sleep (this.telegram_interval_ms - goneMS);
 		}
 		this.telegram_last_sent_time = curMS;
-		key = this.cache.key( text +'_'+ chat_id +'_'+ bot_key +'_'+ JSON.stringify(extra_opts) );
-		if ( ! this.cache.exists('function__telegram_message_cached', $key) ){
-			$res= $this->telegram_message($array, $botid);
-			$ok='true';
+		const cacheId = this.cache.file.idForContent( text +'_'+ chat_id +'_'+ bot_key +'_'+ JSON.stringify(extra_opts) );
+		if (this.cache.file.addIdIfNotExists('function_telegram_message', cacheId) ){
+			return this.telegramMessage(text, chat_id, bot_key, extra_opts);
 		}
 		else {
-			$res= (object)( ["ok"=>true, "success"=>false, 'reason'=>"$key was cached", 'content'=> json_encode($array) ] );
-			$ok='false';
+			return false;
 		}
-		if(is_callable([$this,'notifications_db_entry'])) 
-			$this->notifications_db_entry($key, $array['chat_id'], $this->stringify($res), time(), $ok );
-		return $res;
-	}
- */ 
+		//if(is_callable([$this,'notifications_db_entry'])) 
+		//	$this->notifications_db_entry($key, $array['chat_id'], $this->stringify($res), time(), $ok );
+		//return $res;
+	},
+
 	openUrlInBrowser(url)
 	{
 		var cmd = (process.platform == 'darwin'? `open ${url}`: process.platform == 'win32'? `start ${url}`: `xdg-open ${url}`); 
