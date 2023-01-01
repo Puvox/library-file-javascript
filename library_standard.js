@@ -2520,7 +2520,7 @@ const puvox_library =
 
 	telegram_interval_ms: 50, // telegram seems to accept around 30 times per second, so we'd better wait around that milliseconds
 	telegram_last_sent_time: 0,
-
+/*
 	async telegramMessageCached(text, chat_id, bot_key, extra_opts={}){
 		const curMS  = this.milliseconds();
 		const goneMS = curMS - this.telegram_last_sent_time;
@@ -2541,7 +2541,7 @@ const puvox_library =
 			$this->notifications_db_entry($key, $array['chat_id'], $this->stringify($res), time(), $ok );
 		return $res;
 	}
-  
+ */ 
 	openUrlInBrowser(url)
 	{
 		var cmd = (process.platform == 'darwin'? `open ${url}`: process.platform == 'win32'? `start ${url}`: `xdg-open ${url}`); 
@@ -2706,93 +2706,21 @@ const puvox_library =
 	
 
 	// ######## CACHE ITEMS (client-side JS) ########
-	AppName : 'puvox_', //override with anything you want
-	setAppName (name){ this.AppName = name; },
+	_privateAppName : null, //override with anything you want
+	setAppName (name){ this._privateAppName = name; },
+	getAppName(){ 
+		if (!this._privateAppName || this._privateAppName === ''){
+			throw new Error ('Before you start using caching functions, please at first define your appplication\'s name(identifier) at first with .setAppName("whatever_my_app_name"), so it will get its own cache-storage');
+		}
+		return this._privateAppName; 
+	},
 
 	cache: {
-		key(content){
-			return puvox_library.md5(puvox_library.isSimpleVariableType(content) ? content : JSON.stringify(content)); 
-		},
-		exists(key){
-
-		},
-	private function cache_ids_parentname($containerHint){ return "_px_cached_ids_".$containerHint;} 
-	private function get_cached_ids_array($containerHint){
-		$ContainerName = $this->cache_ids_parentname($containerHint);
-		if ($this->cached_IDS_type=='file'){
-			$filePath =$this->cache_dir_get() . $ContainerName;
-			if ( empty($this->temp_cacheIdsArray) || empty($this->temp_cacheIdsArray[$filePath]) ) {
-				$cont = $this->file_get_contents( $filePath );
-				if ( empty($cont) ) {
-					$this->temp_cacheIdsArray[$filePath] = [];
-				}
-				else {
-					$this->temp_cacheIdsArray[$filePath] = json_decode($cont,true);
-					//if error happened
-					if (is_null($this->temp_cacheIdsArray[$filePath])){
-						//if contains broken array due to rare overwrite problem, i.e. ["id_1"],"id2","id3"]
-						if ($this->contains($cont, $delimiter = '"')){
-							$arrs=$this->string_to_array($cont, $delimiter);
-							$this->temp_cacheIdsArray[$filePath]=$arrs;
-						}
-					}
-				}
-			}
-			$existing_ids = $this->temp_cacheIdsArray[$filePath];
-		}
-		elseif ($this->cached_IDS_type=='wp'){
-			$existing_ids = get_option( $ContainerName, [] );
-		}
-		elseif ($this->cached_IDS_type=='object'){
-			$existing_ids = $this->cache_get( $ContainerName, [] );
-		}
-		return $existing_ids;
-	}
-	private function set_cached_ids_array($containerHint, $existing_ids){
-		$ContainerName = $this->cache_ids_parentname($containerHint);
-		if ($this->cached_IDS_type=='file'){
-			$filePath = $this->cache_dir_get() . $ContainerName;
-			$this->temp_cacheIdsArray[$filePath] = $existing_ids;
-			$this->localdata_set( $filePath, json_encode($existing_ids) );
-		}
-		elseif ($this->cached_IDS_type=='wp'){
-			update_option( $ContainerName, $existing_ids );
-		}
-		elseif ($this->cached_IDS_type=='redis'){
-			$this->cache_set( $ContainerName, $existing_ids);
-		}
-	}
-
-	private function add_cached_id($containerHint, $cache_id){
-		$ContainerName = $this->cache_ids_parentname($containerHint);
-		//to ensure to preserve any overwrites happened within last few milliseconds
-		$latest_current_ids = $this->get_cached_ids_array($containerHint); //
-		//$recently_added_ids = array_diff($latest_current_ids, $added_ids);
-		//$up_to_date_IDS = array_merge($existing_ids, $recently_added_ids); 
-		$latest_current_ids[]=$cache_id;
-		$this->set_cached_ids_array($containerHint, $latest_current_ids);
-	}
-
-	public function is_cached_id($cache_parent_key, $item_key_or_params){  
-		$key = is_array($item_key_or_params) ? json_encode($item_key_or_params) : $item_key_or_params;
-		$key = strlen($key) <=35 ? $key : md5($key); //if same length as md5, then prefer original readable key
-		if( in_array($key, $this->get_cached_ids_array($cache_parent_key) ) )
-		{
-			return true;
-		}
-		else{
-			$this->add_cached_id($cache_parent_key, $key);
-			return false;
-		}
-	}
-		localStorage : {
-			parent(){ return puvox_library; },
-			AppName(){ return puvox_library.AppName; },
-
+		localStorage : { 
 			storage: typeof window !== 'undefined' ? window.localStorage : null,
 
 			get(name, defaultValue, expireSeconds = 0){
-				let appName = this.AppName();
+				let appName = puvox_library.getAppName();
 				let val = this.storage.getItem(appName + '_' + name);
 				let expireVal = this.storage.getItem(appName + '_createtime_' + name);
 				if (val === null) {
@@ -2812,15 +2740,17 @@ const puvox_library =
 			},
 			set(name, value){
 				try{ 
-					this.storage.setItem(this.AppName() + '_' +name, value); 
-					this.storage.setItem(this.AppName() + '_createtime_' +name, (new Date()).getTime()); 
+					const appName = puvox_library.getAppName();
+					this.storage.setItem(appName + '_' +name, value); 
+					this.storage.setItem(appName + '_createtime_' +name, (new Date()).getTime()); 
 					return true; 
 				}
 				catch(ex){ alert("Cache storage quote exceeded. can't save value. err598"); return false; }
 			},
-			remove(name, value){
-				this.storage.removeItem(this.AppName() + '_' +name); 
-				this.storage.removeItem(this.AppName() + '_createtime_' +name);
+			remove(name){
+				const appName = puvox_library.getAppName();
+				this.storage.removeItem(appName + '_' + name); 
+				this.storage.removeItem(appName + '_createtime_' + name);
 			},
 			getItem(name, subItemName, defaultValue){
 				let val = this.get(name, '{}');
@@ -2841,30 +2771,27 @@ const puvox_library =
 				return this.set(name, JSON.stringify(parsed) );
 			}
 		},
-		file : {
+		file: {
 			// ########## CACHE DIRS (server-side JS) ##########
-			parent(){ return puvox_library; },
-			AppName(){ return puvox_library.AppName; },
-
 			customCacheDir:null,
-			dirPath(){  
+			dir(){  
 				if (!this.customCacheDir){ 
-					this.customCacheDir = this.parent().file.getTempDir() + '/';
+					this.customCacheDir = puvox_library.file.getTempDir() + '/';
 				}
-				let finaldir = this.customCacheDir + '_cache' + this.AppName() + '/';
+				let finaldir = this.customCacheDir + '_cache_' + puvox_library.getAppName() + '/';
 				return finaldir; 
 			},
 			filePath(uniqFileName){
-				const parent = this.parent();
+				const parent = puvox_library;
 				uniqFileName = parent.isString(uniqFileName) || parent.isNumeric(uniqFileName) ? uniqFileName : JSON.stringify(uniqFileName);
 				uniqFileName = parent.sanitize_key_dashed(parent.getCharsFromStart(uniqFileName, 15)) + "_"+ parent.md5(uniqFileName);
-				filePath= this.dirPath() + uniqFileName + "_tmp"; //"/". 
+				filePath= this.dir() + uniqFileName + "_tmp"; //"/". 
 				return filePath;
 			},
 			//
 			get(uniqFileName, defaultContent ='', expire_seconds=8640000, decode = true)
 			{
-				const parent = this.parent();
+				const parent = puvox_library;
 				let filePath = this.filePath(uniqFileName);
 				if ( filePath.length < 3) return "too tiny filename";
 
@@ -2899,7 +2826,7 @@ const puvox_library =
 			},
 			set(uniqFileName, content)
 			{
-				const parent = this.parent();
+				const parent = puvox_library;
 				let filePath= this.filePath(uniqFileName);
 				let contentFinal = parent.isString(content) ? content : ((parent.isArray(content) || parent.isObject(content)) ? JSON.stringify(content) : content);
 				return parent.file.write(filePath, contentFinal);
@@ -2925,6 +2852,37 @@ const puvox_library =
 			// 		console.log("writeFileAppendJson", e); 
 			// 	}
 			// },
+			containerDefaultPrefix: "_cached_ids_",
+			tempIds:{},
+			idForContent(slugOrContent){
+				return puvox_library.md5(puvox_library.isSimpleVariableType(slugOrContent) ? slugOrContent : JSON.stringify(slugOrContent)); 
+			},
+			existsId(containerSlug, id){
+				return (id in this.getIds(containerSlug));
+			},
+			getIds(containerSlug) {
+				if (! (containerSlug in this.tempIds)) {
+					const content = puvox_library.file.read(this.dir() + this.containerDefaultPrefix + containerSlug, '{}');
+					this.tempIds[containerSlug] = JSON.parse(content);
+				}
+				return this.tempIds[containerSlug];
+			},
+			setIds(containerSlug, idsDict) {
+				this.tempIds[containerSlug] = idsDict;
+				return puvox_library.file.write(this.dir() + this.containerDefaultPrefix + containerSlug, JSON.stringify(this.tempIds[containerSlug]));
+			},
+			addId(containerSlug, id){
+				const ids = this.getIds(containerSlug);
+				ids[id] = 1;
+				this.setIds(containerSlug, ids);
+			},
+			addIdIfNotExists(containerSlug, id){
+				if (! this.existsId(containerSlug, id)){
+					this.addId(containerSlug, id);
+					return true;
+				}
+				return false;
+			},
 		}
 	}, 
 
@@ -2939,7 +2897,7 @@ const puvox_library =
 			return this._required_instances[name];
 		}
 	}, 
-	file : {
+	file: {
 		parent() {return puvox_library;},
 		fs() {return puvox_library.modules('fs');},
 		os() {return puvox_library.modules('os');},
