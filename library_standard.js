@@ -158,151 +158,7 @@ const puvox_library =
 	stringToArrayToNumeric(arr){
 		return this.stringArrayToNumeric(this.stringToArray(arr));
 	},
-
-
-
-	// region: ####### from CCXT ##########
-	keys: Object.keys,
-    values:  (x) => ((!isArray (x)) ? Object.values (x) : x),
-    extend: (...args) => Object.assign ({}, ...args), // NB: side-effect free
-    clone:(x) => (isArray (x) ? Array.from (x) : extend (x)),
-    index: (x) => new Set (values (x)),
-    ordered: (x) => x, // a stub to keep assoc keys in order (in JS it does nothing, it's mostly for Python)
-    unique: (x) => Array.from (index (x)),
-    arrayConcat: (a, b) => a.concat (b),
-    inArray (needle, haystack) {
-        return haystack.includes (needle);
-    },
-    toArray (object) {
-        return Object.values (object);
-    },
-    isEmpty (object) {
-        if (!object) {
-            return true;
-        }
-        return (Array.isArray (object) ? object : Object.keys (object)).length < 1;
-    },
-    keysort (x, out = {}) {
-        for (const k of keys (x).sort ()) {
-            out[k] = x[k];
-        }
-        return out;
-    },
-    indexBy (x, k, out = {}) {
-        //  description: https://github.com/ccxt/ccxt/blob/master/js/base/functions/generic.js
-        for (const v of values (x)) {
-            if (k in v) {
-                out[v[k]] = v;
-            }
-        }
-
-        return out;
-    },
-    groupBy (x, k, out = {}) {
-        //  description: https://github.com/ccxt/ccxt/blob/master/js/base/functions/generic.js
-        for (const v of values (x)) {
-            if (k in v) {
-                const p = v[k];
-                out[p] = out[p] || [];
-                out[p].push (v);
-            }
-        }
-        return out;
-    },
-    filterBy (x, k, value = undefined, out = []) {
-        //  description: https://github.com/ccxt/ccxt/blob/master/js/base/functions/generic.js
-        for (const v of values (x)) {
-            if (v[k] === value) {
-                out.push (v);
-            }
-        }
-        return out;
-    },
-    sortBy: (array, key, descending = false, direction = descending ? -1 : 1) => array.sort ((a, b) => {
-        if (a[key] < b[key]) {
-            return -direction;
-        } else if (a[key] > b[key]) {
-            return direction;
-        } else {
-            return 0;
-        }
-    }),
-    sortBy2: (array, key1, key2, descending = false, direction = descending ? -1 : 1) => array.sort ((a, b) => {
-        if (a[key1] < b[key1]) {
-            return -direction;
-        } else if (a[key1] > b[key1]) {
-            return direction;
-        } else {
-            if (a[key2] < b[key2]) {
-                return -direction;
-            } else if (a[key2] > b[key2]) {
-                return direction;
-            } else {
-                return 0;
-            }
-        }
-    }),
-    flatten: function flatten (x, out = []) {
-
-        for (const v of x) {
-            if (isArray (v)) {
-                flatten (v, out);
-            } else {
-                out.push (v);
-            }
-        }
-
-        return out;
-    },
-    pluck: (x, k) => values (x).filter ((v) => k in v).map ((v) => v[k]),
-    omit (x, ...args) {
-        if (!Array.isArray (x)) {
-
-            const out = clone (x);
-
-            for (const k of args) {
-                if (isArray (k)) { // omit (x, ['a', 'b'])
-                    for (const kk of k) {
-                        delete out[kk];
-                    }
-                } else {
-                    delete out[k]; // omit (x, 'a', 'b')
-                }
-            }
-
-            return out;
-        }
-
-        return x;
-    },
-    sum (...xs) {
-        const ns = xs.filter (isNumber); // leave only numbers
-        return (ns.length > 0) ? ns.reduce ((a, b) => a + b, 0) : undefined;
-    },
-    deepExtend: function deepExtend (...xs) {
-        let out = undefined;
-        for (const x of xs) {
-            if (isDictionary (x)) {
-                if (!isDictionary (out)) {
-                    out = {};
-                }
-                for (const k in x) { // eslint-disable-line guard-for-in
-                    out[k] = deepExtend (out[k], x[k]);
-                }
-            } else {
-                out = x;
-            }
-        }
-        return out;
-    },
-	// endregion: ####### from CCXT ##########
-
-
-
-
-
-
-
+ 
 	objectCopy(obj){
 		return JSON.parse(JSON.stringify(obj));
 	},
@@ -1446,8 +1302,6 @@ const puvox_library =
 			)
 		)
 	},
-
-	milliseconds(){ return (new Date().getTime()); },
 
 	fancyTimeFormat(time)
 	{   
@@ -3089,6 +2943,234 @@ const puvox_library =
 			return filesList;
 		},
 	},
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	// region: ####### from CCXT ##########
+	// generic
+	keys: Object.keys,
+    values(x) { return ((!this.isArray (x)) ? Object.values (x) : x);},
+    extend(...args) { return Object.assign ({}, ...args) ;}, // NB: side-effect free
+    clone(x){ return (this.isArray (x) ? Array.from (x) : this.extend (x)) ;},
+    index(x) { return new Set (this.values (x));},
+    ordered: (x) => x, // a stub to keep assoc keys in order (in JS it does nothing, it's mostly for Python)
+    unique(x) { return Array.from (this.index (x));},
+    arrayConcat: (a, b) => a.concat (b),
+    inArray (needle, haystack) {
+        return haystack.includes (needle);
+    },
+    toArray (object) {
+        return Object.values (object);
+    },
+    isEmpty (object) {
+        if (!object) {
+            return true;
+        }
+        return (Array.isArray (object) ? object : Object.keys (object)).length < 1;
+    },
+    keysort (x, out = {}) {
+        for (const k of this.keys (x).sort ()) {
+            out[k] = x[k];
+        }
+        return out;
+    },
+    indexBy (x, k, out = {}) {
+        //  description: https://github.com/ccxt/ccxt/blob/master/js/base/functions/generic.js
+        for (const v of this.values (x)) {
+            if (k in v) {
+                out[v[k]] = v;
+            }
+        }
+
+        return out;
+    },
+    groupBy (x, k, out = {}) {
+        //  description: https://github.com/ccxt/ccxt/blob/master/js/base/functions/generic.js
+        for (const v of this.values (x)) {
+            if (k in v) {
+                const p = v[k];
+                out[p] = out[p] || [];
+                out[p].push (v);
+            }
+        }
+        return out;
+    },
+    filterBy (x, k, value = undefined, out = []) {
+        //  description: https://github.com/ccxt/ccxt/blob/master/js/base/functions/generic.js
+        for (const v of this.values (x)) {
+            if (v[k] === value) {
+                out.push (v);
+            }
+        }
+        return out;
+    },
+    sortBy: (array, key, descending = false, direction = descending ? -1 : 1) => array.sort ((a, b) => {
+        if (a[key] < b[key]) {
+            return -direction;
+        } else if (a[key] > b[key]) {
+            return direction;
+        } else {
+            return 0;
+        }
+    }),
+    sortBy2: (array, key1, key2, descending = false, direction = descending ? -1 : 1) => array.sort ((a, b) => {
+        if (a[key1] < b[key1]) {
+            return -direction;
+        } else if (a[key1] > b[key1]) {
+            return direction;
+        } else {
+            if (a[key2] < b[key2]) {
+                return -direction;
+            } else if (a[key2] > b[key2]) {
+                return direction;
+            } else {
+                return 0;
+            }
+        }
+    }),
+    flatten: function flatten (x, out = []) {
+
+        for (const v of x) {
+            if (this.isArray (v)) {
+                this.flatten (v, out);
+            } else {
+                out.push (v);
+            }
+        }
+
+        return out;
+    },
+    pluck(x, k) { return this.values (x).filter ((v) => k in v).map ((v) => v[k]);},
+    omit (x, ...args) {
+        if (!Array.isArray (x)) {
+            const out = this.clone (x);
+            for (const k of args) {
+                if (this.isArray (k)) { // omit (x, ['a', 'b'])
+                    for (const kk of k) {
+                        delete out[kk];
+                    }
+                } else {
+                    delete out[k]; // omit (x, 'a', 'b')
+                }
+            }
+            return out;
+        }
+        return x;
+    },
+    sum (...xs) {
+        const ns = xs.filter (isNumber); // leave only numbers
+        return (ns.length > 0) ? ns.reduce ((a, b) => a + b, 0) : undefined;
+    },
+    deepExtend: function deepExtend (...xs) {
+        let out = undefined;
+        for (const x of xs) {
+            if (this.isDictionary (x)) {
+                if (!this.isDictionary (out)) {
+                    out = {};
+                }
+                for (const k in x) { // eslint-disable-line guard-for-in
+                    out[k] = this.deepExtend (out[k], x[k]);
+                }
+            } else {
+                out = x;
+            }
+        }
+        return out;
+    },
+	// type
+	isNumber: Number.isFinite,
+    isInteger: Number.isInteger,
+    isArray: Array.isArray,
+    hasProps: o => ((o !== undefined) && (o !== null)),
+    isString: s => (typeof s === 'string'),
+    isObject: o => ((o !== null) && (typeof o === 'object')),
+    isRegExp: o => (o instanceof RegExp),
+    isDictionary(o ){return (this.isObject (o) && (Object.getPrototypeOf (o) === Object.prototype) && !isArray (o) && !isRegExp (o));},
+    isStringCoercible(x){ return ((this.hasProps (x) && x.toString) || this.isNumber (x));},
+	prop (o, k) { return (this.isObject (o) && o[k] !== '' && o[k] !== null ? o[k] : undefined);},
+	getValueFromKeysInArray(object, array) { return object[array.find (k => this.prop (object,k) !== undefined)];},
+	asFloat (x) { return ((this.isNumber (x) || (this.isString (x) && x.length !== 0)) ? parseFloat (x) : NaN);}
+    , 
+	asInteger(x) { return ((this.isNumber (x) || (this.isString (x) && x.length !== 0)) ? Math.trunc (Number(x)) : NaN);},
+	// safeFloat:(o, k, $default, n = asFloat (prop (o, k))) => (this.isNumber (n) ? n : $default),
+	// safeInteger: (o, k, $default, n = asInteger (prop (o, k))) => (this.isNumber (n) ? n : $default),
+	// safeTimestamp: (o, k, $default, n = asFloat (prop (o, k))) => (isNumber (n) ? parseInt (n * 1000) : $default),
+	// safeValue(o, k, $default, x = prop (o, k)) { return (hasProps (x) ? x : $default); },
+	// safeString(o, k, $default, x = prop (o, k)){ return (this.isStringCoercible (x) ? String (x)       : $default);},
+	// safeStringLower(o, k, $default, x = prop (o, k)){ return (this.isStringCoercible (x) ? String (x).toLowerCase () : $default ? $default.toLowerCase () : $default);},
+    // safeStringUpper(o, k, $default, x = prop (o, k)){ return (this.isStringCoercible (x) ? String (x).toUpperCase () : $default ? $default.toUpperCase () : $default);},
+
+	// misc
+	parseTimeframe(timeframe){
+		const amount = timeframe.slice (0, -1);
+		const unit = timeframe.slice (-1);
+		let scale = undefined;
+		if (unit === 'y') {	scale = 60 * 60 * 24 * 365;	} 
+		else if (unit === 'M') { scale = 60 * 60 * 24 * 30;	}
+		else if (unit === 'w') { scale = 60 * 60 * 24 * 7; }
+		else if (unit === 'd') { scale = 60 * 60 * 24; } 
+		else if (unit === 'h') { scale = 60 * 60;} 
+		else if (unit === 'm') { scale = 60; } 
+		else if (unit === 's') { scale = 1;	} 
+		else {	throw new NotSupported ('timeframe unit ' + unit + ' is not supported'); }
+		return amount * scale;
+	},
+	roundTimeframe(timeframe, timestamp, direction = ROUND_DOWN) {
+		const ms = this.parseTimeframe (timeframe) * 1000
+		// Get offset based on timeframe in milliseconds
+		const offset = timestamp % ms
+		return timestamp - offset + ((direction === ROUND_UP) ? ms : 0);
+	},
+	json:(data, params = undefined) => JSON.stringify (data),
+	isJsonEncodedObject: object => (
+        (typeof object === 'string') &&
+        (object.length >= 2) &&
+        ((object[0] === '{') || (object[0] === '['))
+    ),
+	// number
+	precisionFromString (string) {
+		const split = string.replace (/0+$/g, '').split ('.')
+		return (split.length > 1) ? (split[1].length) : 0
+	},
+	numberToString (x) { // avoids scientific notation for too large and too small numbers
+		if (x === undefined) return undefined; if (typeof x !== 'number') return x.toString (); const s = x.toString (); if (Math.abs (x) < 1.0) { const n_e = s.split ('e-'); const n = n_e[0].replace ('.', ''); const e = parseInt (n_e[1]); const neg = (s[0] === '-'); if (e) { x = (neg ? '-' : '') + '0.' + (new Array (e)).join ('0') + n.substring (neg); return x; } } else { const parts = s.split ('e'); if (parts[1]) { let e = parseInt (parts[1]); const m = parts[0].split ('.'); let part = ''; if (m[1]) { e -= m[1].length; part = m[1]; } return m[0] + part + (new Array (e + 1)).join ('0'); } }	return s;
+	},
+	// platform
+	isBrowser: typeof window !== 'undefined',
+	isElectron: typeof process !== 'undefined' && typeof process.versions !== 'undefined' && typeof process.versions.electron !== 'undefined',
+	isWebWorker: typeof WorkerGlobalScope !== 'undefined' && (self instanceof WorkerGlobalScope),
+	isWindows: typeof process !== 'undefined' && process.platform === "win32",
+	isNode: !(this.isBrowser || this.isWebWorker),
+	defaultFetch: fetch,
+	//string 
+	uuid: a => a ? (a ^ Math.random () * 16 >> a / 4).toString (16) : ([1e7]+-1e3+-4e3+-8e3+-1e11).replace (/[018]/g, uuid), 
+	capitalize: s => s.length ? (s.charAt (0).toUpperCase () + s.slice (1)) : s,
+    strip: s => s.replace(/^\s+|\s+$/g, ''),
+	// time
+	now: Date.now,
+	milliseconds: Date.now, //  milliseconds(){ return (new Date().getTime()); },
+	seconds: () => Math.floor (Date.now () / 1000),
+	// endregion: ####### from CCXT ##########
+
+
+
 };
 
 
