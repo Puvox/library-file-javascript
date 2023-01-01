@@ -3102,7 +3102,7 @@ const puvox_library =
     isString: s => (typeof s === 'string'),
     isObject: o => ((o !== null) && (typeof o === 'object')),
     isRegExp: o => (o instanceof RegExp),
-    isDictionary(o ){return (this.isObject (o) && (Object.getPrototypeOf (o) === Object.prototype) && !isArray (o) && !isRegExp (o));},
+    isDictionary(o ){return (this.isObject (o) && (Object.getPrototypeOf (o) === Object.prototype) && !this.isArray (o) && !this.isRegExp (o));},
     isStringCoercible(x){ return ((this.hasProps (x) && x.toString) || this.isNumber (x));},
 	prop (o, k) { return (this.isObject (o) && o[k] !== '' && o[k] !== null ? o[k] : undefined);},
 	getValueFromKeysInArray(object, array) { return object[array.find (k => this.prop (object,k) !== undefined)];},
