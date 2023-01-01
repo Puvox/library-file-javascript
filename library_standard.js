@@ -159,6 +159,150 @@ const puvox_library =
 		return this.stringArrayToNumeric(this.stringToArray(arr));
 	},
 
+
+
+	// region: ####### from CCXT ##########
+	keys: Object.keys,
+    values:  (x) => ((!isArray (x)) ? Object.values (x) : x),
+    extend: (...args) => Object.assign ({}, ...args), // NB: side-effect free
+    clone:(x) => (isArray (x) ? Array.from (x) : extend (x)),
+    index: (x) => new Set (values (x)),
+    ordered: (x) => x, // a stub to keep assoc keys in order (in JS it does nothing, it's mostly for Python)
+    unique: (x) => Array.from (index (x)),
+    arrayConcat: (a, b) => a.concat (b),
+    inArray (needle, haystack) {
+        return haystack.includes (needle);
+    },
+    toArray (object) {
+        return Object.values (object);
+    },
+    isEmpty (object) {
+        if (!object) {
+            return true;
+        }
+        return (Array.isArray (object) ? object : Object.keys (object)).length < 1;
+    },
+    keysort (x, out = {}) {
+        for (const k of keys (x).sort ()) {
+            out[k] = x[k];
+        }
+        return out;
+    },
+    indexBy (x, k, out = {}) {
+        //  description: https://github.com/ccxt/ccxt/blob/master/js/base/functions/generic.js
+        for (const v of values (x)) {
+            if (k in v) {
+                out[v[k]] = v;
+            }
+        }
+
+        return out;
+    },
+    groupBy (x, k, out = {}) {
+        //  description: https://github.com/ccxt/ccxt/blob/master/js/base/functions/generic.js
+        for (const v of values (x)) {
+            if (k in v) {
+                const p = v[k];
+                out[p] = out[p] || [];
+                out[p].push (v);
+            }
+        }
+        return out;
+    },
+    filterBy (x, k, value = undefined, out = []) {
+        //  description: https://github.com/ccxt/ccxt/blob/master/js/base/functions/generic.js
+        for (const v of values (x)) {
+            if (v[k] === value) {
+                out.push (v);
+            }
+        }
+        return out;
+    },
+    sortBy: (array, key, descending = false, direction = descending ? -1 : 1) => array.sort ((a, b) => {
+        if (a[key] < b[key]) {
+            return -direction;
+        } else if (a[key] > b[key]) {
+            return direction;
+        } else {
+            return 0;
+        }
+    }),
+    sortBy2: (array, key1, key2, descending = false, direction = descending ? -1 : 1) => array.sort ((a, b) => {
+        if (a[key1] < b[key1]) {
+            return -direction;
+        } else if (a[key1] > b[key1]) {
+            return direction;
+        } else {
+            if (a[key2] < b[key2]) {
+                return -direction;
+            } else if (a[key2] > b[key2]) {
+                return direction;
+            } else {
+                return 0;
+            }
+        }
+    }),
+    flatten: function flatten (x, out = []) {
+
+        for (const v of x) {
+            if (isArray (v)) {
+                flatten (v, out);
+            } else {
+                out.push (v);
+            }
+        }
+
+        return out;
+    },
+    pluck: (x, k) => values (x).filter ((v) => k in v).map ((v) => v[k]),
+    omit (x, ...args) {
+        if (!Array.isArray (x)) {
+
+            const out = clone (x);
+
+            for (const k of args) {
+                if (isArray (k)) { // omit (x, ['a', 'b'])
+                    for (const kk of k) {
+                        delete out[kk];
+                    }
+                } else {
+                    delete out[k]; // omit (x, 'a', 'b')
+                }
+            }
+
+            return out;
+        }
+
+        return x;
+    },
+    sum (...xs) {
+        const ns = xs.filter (isNumber); // leave only numbers
+        return (ns.length > 0) ? ns.reduce ((a, b) => a + b, 0) : undefined;
+    },
+    deepExtend: function deepExtend (...xs) {
+        let out = undefined;
+        for (const x of xs) {
+            if (isDictionary (x)) {
+                if (!isDictionary (out)) {
+                    out = {};
+                }
+                for (const k in x) { // eslint-disable-line guard-for-in
+                    out[k] = deepExtend (out[k], x[k]);
+                }
+            } else {
+                out = x;
+            }
+        }
+        return out;
+    },
+	// endregion: ####### from CCXT ##########
+
+
+
+
+
+
+
 	objectCopy(obj){
 		return JSON.parse(JSON.stringify(obj));
 	},
