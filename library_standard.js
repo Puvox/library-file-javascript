@@ -2476,8 +2476,8 @@ const puvox_library =
 
 	// region ### TELEGRAM FUNCTIONS ###
 	async telegramMessage(text, chat_id, bot_key, extra_opts={}){
+		if (!extra_opts) extra_opts = {};
 		const is_repeated_call = 'is_repeated_call' in extra_opts;
-		const use_cache = 'cache' in extra_opts;
 		if (! ('parse_mode' in extra_opts)){
 			extra_opts['parse_mode'] = 'html';
 		}
@@ -2521,6 +2521,7 @@ const puvox_library =
 	telegram_last_sent_time: 0,
 
 	async telegramMessageCached(text, chat_id, bot_key, extra_opts={}, customCacheId=null){
+		if (!extra_opts) extra_opts = {};
 		const curMS  = this.milliseconds();
 		const goneMS = curMS - this.telegram_last_sent_time;
 		if ( goneMS < this.telegram_interval_ms ){
