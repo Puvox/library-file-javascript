@@ -68,7 +68,7 @@ const puvox_library =
 	removeKeys(obj, keysArr){
 		let newObj ={};
 		for (let [key,val] of Object.entries(obj)){
-			if (!this.inArray(keysArr,key))
+			if (!this.inArray(key,keysArr))
 				newObj[key]=val;
 		}
 		return newObj;
@@ -76,7 +76,7 @@ const puvox_library =
 	removeKeysExcept (obj, keysArr){
 		let newObj ={};
 		for (let [key,val] of Object.entries(obj)){
-			if (this.inArray(keysArr,key))
+			if (this.inArray(key,keysArr))
 				newObj[key]=val;
 		}
 		return newObj;
@@ -383,9 +383,9 @@ const puvox_library =
 	isArray(x)	{ return ( (!!x) && (x.constructor === Array) ) || (Array.isArray(x)); },	
 	
 	isSimpleVariableType(obj){ return this.isSimpleVariableTypeName(typeof obj); },
-	isSimpleVariableTypeName(typeName_){ return this.inArray( [ "boolean", "integer", "float", "double", "decimal", "string"], typeName_);  },
+	isSimpleVariableTypeName(typeName_){ return this.inArray( typeName_, [ "boolean", "integer", "float", "double", "decimal", "string"]);  },
 	isNumericVariableType(obj){ return this.isNumericVariableTypeName(typeof obj); },
-	isNumericVariableTypeName(typeName_){ return this.inArray( [ "integer", "float", "double", "decimal"], typeName_); },
+	isNumericVariableTypeName(typeName_){ return this.inArray(typeName_, [ "integer", "float", "double", "decimal"]); },
 
 	stringToBoolean(string){
 		switch(string.toLowerCase().trim()){
@@ -625,7 +625,7 @@ const puvox_library =
 		}
 	},
 	argvIsSet(which){
-		return this.inArray(this.argvsString, which) || this.argv(which)!=undefined;
+		return this.inArray(which, this.argvsArray()) || this.argv(which)!=undefined;
 	},
 
 	
@@ -862,9 +862,8 @@ const puvox_library =
 		areSameDays(d1, d2){ },
 
 
-		// #######################
 		// ##### added to JS #####
-		// #######################
+		GetDayOfYear(dt) { return (dt || new Date()).getUTCDate(); },
 		StringToUtcString(str) {
 			return str.indexOf ('Z') > -1 || str.indexOf ('GMT') > -1 ? str : str  + ' GMT+0000';
 		},
@@ -1769,23 +1768,17 @@ const puvox_library =
 	// ========================================================== //
 
 
-	inArray(haystack, needle) {
-		var length = haystack.length;
-		for(var i = 0; i < length; i++) {
-			//if(typeof haystack[i] == 'object') {
-			//	if(arrayCompare(haystack[i], needle)) return true;
-			//} else 
-			{
-				if(haystack[i] == needle) return true;
-			}
-		}
-		return false;
+	inArray(needle, haystack) {
+		return haystack.indexOf(needle) > -1;
+	},
+	inKeys(key, obj){
+		return key in obj;
 	},
 	
 	partialObject(object_, array_) {
 		let newObj ={};
 		for (let [key, value] of Object.entries(object_)) {
-			if( this.inArray(array_, key)){
+			if( this.inArray(key, array_)){
 				newObj[key] = value;
 			}
 		}
