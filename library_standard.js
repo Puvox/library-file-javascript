@@ -588,9 +588,7 @@ const puvox_library =
 
     argvsString(){ return process.argv[2]; },
     argvsArray(){ return process.argv.slice(2); },
-	argvs(){ return this.argvsArray();},
-
-	argv(which, def = undefined){ 
+	argvs(){ 
 		let argvs= this.argvsArray();
 		let KeyValues= {};
 		for (let i=0; i<argvs.length; i++){
@@ -617,7 +615,7 @@ const puvox_library =
 				KeyValues = Object.assign (KeyValues, pair);
 			}
 		}
-		return (which in KeyValues ? KeyValues[which] : def);
+		return KeyValues;
 	},
 	argvIsSet(which){
 		return this.inArray(which, this.argvsArray()) || this.argv(which)!=undefined;
