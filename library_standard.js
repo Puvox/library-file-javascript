@@ -617,6 +617,10 @@ const puvox_library =
 		}
 		return KeyValues;
 	},
+	argv(which, def = undefined){ 
+		let KeyValues= this.argvs();
+		return (which in KeyValues ? KeyValues[which] : def);
+	},
 	argvIsSet(which){
 		return this.inArray(which, this.argvsArray()) || this.argv(which)!=undefined;
 	},
