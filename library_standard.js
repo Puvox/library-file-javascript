@@ -588,41 +588,36 @@ const puvox_library =
 
     argvsString(){ return process.argv[2]; },
     argvsArray(){ return process.argv.slice(2); },
-	argv(which, def = undefined){
-		var which = which || undefined; 
+	argvs(){ return this.argvsArray();},
+
+	argv(which, def = undefined){ 
 		let argvs= this.argvsArray();
-		if (argvs.length <= 0)
-		{
-			return def;
-		}
-		else{
-			let KeyValues= {};
-			for (let i=0; i<argvs.length; i++){
-				let argumentString = argvs[i]; // each argument
-				let pair = {}; 
-				if ( argumentString.includes('=') ){
-					pair = this.parseQuery(argumentString);
-				} else {
-					pair[argumentString] = undefined;
-				}
-				let pairKey= Object.keys(pair)[0];
-				// if member already exists (i.e: cli  key1=val1 key2=val2 key1=xyz..)
-				if (pairKey in KeyValues){
-					// if not array yet
-					if (!Array.isArray(KeyValues[pairKey]))
-					{
-						KeyValues[pairKey] = [ KeyValues[pairKey], pair[pairKey]];
-					}  
-					// if already array-ed
-					else {
-						KeyValues[pairKey] = KeyValues[pairKey].concat([pair[pairKey]]);
-					}
-				} else {
-					KeyValues = Object.assign (KeyValues, pair);
-				}
+		let KeyValues= {};
+		for (let i=0; i<argvs.length; i++){
+			let argumentString = argvs[i]; // each argument
+			let pair = {}; 
+			if ( argumentString.includes('=') ){
+				pair = this.parseQuery(argumentString);
+			} else {
+				pair[argumentString] = undefined;
 			}
-			return (which==undefined ? KeyValues : (which in KeyValues ? KeyValues[which] : undefined) );
+			let pairKey= Object.keys(pair)[0];
+			// if member already exists (i.e: cli  key1=val1 key2=val2 key1=xyz..)
+			if (pairKey in KeyValues){
+				// if not array yet
+				if (!Array.isArray(KeyValues[pairKey]))
+				{
+					KeyValues[pairKey] = [ KeyValues[pairKey], pair[pairKey]];
+				}  
+				// if already array-ed
+				else {
+					KeyValues[pairKey] = KeyValues[pairKey].concat([pair[pairKey]]);
+				}
+			} else {
+				KeyValues = Object.assign (KeyValues, pair);
+			}
 		}
+		return (which in KeyValues ? KeyValues[which] : def);
 	},
 	argvIsSet(which){
 		return this.inArray(which, this.argvsArray()) || this.argv(which)!=undefined;
