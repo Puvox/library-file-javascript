@@ -828,30 +828,29 @@ const puvox_library =
 			let finalStr = (withT ? str.replace(' ', 'T') : str);
 			return withMS ? finalStr : finalStr.split('.')[0]; //2022-07-09 19:25:00.276
 		},
-		// in some langs, the date object has distinctions, so the two below needs separated methods
-		StringToDatetimeUtc(str, format, culture) { return new Date(str); }, // DateTime, bool, str
-		StringToDatetimeLocal(str, format, culture) { return new Date(str); }, // DateTime, bool, str
-		UtcDatetime() {  
+		// in some langs, the date object has distinctions, so the two below needs separated methods. However, the "date" object returned from them, are same, just the representation can be local or UTC depending user.
+		StringToDatetimeUtc(str, format, culture) { return new Date(str); }, 
+		StringToDatetimeLocal(str, format, culture) { return new Date(str); }, 
+		DatetimeUtc() {  
 			var now = new Date();
 			var utc = new Date(now.getTime()); // + now.getTimezoneOffset() * 60000 is not needed !!!!!!
 			return utc;
-		},
-		UtcDatetimeFrom(dt) { }, // DateTime
+		}, UtcDatetime() { return this.DatetimeUtc(); },
 		// UTC
-		UtcTimestamp() { 
+		TimestampUtc() { 
 			return Math.floor(new Date().getTime()); 
-		},
+		}, UtcTimestamp() { return this.TimestampUtc(); },
 		//i.e. input:  "2021-03-08 11:59:00"      |  output : 1650000000000 (milliseconds)  
 		// [DONT CHANGE THIS FUNC, I'VE REVISED]
-		UtcTimestampFrom(dt) { 
+		DatetimeToTimestampUtc(dt) { 
 			let offset = this.getOffsetFromUtc();
 			return ((((new Date( dt )).getTime()) / 1000) + 14400 - offset * 60* 60) * 1000; 
-		},
-		UtcTimestampToUtcDatetime(ts) {
+		}, UtcTimestampFrom(dt) { return this.DatetimeToTimestampUtc(dt); },
+		TimestampUtcToDatetimeUtc(ts) {
 			var d = new Date(ts);
 			d.setHours(d.getHours());
 			return d;
-		},
+		}, UtcTimestampToUtcDatetime(ts) { return this.TimestampUtcToDatetimeUtc(ts); },
 		// shorthands
 		MaxDate(d1, d2, d3=null) {},
 		MinDate(d1, d2, d3=null) {},
@@ -2407,6 +2406,26 @@ const puvox_library =
 		};
 	},
 	
+	compare(a, b, operator) {
+		if(operator === '==') return a == b;
+		else if (operator === '===') return a === b;
+		else if (operator === '!=') return a != b;
+		else if (operator === '!==') return a !== b;
+		else if (operator === '>') return a > b;
+		else if (operator === '>=') return a >= b;
+		else if (operator === '<') return a < b;
+		else if (operator === '<=') return a <= b;
+		else throw "Unknown operator";
+	},
+	calculate(a, b, operator) {
+		if(operator === '+') return a + b;
+		else if (operator === '-') return a - b;
+		else if (operator === '*') return a * b;
+		else if (operator === '/') return a / b;
+		else if (operator === '%') return a % b;
+		else throw "Unknown operator";
+	},
+
 	// random NUMBER or STRINGS
 	RandomNum(maxNum)		{ return Math.floor((Math.random() * maxNum) + 1); },
 
