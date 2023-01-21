@@ -1969,16 +1969,16 @@ const puvox_library =
 	parsePOST(request, callback)
 	{
 		if (request.method == 'POST') {
-			let name='querystring';
-			var qs = require(name);
-			let stringData = '';
-			request.on('data', function (data) {
-				stringData += data;
-				// Too much POST data, kill the connection!   1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB
-				if (stringData.length > 1e6)
-					request.connection.destroy();
-			});
-			request.on('end', function(){ callback(qs.parse(stringData)); } );
+			// let name='querystring';// deprecated by URLSearchParams 
+			// var qs = require(name);  
+			// let stringData = '';
+			// request.on('data', function (data) {
+			// 	stringData += data;
+			// 	// Too much POST data, kill the connection!   1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB
+			// 	if (stringData.length > 1e6)
+			// 		request.connection.destroy();
+			// });
+			// request.on('end', function(){ callback(qs.parse(stringData)); } );
 		}
 	},
 
@@ -2552,8 +2552,7 @@ const puvox_library =
 	openUrlInBrowser(url)
 	{
 		var cmd = (process.platform == 'darwin'? `open ${url}`: process.platform == 'win32'? `start ${url}`: `xdg-open ${url}`); 
-		let name='child_process';
-		require(name).exec(cmd);
+		require('child_process').exec(cmd);
 	},
 
 	stringify(obj_or_str){
@@ -2898,20 +2897,20 @@ const puvox_library =
 
 	// ################################################
 	// for node packs:_fs_instance :null,
-	_required_instances : {},
-	modules(name){
-		if (name in this._required_instances){
-			return this._required_instances[name];
-		} else {
-			this._required_instances[name] = require(name);
-			return this._required_instances[name];
-		}
-	}, 
+	// _required_instances : {},
+	// modules(name){
+	// 	if (name in this._required_instances){
+	// 		return this._required_instances[name];
+	// 	} else {
+	// 		this._required_instances[name] = require(name);
+	// 		return this._required_instances[name];
+	// 	}
+	// }, 
 	file: {
 		parent() {return puvox_library;},
-		fs() {return puvox_library.modules('fs');},
-		os() {return puvox_library.modules('os');},
-		path() {return puvox_library.modules('path');},
+		fs() {return require('fs');}, //puvox_library.modules('fs')
+		os() {return require('os');},
+		path() {return require('path');},
 		//
 		getTempDir(){ return this.os().tmpdir(); },
 
