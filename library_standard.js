@@ -229,7 +229,7 @@ const puvox_library =
 		);
 	},
 
-	move_to_top_in_parent (el_tag)
+	move_to_top_in_parent(el_tag)
 	{
 		$(el_tag).each(function() {
 			$(this).parent().prepend(this);
@@ -804,7 +804,7 @@ const puvox_library =
     },
 
 
-	dateUtils : {
+	datetime : {
 		//  0940 type time-ints
 		isBetweenHMS(target, start,  end,  equality) { }, // datetime, int/datetime, int/datetime, bool
 		equalDays(d1,d2) { 
@@ -2711,17 +2711,24 @@ const puvox_library =
 	},
 	//  if(setHashInAddress) {	window.location.hash = id_or_Name;	}
 	
-
-	
+	unTrailingSlash(str){
+		while (str.endsWith('/') || str.endsWith('\\')) {
+			str = str.slice(0, -1);
+		}
+		return str;
+	},
+	trailingSlash(str){
+		return this.unTrailingSlash(str) + '/';
+	},
 
 	// ######## CACHE ITEMS (client-side JS) ########
-	_privateAppName : null, //override with anything you want
-	setAppName (name){ this._privateAppName = name; },
+	privateAppName__ : null, //override with anything you want
+	setAppName (name){ this.privateAppName__ = name; },
 	getAppName(){ 
-		if (!this._privateAppName || this._privateAppName === ''){
+		if (!this.privateAppName__){
 			throw new Error ('Before you start using caching functions, please at first define your appplication\'s name(identifier) at first with .setAppName("whatever_my_app_name"), so it will get its own cache-storage');
 		}
-		return this._privateAppName; 
+		return this.privateAppName__; 
 	},
 
 	cache: {
@@ -2783,18 +2790,28 @@ const puvox_library =
 		file: {
 			// ########## CACHE DIRS (server-side JS) ##########
 			customCacheDir:null,
-			dir(){  
+			get_dir(){  
 				if (!this.customCacheDir){ 
-					this.customCacheDir = puvox_library.file.getTempDir() + '/';
+					this.customCacheDir = puvox_library.file.tempDir();
 				}
-				let finaldir = this.customCacheDir + '_cache_' + puvox_library.getAppName() + '/';
+				let finaldir = puvox_library.trailingSlash(this.customCacheDir + '_cache_' + puvox_library.getAppName());
 				return finaldir; 
+			},
+			set_dir(dir, auto_clear_seconds=null){ 
+				if(dir) this.customCacheDir = dir;
+				const res = puvox_library.file.createDirectory(this.customCacheDir);
+				if( !is_null(auto_clear_seconds))
+				{
+					throw new Error("Not implemented yet! 345346");
+					//$this->clearCacheDir($auto_clear_seconds); 
+				}
+				return res;
 			},
 			filePath(uniqFileName){
 				const parent = puvox_library;
 				uniqFileName = parent.isString(uniqFileName) || parent.isNumeric(uniqFileName) ? uniqFileName : JSON.stringify(uniqFileName);
 				uniqFileName = parent.sanitize_key_dashed(parent.getCharsFromStart(uniqFileName, 15)) + "_"+ parent.md5(uniqFileName);
-				filePath= this.dir() + uniqFileName + "_tmp"; //"/". 
+				filePath= this.get_dir() + uniqFileName + "_tmp"; //"/". 
 				return filePath;
 			},
 			//
@@ -2802,8 +2819,6 @@ const puvox_library =
 			{
 				const parent = puvox_library;
 				let filePath = this.filePath(uniqFileName);
-				if ( filePath.length < 3) return "too tiny filename";
-
 				if ( parent.file.exists(filePath) ){
 					if ( parent.file.mtime(filePath) + expire_seconds *1000 < (new Date()).getTime() ){
 						parent.file.unlink(filePath);
@@ -2871,14 +2886,14 @@ const puvox_library =
 			},
 			getIds(containerSlug) {
 				if (! (containerSlug in this.tempIds)) {
-					const content = puvox_library.file.read(this.dir() + this.containerDefaultPrefix + containerSlug, '{}');
+					const content = puvox_library.file.read(this.get_dir() + this.containerDefaultPrefix + containerSlug, '{}');
 					this.tempIds[containerSlug] = JSON.parse(content);
 				}
 				return this.tempIds[containerSlug];
 			},
 			setIds(containerSlug, idsDict) {
 				this.tempIds[containerSlug] = idsDict;
-				return puvox_library.file.write(this.dir() + this.containerDefaultPrefix + containerSlug, JSON.stringify(this.tempIds[containerSlug]));
+				return puvox_library.file.write(this.get_dir() + this.containerDefaultPrefix + containerSlug, JSON.stringify(this.tempIds[containerSlug]));
 			},
 			addId(containerSlug, id){
 				const ids = this.getIds(containerSlug);
@@ -2907,12 +2922,11 @@ const puvox_library =
 	// 	}
 	// }, 
 	file: {
-		parent() {return puvox_library;},
 		fs() {return require('fs');}, //puvox_library.modules('fs')
 		os() {return require('os');},
 		path() {return require('path');},
 		//
-		getTempDir(){ return this.os().tmpdir(); },
+		tempDir(){ return puvox_library.trailingSlash(this.os().tmpdir()); },
 
 		exists(filePath){
 			return this.fs().existsSync(filePath);
@@ -2927,10 +2941,11 @@ const puvox_library =
 		unlink(filePath){
 			return (this.fs().unlinkSync(filePath));
 		},
-		createDirectory(dirPath, force = false){
-			if (!this.exists(dirPath) || force){
-				this.fs().mkdirSync(dirPath, { recursive: true });
+		createDirectory(dirPath){
+			if (!this.exists(dirPath)){
+				return this.fs().mkdirSync(dirPath, { recursive: true });
 			}
+			return true;
 		},
 		read(filePath, defaultContent = ''){
 			if (!this.exists(filePath)){
