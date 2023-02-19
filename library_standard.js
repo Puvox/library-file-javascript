@@ -665,6 +665,29 @@ const puvox_library =
 		);
 	},
 
+	MakeIframeFullHeight(iframeElement, cycling, overwrite_margin){
+		cycling= cycling || false;
+		overwrite_margin= overwrite_margin || false;
+		iframeElement.style.width	= "100%";
+		var ifrD = iframeElement.contentDocument || iframeElement.contentWindow.document;
+		var mHeight = parseInt( window.getComputedStyle( ifrD.documentElement).height );  // Math.max( ifrD.body.scrollHeight, .. offsetHeight, ....clientHeight,
+		var margins = ifrD.body.style.margin + ifrD.body.style.padding + ifrD.documentElement.style.margin + ifrD.documentElement.style.padding;
+		if(margins=="") { margins=0; if(overwrite_margin) {  ifrD.body.style.margin="0px"; } }
+		(function(){
+			var interval = setInterval(function(){
+			if(ifrD.readyState  == 'complete' ){
+				setTimeout( function(){
+					if(!cycling) { setTimeout( function(){ clearInterval(interval);}, 500); }
+					iframeElement.style.height	= (parseInt(window.getComputedStyle( ifrD.documentElement).height) + parseInt(margins)+1) +"px";
+				}, 200 );
+			}
+			},200)
+		})();
+			//var funcname= arguments.callee.name;
+			//window.setTimeout( function(){ console.log(funcname); console.log(cycling); window[funcname](iframeElement, cycling); }, 500 );
+	},
+
+	getYtIdFromURL(URLL){let r=URLL.match(/^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/); return r[1];},
 
 	//state url change
 	//function processAjaxData(response, urlPath){
@@ -2406,7 +2429,7 @@ const puvox_library =
 		};
 	},
 	
-	compare(a, b, operator) {
+	compare(a, operator, b) {
 		if(operator === '==') return a == b;
 		else if (operator === '===') return a === b;
 		else if (operator === '!=') return a != b;
@@ -2417,7 +2440,7 @@ const puvox_library =
 		else if (operator === '<=') return a <= b;
 		else throw "Unknown operator";
 	},
-	calculate(a, b, operator) {
+	calculate(a, operator, b) {
 		if(operator === '+') return a + b;
 		else if (operator === '-') return a - b;
 		else if (operator === '*') return a * b;
