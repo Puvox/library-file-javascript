@@ -435,6 +435,21 @@ const puvox_library =
 		return result;
 	},
 
+	renameKey (obj, keyFrom, keyTo) {
+		for (const key of Object.keys(obj)) {
+			obj[keyTo] = obj[keyFrom];
+			delete obj[keyFrom];
+		}
+		return obj;
+	},
+	renameSubKey (obj, keyFrom, keyTo) {
+		for (const key of Object.keys(obj)) {
+			obj[key][keyTo] = obj[key][keyFrom];
+			delete obj[key][keyFrom];
+		}
+		return obj;
+	},
+
 	hasEmptyChild(obj){
 		let hasEmpty = false;
 		if(this.isObject(obj)) {
