@@ -2369,6 +2369,12 @@ const puvox_library =
 	RemoveHashString(str){  var hash=str.split("#")[1];  return str.replace("#"+hash,'');	},
 	// ===================================================================//
 
+	arrayRemoveValue(array, value) {
+		const newArray = [...array];
+		const index = newArray.indexOf(value);
+		newArray.splice(index, 1);
+		return newArray;
+	},
 
 	getCharsFromStart(str, amount){
 		return str.substring(0, amount);
