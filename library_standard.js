@@ -442,9 +442,9 @@ const puvox_library =
 		}
 		return obj;
 	},
-	renameSubKey (obj, keyFrom, keyTo) {
+	renameSubKey (obj, keyFrom, keyTo, strict = false) {
 		for (const key of Object.keys(obj)) {
-			obj[key][keyTo] = obj[key][keyFrom];
+			obj[key][keyTo] = strict ? obj[key][keyFrom] : (obj[key][keyFrom] || null);
 			delete obj[key][keyFrom];
 		}
 		return obj;
@@ -1664,7 +1664,7 @@ const puvox_library =
 	// ============================= get basename of url ============================
 	basename(path) {   return path.split('/').reverse()[0];	},
 
-		
+
 	// ======== simple POPUP  ======== https://github.com/ttodua/useful-javascript/ ==============
 	show_my_popup(TEXTorID, AdditionalStyles ){
 			TEXTorID=TEXTorID.trim(); var FirstChar= TEXTorID.charAt(0); var eName = TEXTorID.substr(1); if ('#'==FirstChar || '.'==FirstChar){	if('#'==FirstChar){var x=document.getElementById(eName);} else{var x=document.getElementsByClassName(eName)[0];}} else { var x=document.createElement('div');x.innerHTML=TEXTorID;} var randm_id=Math.floor((Math.random()*100000000));
@@ -2473,9 +2473,10 @@ const puvox_library =
 	// random NUMBER or STRINGS
 	RandomNum(maxNum)		{ return Math.floor((Math.random() * maxNum) + 1); },
 
-	random_number(length)	{ var length= length || 5;  return Math.floor((Math.random() * Math.pow(10, length)) + 1);},
+	random_number(Length)	{ var length= length || 5;  return Math.floor((Math.random() * Math.pow(10, length)) + 1);},
+	randomNumber(Length)	{return this.random_number(length);},
 	random_number_minmax(min, max) { var min= min || 1; var max= max || 9999999999; return Math.floor(Math.random() * (max - min + 1)) + min;},
-	randomString(length)	{ var length= length || 5;  return Math.random().toString(36).substr(2, length);},
+	randomString(Length)	{ var length= length || 5;  return Math.random().toString(36).substr(2, length);},
     //getRandomInt(max) {    return Math.floor(Math.random() * Math.floor(max)); },
 	
 	shuffle_Word(word){
@@ -2728,9 +2729,6 @@ const puvox_library =
 
 
 
-
-
-
 	async fetch(url, postOptions = null, opts = {}){
 		return await this.getRemoteData(url, postOptions, opts);
 	},
@@ -2755,6 +2753,17 @@ const puvox_library =
 	},
 	//  if(setHashInAddress) {	window.location.hash = id_or_Name;	}
 	
+
+    async downloadFile(url, path){
+        const res = await this.fetch(url);
+        const fileStream = this.file.fs().createWriteStream(path);
+        await new Promise((resolve, reject) => {
+            res.body.pipe(fileStream);
+            res.body.on("error", reject);
+            fileStream.on("finish", resolve);
+        });
+    },
+
 	unTrailingSlash(str){
 		while (str.endsWith('/') || str.endsWith('\\')) {
 			str = str.slice(0, -1);

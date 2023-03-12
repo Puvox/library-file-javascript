@@ -10,7 +10,10 @@ Include `<script src="https://unpkg.com/puvox-library"></script>` in your front-
 
 ## Examples
 ```
-let myVar = PuvoxLibrary.arrayLastItem ( [1,2,3,4,5] );
-let myVar = PuvoxLibrary.removeKeys ( {a:11, b:22, c:33},  ['c'] );
-// etc, numberous useful methods...
+PuvoxLibrary.arrayValue ( {a:11, b:22, c:33}, 'c' );         // 33
+PuvoxLibrary.arrayRemoveValue ( ["k", "z", "g"] , "z" );     // ["k", "g"]
+PuvoxLibrary.randomNumber (length);                          // 29873433
+PuvoxLibrary.removeKeys ( {a:11, b:22, c:33},  ['c'] );      // {a:11, b:22}
+PuvoxLibrary.stringToArray ( {a:11, b:22, c:33},  ['c'] );   // {a:11, b:22}
+// etc, numerous useful methods...
 ```
