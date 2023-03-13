@@ -934,8 +934,12 @@ const puvox_library =
 		msGoneAfter(date){
 			return (new Date()-date);
 		},
-		getYMDHISFfromDate(dt){
-			return [1900 + dt.getYear(), dt.getMonth()+1, dt.getDate(), dt.getHours(), dt.getMinutes(), dt.getSeconds(), dt.getMilliseconds()];
+		getYMDHISFfromDate(dt, utc=true){
+			if (utc) {
+				return [dt.getUTCFullYear(), dt.getUTCMonth()+1, dt.getUTCDate(), dt.getUTCHours(), dt.getUTCMinutes(), dt.getUTCSeconds(), dt.getUTCMilliseconds()];
+			} else {
+				return [1900 + dt.getYear(), dt.getMonth()+1, dt.getDate(), dt.getHours(), dt.getMinutes(), dt.getSeconds(), dt.getMilliseconds()];
+			}
 		}, 
 		prefixWithZero(num, digits){
 			return (digits===1 ? num : (digits===2 ? (num < 10 ? "0"+num : num ) : (digits===3 ? (num < 10 ? "00"+num : (num < 100 ? "0"+num : num ) ) : num ) ) ).toString();
@@ -2754,15 +2758,14 @@ const puvox_library =
 	//  if(setHashInAddress) {	window.location.hash = id_or_Name;	}
 	
 
-    async downloadFile(url, path){
-        const res = await this.fetch(url);
-        const fileStream = this.file.fs().createWriteStream(path);
-        await new Promise((resolve, reject) => {
-            res.body.pipe(fileStream);
-            res.body.on("error", reject);
-            fileStream.on("finish", resolve);
-        });
-    },
+    // async downloadFile(url, path){
+	// 	const { Readable } = require('stream');
+	// 	const { finished } = require('stream/promises');
+    //     const response = await fetch(url);
+    //     const body = Readable.fromWeb(response.body);
+	// 	const download_write_stream = this.file.fs().createWriteStream(filepath);
+	// 	await finished(body.pipe(download_write_stream));
+    // },
 
 	unTrailingSlash(str){
 		while (str.endsWith('/') || str.endsWith('\\')) {
