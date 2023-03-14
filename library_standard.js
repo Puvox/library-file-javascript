@@ -1008,11 +1008,12 @@ const puvox_library =
 			return result;
 		},
 		daysBetween(a, b, utc = true){
+			// https://stackoverflow.com/a/15289883/2377343
 			const _MS_PER_DAY = 1000 * 60 * 60 * 24;
 			let d1, d2;
 			// Discard the time and time-zone information.
 			if (utc) {
-				d1 = Date.UTC(a.getUTCgetFullYear(), a.getUTCMonth(), a.getUTCDate());
+				d1 = Date.UTC(a.getUTCFullYear(), a.getUTCMonth(), a.getUTCDate());
 				d2 = Date.UTC(b.getUTCFullYear(), b.getUTCMonth(), b.getUTCDate());
 			} else {
 				d1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
