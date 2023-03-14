@@ -1006,6 +1006,19 @@ const puvox_library =
 			var result = new Date(date);
 			result.setDate(result.getDate() + days);
 			return result;
+		},
+		daysBetween(a, b, utc = true){
+			const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+			let d1, d2;
+			// Discard the time and time-zone information.
+			if (utc) {
+				d1 = Date.UTC(a.getUTCgetFullYear(), a.getUTCMonth(), a.getUTCDate());
+				d2 = Date.UTC(b.getUTCFullYear(), b.getUTCMonth(), b.getUTCDate());
+			} else {
+				d1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+				d2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+			}
+			return Math.floor((d2 - d1) / _MS_PER_DAY);
 		}
 	},
 
