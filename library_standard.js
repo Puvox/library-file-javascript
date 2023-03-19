@@ -1095,7 +1095,7 @@ const puvox_library =
 			rejector = reject;
 		});
 		let buffer = '';
-		const readStream = fs.createReadStream(filePath);
+		const readStream = this.file.fs().createReadStream(filePath);
 		let collectedLines = [];
 		readStream.on('data', async function(chunk) {
 			var lines = (buffer + chunk).split(/\n/g);
