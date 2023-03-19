@@ -1068,6 +1068,86 @@ const puvox_library =
 	},
 	
 	
+	// https://stackoverflow.com/a/7924240/2377343 (has better performance than (ch.match(/\n/g) || []).length  or ch.split('\n').length - 1 )
+	occurences_amount(string, subString, allowOverlapping) {
+		string += "";
+		subString += "";
+		if (subString.length <= 0) return (string.length + 1);
+		var n = 0, pos = 0, step = allowOverlapping ? 1 : subString.length;
+		while (true) {
+			pos = string.indexOf(subString, pos);
+			if (pos >= 0) { ++n; pos += step; } else break;
+		}
+		return n;
+	},
+	
+	// startReadStream(__dirname + '/aa.csv', ()=>{});
+	async readLineByLine (filePath, callback, linesSize = 10000, delimiterN = true) {
+		// https://stackoverflow.com/questions/6156501/read-a-file-one-line-at-a-time-in-node-js
+		// https://stackoverflow.com/questions/31479379/nodejs-read-very-large-file10gb-process-line-by-line-then-write-to-other-fil
+		// https://stackoverflow.com/questions/7545147/nodejs-synchronization-read-large-file-line-by-line
+		// https://stackoverflow.com/questions/16010915/parsing-huge-logfiles-in-node-js-read-in-line-by-line
+		// calblack format: callback(linesArray, isLastChunk)
+		let resolver = null;
+		let rejector = null;
+		const prom = new Promise((resolve, reject) => {
+			resolver = resolve;
+			rejector = reject;
+		});
+		let buffer = '';
+		const readStream = fs.createReadStream(filePath);
+		let collectedLines = [];
+		readStream.on('data', async function(chunk) {
+			var lines = (buffer + chunk).split(/\n/g);
+			buffer = lines.pop();
+			collectedLines = collectedLines.concat(lines);
+			const length = collectedLines.length;
+			if (length > linesSize) {
+				const remnant = collectedLines.splice(linesSize);
+				await callback(collectedLines, false);
+				collectedLines = remnant;
+			}
+		});
+		readStream.on('end', async function() {
+			collectedLines = collectedLines.concat([buffer]);
+			await callback(collectedLines, true);
+			resolver();
+		});
+		readStream.on('error', function() {
+			rejector();
+		});
+		return prom;
+	},
+	async linesAmountInFile(filePath, delimiterN = true) {
+		const self = this;
+		// calblack format: callback(linesArray, isLastChunk)
+		let resolver = null;
+		let rejector = null;
+		const prom = new Promise((resolve, reject) => {
+			resolver = resolve;
+			rejector = reject;
+		});
+		let buffer = '';
+		const readStream = fs.createReadStream(filePath);
+		let linesAmount = 0;
+		readStream.on('data', async function(chunk) {
+			const ch = chunk + '';
+			const curLenth = self.helpers.occurences_amount(ch, '\n');
+			linesAmount = linesAmount + curLenth;
+		});
+		readStream.on('end', async function() {
+			resolver(linesAmount);
+		});
+		readStream.on('error', function() {
+			rejector();
+		});
+		return prom;
+	},
+
+
+
+
+
 	oneSpace(cc){
 		return cc.replace(/\s\s+/g, ' ');
 	},
