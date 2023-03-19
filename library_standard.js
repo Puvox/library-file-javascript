@@ -1131,7 +1131,7 @@ const puvox_library =
 		let linesAmount = 0;
 		readStream.on('data', async function(chunk) {
 			const ch = chunk + '';
-			const curLenth = self.helpers.occurences_amount(ch, '\n');
+			const curLenth = self.occurences_amount(ch, '\n');
 			linesAmount = linesAmount + curLenth;
 		});
 		readStream.on('end', async function() {
