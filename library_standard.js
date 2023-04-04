@@ -2469,7 +2469,9 @@ const puvox_library =
 	arrayRemoveValue(array, value) {
 		const newArray = [...array];
 		const index = newArray.indexOf(value);
-		newArray.splice(index, 1);
+		if (index > -1){
+			newArray.splice(index, 1);
+		}
 		return newArray;
 	},
 
