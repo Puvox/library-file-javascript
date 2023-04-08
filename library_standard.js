@@ -3076,7 +3076,7 @@ const puvox_library =
 		fs() {return require('fs');}, //puvox_library.modules('fs')
 		os() {return require('os');},
 		path() {return require('path');},
-		//
+		// ends with slash
 		tempDir(){ return puvox_library.trailingSlash(this.os().tmpdir()); },
 
 		exists(filePath){
@@ -3121,6 +3121,26 @@ const puvox_library =
 			return filesList;
 		},
 	},
+	options: {
+		fileLocation(suffix = '') {
+			return puvox_library.file.tempDir() + puvox_library.getAppName() + '_' + suffix + '.json';
+		},
+		get(groupName, optName, defaultVal = null){
+			const fileName = this.fileLocation(groupName);
+			const content = puvox_library.file.read(fileName, '{}');
+			const json = JSON.parse(content);
+			return (optName in json) ? json[optName] : defaultVal;
+		},
+		set(groupName, optName, val){
+			const fileName = this.fileLocation(groupName);
+			const content = puvox_library.file.read(fileName, '{}');
+			const json = JSON.parse(content);
+			json[optName] = val;
+			puvox_library.file.write(fileName, JSON.stringify(json));
+		}
+	},
+
+
 
 
 
