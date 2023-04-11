@@ -2739,75 +2739,6 @@ const puvox_library =
 	md5(str){var md5cycle=function(x,k){var a=x[0],b=x[1],c=x[2],d=x[3];a=ff(a,b,c,d,k[0],7,-680876936);d=ff(d,a,b,c,k[1],12,-389564586);c=ff(c,d,a,b,k[2],17,606105819);b=ff(b,c,d,a,k[3],22,-1044525330);a=ff(a,b,c,d,k[4],7,-176418897);d=ff(d,a,b,c,k[5],12,1200080426);c=ff(c,d,a,b,k[6],17,-1473231341);b=ff(b,c,d,a,k[7],22,-45705983);a=ff(a,b,c,d,k[8],7,1770035416);d=ff(d,a,b,c,k[9],12,-1958414417);c=ff(c,d,a,b,k[10],17,-42063);b=ff(b,c,d,a,k[11],22,-1990404162);a=ff(a,b,c,d,k[12],7,1804603682);d=ff(d,a,b,c,k[13],12,-40341101);c=ff(c,d,a,b,k[14],17,-1502002290);b=ff(b,c,d,a,k[15],22,1236535329);a=gg(a,b,c,d,k[1],5,-165796510);d=gg(d,a,b,c,k[6],9,-1069501632);c=gg(c,d,a,b,k[11],14,643717713);b=gg(b,c,d,a,k[0],20,-373897302);a=gg(a,b,c,d,k[5],5,-701558691);d=gg(d,a,b,c,k[10],9,38016083);c=gg(c,d,a,b,k[15],14,-660478335);b=gg(b,c,d,a,k[4],20,-405537848);a=gg(a,b,c,d,k[9],5,568446438);d=gg(d,a,b,c,k[14],9,-1019803690);c=gg(c,d,a,b,k[3],14,-187363961);b=gg(b,c,d,a,k[8],20,1163531501);a=gg(a,b,c,d,k[13],5,-1444681467);d=gg(d,a,b,c,k[2],9,-51403784);c=gg(c,d,a,b,k[7],14,1735328473);b=gg(b,c,d,a,k[12],20,-1926607734);a=hh(a,b,c,d,k[5],4,-378558);d=hh(d,a,b,c,k[8],11,-2022574463);c=hh(c,d,a,b,k[11],16,1839030562);b=hh(b,c,d,a,k[14],23,-35309556);a=hh(a,b,c,d,k[1],4,-1530992060);d=hh(d,a,b,c,k[4],11,1272893353);c=hh(c,d,a,b,k[7],16,-155497632);b=hh(b,c,d,a,k[10],23,-1094730640);a=hh(a,b,c,d,k[13],4,681279174);d=hh(d,a,b,c,k[0],11,-358537222);c=hh(c,d,a,b,k[3],16,-722521979);b=hh(b,c,d,a,k[6],23,76029189);a=hh(a,b,c,d,k[9],4,-640364487);d=hh(d,a,b,c,k[12],11,-421815835);c=hh(c,d,a,b,k[15],16,530742520);b=hh(b,c,d,a,k[2],23,-995338651);a=ii(a,b,c,d,k[0],6,-198630844);d=ii(d,a,b,c,k[7],10,1126891415);c=ii(c,d,a,b,k[14],15,-1416354905);b=ii(b,c,d,a,k[5],21,-57434055);a=ii(a,b,c,d,k[12],6,1700485571);d=ii(d,a,b,c,k[3],10,-1894986606);c=ii(c,d,a,b,k[10],15,-1051523);b=ii(b,c,d,a,k[1],21,-2054922799);a=ii(a,b,c,d,k[8],6,1873313359);d=ii(d,a,b,c,k[15],10,-30611744);c=ii(c,d,a,b,k[6],15,-1560198380);b=ii(b,c,d,a,k[13],21,1309151649);a=ii(a,b,c,d,k[4],6,-145523070);d=ii(d,a,b,c,k[11],10,-1120210379);c=ii(c,d,a,b,k[2],15,718787259);b=ii(b,c,d,a,k[9],21,-343485551);x[0]=add32(a,x[0]);x[1]=add32(b,x[1]);x[2]=add32(c,x[2]);x[3]=add32(d,x[3])};var cmn=function(q,a,b,x,s,t){a=add32(add32(a,q),add32(x,t));return add32(a<<s|a>>>32-s,b)};var ff=function(a,b,c,d,x,s,t){return cmn(b&c|~b&d,a,b,x,s,t)};var gg=function(a,b,c,d,x,s,t){return cmn(b&d|c&~d,a,b,x,s,t)};var hh=function(a,b,c,d,x,s,t){return cmn(b^c^d,a,b,x,s,t)};var ii=function(a,b,c,d,x,s,t){return cmn(c^(b|~d),a,b,x,s,t)};var md51=function(s){var txt="",n=s.length,state=[1732584193,-271733879,-1732584194,271733878],i;for(i=64;i<=s.length;i+=64){md5cycle(state,md5blk(s.substring(i-64,i)))}s=s.substring(i-64);var tail=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];for(i=0;i<s.length;i++)tail[i>>2]|=s.charCodeAt(i)<<(i%4<<3);tail[i>>2]|=128<<(i%4<<3);if(i>55){md5cycle(state,tail);for(i=0;i<16;i++)tail[i]=0}tail[14]=n*8;md5cycle(state,tail);return state};var md5blk=function(s){var md5blks=[],i;for(i=0;i<64;i+=4){md5blks[i>>2]=s.charCodeAt(i)+(s.charCodeAt(i+1)<<8)+(s.charCodeAt(i+2)<<16)+(s.charCodeAt(i+3)<<24)}return md5blks};var hex_chr="0123456789abcdef".split("");var rhex=function(n){var s="",j=0;for(;j<4;j++)s+=hex_chr[n>>j*8+4&15]+hex_chr[n>>j*8&15];return s};var hex=function(x){for(var i=0;i<x.length;i++)x[i]=rhex(x[i]);return x.join("")};var md5_=function(s){return hex(md51(s))};var add32=function(a,b){return a+b&4294967295};if(md5_("hello")!="5d41402abc4b2a76b9719d911017c592"){var add32=function(x,y){var lsw=(x&65535)+(y&65535),msw=(x>>16)+(y>>16)+(lsw>>16);return msw<<16|lsw&65535}}return md5_(str)},
 
 
-	// ######## Cookies: https://github.com/ttodua/useful-javascript/blob/master/cookies-library.js ######## //
-	Cookies : {
-		get(a,b) { return this.cookies_instance().get(a,b); },
-		set(a,b,c) { return this.cookies_instance().set(a,b);  },
-		remove(a, b) {return this.cookies_instance().remove(a,b);   },
-		append(name, value, attributes) {return this.cookies_instance().set((this.get(name) || '')  + value, attributes);  },
-		isset(cookiename) {return this.get(cookiename)!="";}, // document.cookie.indexOf('; '+cookiename+'='); 
-		// WORKING WITH ARRAY/OBJECTS
-		getOption(cookieName, key, defaultValue)
-		{ 
-			var existingValue = this.get(cookieName);
-			if(existingValue)
-			{
-				var parsed = JSON.parse(existingValue);
-				if(key in parsed)
-					return parsed[key];
-			}
-			return defaultValue;
-		},
-		setOption(cookieName, key, value, attributes)
-		{
-			var cookie = this.get(cookieName);
-			var parsed = {};
-			if(cookie) parsed = JSON.parse(cookie); 
-			parsed[key] = value;
-			var attributes = attributes ||  { expires: 99999 };
-			this.set(cookieName, JSON.stringify(parsed), attributes);
-			return parsed;
-		},
-		removeOption(cookieName, key, attributes)
-		{
-			var cookie = this.get(cookieName);
-			var parsed = {};
-			if(cookie) parsed = JSON.parse(cookie); 
-			if(key in parsed) delete parsed[key];
-			var attributes = attributes ||  { expires: 99999 };
-			this.set(cookieName, JSON.stringify(parsed), attributes);
-			return parsed;
-		}, 
-		//sub-array
-		getOptionObject(cookieName, key){
-			return JSON.parse( this.getOption(cookieName, key, "{}") );
-		},
-		setOptionObject(cookieName, key, subKey, subValue){
-			var existing = JSON.parse( this.getOption(cookieName, key, "{}") );
-			if (subValue==null) delete existing[subKey];
-			else existing[subKey]=subValue;
-			this.setOption(cookieName, key, JSON.stringify(existing));
-		},
-		setOptionArray(cookieName, key, subValue, Add_or_remove)
-		{
-			var existing = JSON.parse( this.getOption(cookieName, key, "[]") );
-			if (Add_or_remove && !existing.includes(subValue) )
-			{
-				existing.push(subValue);
-			}
-			else if(!Add_or_remove && existing.includes(subValue) )
-			{
-				existing = this.removeItem(existing, subValue);
-			}
-			this.setOption(cookieName, key, JSON.stringify(existing));
-		},
-		//
-		cookies_instance(){ if (!this.cookies_inited) this.cookies_inited=this.cookies(); return this.cookies_inited; } ,
-		cookies_inited: null,
-		// https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js
-		cookies : function(){"use strict";function e(e){for(var t=1;t<arguments.length;t++){var n=arguments[t];for(var r in n)e[r]=n[r]}return e}var t={read:function(e){return e.replace(/(%[\dA-F]{2})+/gi,decodeURIComponent)},write:function(e){return encodeURIComponent(e).replace(/%(2[346BF]|3[AC-F]|40|5[BDE]|60|7[BCD])/g,decodeURIComponent)}};return function n(r,o){function i(t,n,i){if("undefined"!=typeof document){"number"==typeof(i=e({},o,i)).expires&&(i.expires=new Date(Date.now()+864e5*i.expires)),i.expires&&(i.expires=i.expires.toUTCString()),t=encodeURIComponent(t).replace(/%(2[346B]|5E|60|7C)/g,decodeURIComponent).replace(/[()]/g,escape),n=r.write(n,t);var c="";for(var u in i)i[u]&&(c+="; "+u,!0!==i[u]&&(c+="="+i[u].split(";")[0]));return document.cookie=t+"="+n+c}}return Object.create({set:i,get:function(e){if("undefined"!=typeof document&&(!arguments.length||e)){for(var n=document.cookie?document.cookie.split("; "):[],o={},i=0;i<n.length;i++){var c=n[i].split("="),u=c.slice(1).join("=");'"'===u[0]&&(u=u.slice(1,-1));try{var f=t.read(c[0]);if(o[f]=r.read(u,f),e===f)break}catch(e){}}return e?o[e]:o}},remove:function(t,n){i(t,"",e({},n,{expires:-1}))},withAttributes:function(t){return n(this.converter,e({},this.attributes,t))},withConverter:function(t){return n(e({},this.converter,t),this.attributes)}},{attributes:{value:Object.freeze(o)},converter:{value:Object.freeze(r)}})}(t,{path:"/"})}
-	},
-
 
 
 	jsonConcat(o1, o2) {
@@ -2882,62 +2813,174 @@ const puvox_library =
 		return this.privateAppName__; 
 	},
 
-	cache: {
-		localStorage : { 
-			storage: typeof window !== 'undefined' ? window.localStorage : null,
+	
+	// ######## Cookies: https://github.com/ttodua/useful-javascript/blob/master/cookies-library.js ######## //
+	Cookies : {
+		get(a,b) { return this.cookies_instance().get(a,b); },
+		set(a,b,c) { return this.cookies_instance().set(a,b);  },
+		remove(a, b) {return this.cookies_instance().remove(a,b);   },
+		append(name, value, attributes) {return this.cookies_instance().set((this.get(name) || '')  + value, attributes);  },
+		isset(cookiename) {return this.get(cookiename)!="";}, // document.cookie.indexOf('; '+cookiename+'='); 
+		// WORKING WITH ARRAY/OBJECTS
+		getOption(cookieName, key, defaultValue)
+		{ 
+			var existingValue = this.get(cookieName);
+			if(existingValue)
+			{
+				var parsed = JSON.parse(existingValue);
+				if(key in parsed)
+					return parsed[key];
+			}
+			return defaultValue;
+		},
+		setOption(cookieName, key, value, attributes)
+		{
+			var cookie = this.get(cookieName);
+			var parsed = {};
+			if(cookie) parsed = JSON.parse(cookie); 
+			parsed[key] = value;
+			var attributes = attributes ||  { expires: 99999 };
+			this.set(cookieName, JSON.stringify(parsed), attributes);
+			return parsed;
+		},
+		removeOption(cookieName, key, attributes)
+		{
+			var cookie = this.get(cookieName);
+			var parsed = {};
+			if(cookie) parsed = JSON.parse(cookie); 
+			if(key in parsed) delete parsed[key];
+			var attributes = attributes ||  { expires: 99999 };
+			this.set(cookieName, JSON.stringify(parsed), attributes);
+			return parsed;
+		}, 
+		//sub-array
+		getOptionObject(cookieName, key){
+			return JSON.parse( this.getOption(cookieName, key, "{}") );
+		},
+		setOptionObject(cookieName, key, subKey, subValue){
+			var existing = JSON.parse( this.getOption(cookieName, key, "{}") );
+			if (subValue==null) delete existing[subKey];
+			else existing[subKey]=subValue;
+			this.setOption(cookieName, key, JSON.stringify(existing));
+		},
+		setOptionArray(cookieName, key, subValue, Add_or_remove)
+		{
+			var existing = JSON.parse( this.getOption(cookieName, key, "[]") );
+			if (Add_or_remove && !existing.includes(subValue) )
+			{
+				existing.push(subValue);
+			}
+			else if(!Add_or_remove && existing.includes(subValue) )
+			{
+				existing = puvox_library.removeItem(existing, subValue);
+			}
+			this.setOption(cookieName, key, JSON.stringify(existing));
+		},
+		//
+		cookies_instance(){ if (!this.cookies_inited) this.cookies_inited=this.cookies(); return this.cookies_inited; } ,
+		cookies_inited: null,
+		// https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js
+		cookies : function(){"use strict";function e(e){for(var t=1;t<arguments.length;t++){var n=arguments[t];for(var r in n)e[r]=n[r]}return e}var t={read:function(e){return e.replace(/(%[\dA-F]{2})+/gi,decodeURIComponent)},write:function(e){return encodeURIComponent(e).replace(/%(2[346BF]|3[AC-F]|40|5[BDE]|60|7[BCD])/g,decodeURIComponent)}};return function n(r,o){function i(t,n,i){if("undefined"!=typeof document){"number"==typeof(i=e({},o,i)).expires&&(i.expires=new Date(Date.now()+864e5*i.expires)),i.expires&&(i.expires=i.expires.toUTCString()),t=encodeURIComponent(t).replace(/%(2[346B]|5E|60|7C)/g,decodeURIComponent).replace(/[()]/g,escape),n=r.write(n,t);var c="";for(var u in i)i[u]&&(c+="; "+u,!0!==i[u]&&(c+="="+i[u].split(";")[0]));return document.cookie=t+"="+n+c}}return Object.create({set:i,get:function(e){if("undefined"!=typeof document&&(!arguments.length||e)){for(var n=document.cookie?document.cookie.split("; "):[],o={},i=0;i<n.length;i++){var c=n[i].split("="),u=c.slice(1).join("=");'"'===u[0]&&(u=u.slice(1,-1));try{var f=t.read(c[0]);if(o[f]=r.read(u,f),e===f)break}catch(e){}}return e?o[e]:o}},remove:function(t,n){i(t,"",e({},n,{expires:-1}))},withAttributes:function(t){return n(this.converter,e({},this.attributes,t))},withConverter:function(t){return n(e({},this.converter,t),this.attributes)}},{attributes:{value:Object.freeze(o)},converter:{value:Object.freeze(r)}})}(t,{path:"/"})}
+	},
 
-			get(name, defaultValue, expireSeconds = 0){
-				let appName = puvox_library.getAppName();
-				let val = this.storage.getItem(appName + '_' + name);
-				let expireVal = this.storage.getItem(appName + '_createtime_' + name);
-				if (val === null) {
-					return defaultValue;
+
+	cache: {
+		helper_read(groupName, storageType, expireSeconds = 0){
+			const appName = puvox_library.getAppName();
+			if (storageType === 'file'){
+				const filepath = puvox_library.file.tempDir() + appName + '_' + groupName + '.json';
+				// todo: add expiration
+				return puvox_library.file.read(filepath);
+			} else if (storageType === 'localStorage') {
+				const storage = window.localStorage;
+				let val = storage.getItem(appName + '_' + groupName);
+				let expireVal = parseInt(storage.getItem(appName + '_' + groupName + '_t'));
+				// if it's expired, then return null
+				if (expireSeconds !== 0 && (new Date()).getTime() - expireVal > expireSeconds*1000){
+					this.storage.removeItem(appName + '_' + groupName);
+					this.storage.removeItem(appName + '_' + groupName + '_t');
+					return null;
 				} else {
-					if (expireSeconds === 0){
-						return val;
-					} else {
-						let now = (new Date()).getTime();
-						if (now - expireVal > expireSeconds*1000){
-							this.storage.removeItem(appName + '_' + name);
-							this.storage.removeItem(appName + '_createtime_' + name);
-							return defaultValue;
-						}
-					}
+					return val;
 				}
-			},
-			set(name, value){
-				try{ 
-					const appName = puvox_library.getAppName();
-					this.storage.setItem(appName + '_' +name, value); 
-					this.storage.setItem(appName + '_createtime_' +name, (new Date()).getTime()); 
-					return true; 
-				}
-				catch(ex){ alert("Cache storage quote exceeded. can't save value. err598"); return false; }
-			},
-			remove(name){
-				const appName = puvox_library.getAppName();
-				this.storage.removeItem(appName + '_' + name); 
-				this.storage.removeItem(appName + '_createtime_' + name);
-			},
-			getItem(name, subItemName, defaultValue){
-				let val = this.get(name, '{}');
-				let parsed = JSON.parse(val);
-				return (subItemName in parsed ? parsed[subItemName] : defaultValue);
-			},
-			setItem(name, subItemName, value){ 
-				let curr = this.get(name, '{}' );
-				let parsed = JSON.parse(curr);
-				parsed[subItemName] = value;
-				return this.set(name, JSON.stringify(parsed) );
-			},
-			removeItem(name, subItemName, value){ 
-				let curr = this.get(name, '{}' );
-				let parsed = JSON.parse(curr);
-				if (subItemName in parsed)
-					delete parsed[subItemName];
-				return this.set(name, JSON.stringify(parsed) );
+			} else {
+				alert(`storageType ${storageType} not supported`);
+				throw new Error(`storageType ${storageType} not supported`);
 			}
 		},
+		helper_write(groupName, content, storageType){
+			const appName = puvox_library.getAppName();
+			if (storageType == 'file'){
+				const filepath = puvox_library.file.tempDir() + appName + '_' + groupName + '.json';
+				// todo: add expiration
+				puvox_library.file.write(filepath, content);
+				return true;
+			} else if (storageType === 'localStorage') {
+				try{ 
+					const storage = window.localStorage;
+					storage.setItem(appName + '_' + groupName, content); 
+					storage.setItem(appName + '_' + groupName + '_t', (new Date()).getTime()); 
+					return true; 
+				}
+				catch(ex){ alert("Cache storage quote exceeded. can't save value. err598 |" + ex.message); }
+			} else {
+				alert(`storageType ${storageType} not supported`);
+				throw new Error(`storageType ${storageType} not supported`);
+			}
+		},
+		helper_delete(groupName, storageType){
+			const appName = puvox_library.getAppName();
+			if (storageType == 'file'){
+				const filepath = puvox_library.file.tempDir() + appName + '_' + groupName + '.json';
+				// todo: better delete
+				puvox_library.file.delete(filepath);
+				return true;
+			} else if (storageType === 'localStorage') {
+				try{ 
+					const storage = window.localStorage;
+					storage.setItem(appName + '_' + groupName, content); 
+					storage.setItem(appName + '_' + groupName + '_t', (new Date()).getTime()); 
+					return true; 
+				}
+				catch(ex){ alert("Cache storage quote exceeded. can't save value. err598 |" + ex.message); }
+			} else {
+				alert(`storageType ${storageType} not supported`);
+				throw new Error(`storageType ${storageType} not supported`);
+			}
+		},
+
+		get(groupName, defaultVal = null, storageType = 'localStorage', expireSeconds = 0){
+			const content = this.helper_read(groupName, storageType, expireSeconds);
+			return (content !== null && content !== '') ? content : defaultVal;
+		},
+		set(groupName, content, storageType = 'localStorage'){
+			this.helper_write(groupName, content, storageType);
+		},
+		delete(groupName, storageType = 'localStorage'){
+			this.helper_delete(groupName, storageType);
+		},
+		getChild(groupName, optName, defaultVal = null, storageType = 'localStorage', expireSeconds = 0){
+			// todo: individual sub-item expiration
+			const content = this.get(groupName, '{}', storageType, expireSeconds);
+			const json = JSON.parse(content);
+			return (optName in json) ? json[optName] : defaultVal;
+		},
+		setChild(groupName, optName, val, storageType = 'localStorage'){
+			const content = this.get(groupName, '{}', storageType, expireSeconds);
+			const json = JSON.parse(content);
+			json[optName] = val;
+			this.set(groupName, JSON.stringify(json), storageType);
+		},
+		deleteChild(groupName, optName, storageType = 'localStorage'){
+			const content = this.get(groupName, '{}', storageType, expireSeconds);
+			// if it's empty, no need to do anything
+			if (content === '{}') return;
+			const json = JSON.parse(content);
+			delete json[optName];
+			this.set(groupName, JSON.stringify(json), storageType);
+		},
+
+
 		file: {
 			// ########## CACHE DIRS (server-side JS) ##########
 			customCacheDir:null,
@@ -3007,6 +3050,10 @@ const puvox_library =
 				return parent.file.write(filePath, contentFinal);
 			},
 			
+
+
+
+			
 			//
 			// writeFileAppendJson(filePath, jsonContent, callback){
 			// 	try{
@@ -3058,7 +3105,9 @@ const puvox_library =
 				}
 				return false;
 			},
-		}
+		},
+ 
+	
 	}, 
 
 	// ################################################
@@ -3088,6 +3137,9 @@ const puvox_library =
 			} else {
 				return null;
 			}
+		},
+		delete(filePath){
+			return (this.unlink(filePath));
 		},
 		unlink(filePath){
 			return (this.fs().unlinkSync(filePath));
@@ -3121,32 +3173,6 @@ const puvox_library =
 			return filesList;
 		},
 	},
-	options: {
-		fileLocation(suffix = '') {
-			return puvox_library.file.tempDir() + puvox_library.getAppName() + '_' + suffix + '.json';
-		},
-		get(groupName, optName, defaultVal = null){
-			const fileName = this.fileLocation(groupName);
-			const content = puvox_library.file.read(fileName, '{}');
-			const json = JSON.parse(content);
-			return (optName in json) ? json[optName] : defaultVal;
-		},
-		set(groupName, optName, val){
-			const fileName = this.fileLocation(groupName);
-			const content = puvox_library.file.read(fileName, '{}');
-			const json = JSON.parse(content);
-			json[optName] = val;
-			puvox_library.file.write(fileName, JSON.stringify(json));
-		}
-	},
-
-
-
-
-
-
-
-
 
 
 
