@@ -2966,7 +2966,7 @@ const puvox_library =
 			return (optName in json) ? json[optName] : defaultVal;
 		},
 		setChild(groupName, optName, val, storageType = 'localStorage'){
-			const content = this.get(groupName, '{}', storageType, expireSeconds);
+			const content = this.get(groupName, '{}', storageType);
 			const json = JSON.parse(content);
 			json[optName] = val;
 			this.set(groupName, JSON.stringify(json), storageType);
