@@ -2904,7 +2904,7 @@ const puvox_library =
 					return val;
 				}
 			} else {
-				alert(`storageType ${storageType} not supported`);
+				if (typeof alert !== 'undefined') alert(`storageType ${storageType} not supported`);
 				throw new Error(`storageType ${storageType} not supported`);
 			}
 		},
