@@ -2910,7 +2910,7 @@ const puvox_library =
 		},
 		helper_write(groupName, content, storageType){
 			const appName = puvox_library.getAppName();
-			if (storageType == 'file'){
+			if (storageType === 'file'){
 				const filepath = puvox_library.file.tempDir() + appName + '_' + groupName + '.json';
 				// todo: add expiration
 				puvox_library.file.write(filepath, content);
@@ -2924,13 +2924,13 @@ const puvox_library =
 				}
 				catch(ex){ alert("Cache storage quote exceeded. can't save value. err598 |" + ex.message); }
 			} else {
-				alert(`storageType ${storageType} not supported`);
+				if (typeof alert !== 'undefined') alert(`storageType ${storageType} not supported`);
 				throw new Error(`storageType ${storageType} not supported`);
 			}
 		},
 		helper_delete(groupName, storageType){
 			const appName = puvox_library.getAppName();
-			if (storageType == 'file'){
+			if (storageType === 'file'){
 				const filepath = puvox_library.file.tempDir() + appName + '_' + groupName + '.json';
 				// todo: better delete
 				puvox_library.file.delete(filepath);
