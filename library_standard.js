@@ -869,6 +869,7 @@ const puvox_library =
 		// in some langs, the date object has distinctions, so the two below needs separated methods. However, the "date" object returned from them, are same, just the representation can be local or UTC depending user.
 		StringToDatetimeUtc(str, format, culture) { return new Date(str); }, 
 		StringToDatetimeLocal(str, format, culture) { return new Date(str); }, 
+		StringToTimestamUtc(str, format, culture) { return new Date(str).getTime(); }, 
 		DatetimeUtc() {  
 			var now = new Date();
 			var utc = new Date(now.getTime()); // + now.getTimezoneOffset() * 60000 is not needed !!!!!!
@@ -3368,6 +3369,11 @@ const puvox_library =
         (object.length >= 2) &&
         ((object[0] === '{') || (object[0] === '['))
     ),
+    encode_html_entities (content) {
+        return content.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
+            return '&#'+i.charCodeAt(0)+';';
+        });
+    },
 	// number
 	precisionFromString (string) {
 		const split = string.replace (/0+$/g, '').split ('.')
