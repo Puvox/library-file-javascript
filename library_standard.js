@@ -2890,7 +2890,8 @@ const puvox_library =
 		helper_read(groupName, storageType, expireSeconds = 0){
 			const appName = puvox_library.getAppName();
 			if (storageType === 'file'){
-				const filepath = puvox_library.file.tempDir() + appName + '_' + groupName + '.json';
+				const dir = puvox_library.file.tempDir() + appName + '/';
+				const filepath = dir + groupName + '.json';
 				// todo: add expiration
 				return puvox_library.file.read(filepath);
 			} else if (storageType === 'localStorage') {
@@ -2914,7 +2915,9 @@ const puvox_library =
 			content = puvox_library.isString (content) ? content : (puvox_library.isArray(content) || puvox_library.isObject(content) ? JSON.stringify(content) : content);
 			const appName = puvox_library.getAppName();
 			if (storageType === 'file'){
-				const filepath = puvox_library.file.tempDir() + appName + '_' + groupName + '.json';
+				const dir = puvox_library.file.tempDir() + appName + '/';
+				puvox_library.file.createDirectory(dir);
+				const filepath = dir + groupName + '.json';
 				// todo: add expiration
 				puvox_library.file.write(filepath, content);
 				return true;
@@ -2934,7 +2937,7 @@ const puvox_library =
 		helper_delete(groupName, storageType){
 			const appName = puvox_library.getAppName();
 			if (storageType === 'file'){
-				const filepath = puvox_library.file.tempDir() + appName + '_' + groupName + '.json';
+				const filepath = puvox_library.file.tempDir() + appName + '/' + groupName + '.json';
 				// todo: better delete
 				puvox_library.file.delete(filepath);
 				return true;
@@ -2991,7 +2994,7 @@ const puvox_library =
 				if (!this.customCacheDir){ 
 					this.customCacheDir = puvox_library.file.tempDir();
 				}
-				let finaldir = puvox_library.trailingSlash(this.customCacheDir + '_cache_' + puvox_library.getAppName());
+				let finaldir = puvox_library.trailingSlash(this.customCacheDir + puvox_library.getAppName() + '_cache_');
 				return finaldir; 
 			},
 			set_dir(dir, auto_clear_seconds=null){ 
@@ -3371,6 +3374,7 @@ const puvox_library =
         (object.length >= 2) &&
         ((object[0] === '{') || (object[0] === '['))
     ),
+	//htmlentities
     encode_html_entities (content) {
         return content.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
             return '&#'+i.charCodeAt(0)+';';
