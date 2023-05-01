@@ -2911,6 +2911,7 @@ const puvox_library =
 			}
 		},
 		helper_write(groupName, content, storageType){
+			content = puvox_library.isString (content) ? content : (puvox_library.isArray(content) || puvox_library.isObject(content) ? JSON.stringify(content) : content);
 			const appName = puvox_library.getAppName();
 			if (storageType === 'file'){
 				const filepath = puvox_library.file.tempDir() + appName + '_' + groupName + '.json';
