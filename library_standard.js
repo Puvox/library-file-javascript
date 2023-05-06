@@ -2593,8 +2593,6 @@ const puvox_library =
 	
 	youtubeImage(id, quality) {  return 'http://img.youtube.com/vi/'+id+'/'+ (quality || "mqdefault") +'.jpg'; } ,
 	 
-	
-	
 	// ============================= detect mobile device ============================= //
 	IsMobileDevice(simpleORfull){
 		var simpleORfull = simpleORfull || "simple";
@@ -3180,6 +3178,12 @@ const puvox_library =
 		},
 	},
 
+	catchUnhandledExceptions (callback) {
+		process.on('uncaughtException', (e) => { callback(e, "exc-uncaught"); });
+		process.on('unhandledRejection', (e) => { callback(e, "uexc-nhandled"); });
+		process.on('warning', e=>{ callback(e, "exc-warning"); });
+	},
+	
 
 
 
