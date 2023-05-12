@@ -2641,8 +2641,8 @@ const puvox_library =
 		if (!this.startsWith(chat_id, '-100')) chat_id = '-100' + chat_id;
 		text = this.br2nl(text);
 		text = this.stripTags(text,'<b><strong><i><em><u><ins><s><strike><del><a><code><pre>'); // allowed: https://core.telegram.org/bots/api#html-style
-		text = text.substring(0, 4095); //max telegram message length 4096
 		text = this.encode_html_entities(text);
+		text = text.substring(0, 4095); //max telegram message length 4096
 		const requestOpts = Object.assign({'chat_id':chat_id, 'text':text}, extra_opts);
 		delete requestOpts['cache'];
 		delete requestOpts['is_repeated_call'];
