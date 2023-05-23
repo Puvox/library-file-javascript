@@ -944,6 +944,27 @@ const puvox_library =
 			} else {
 				return [1900 + dt.getYear(), dt.getMonth()+1, dt.getDate(), dt.getHours(), dt.getMinutes(), dt.getSeconds(), dt.getMilliseconds()];
 			}
+		},
+		getYMDHISFfromDateWithZeros(dt, utc=true){
+			let y, M, d, h, m, s, f;
+			if (utc) {
+				y = dt.getUTCFullYear();
+				M = dt.getUTCMonth()+1;
+				d = dt.getUTCDate();
+				h = dt.getUTCHours();
+				m = dt.getUTCMinutes();
+				s = dt.getUTCSeconds();
+				f = dt.getUTCMilliseconds();
+			} else {
+				y = 1900 + dt.getYear();
+				M = dt.getMonth()+1;
+				d = dt.getDate();
+				h = dt.getHours();
+				m = dt.getMinutes();
+				s = dt.getSeconds();
+				f = dt.getMilliseconds();
+			}
+			return {y:y.toString(), M:(M<10?'0':'')+M.toString(), d:(d<10?'0':'')+d.toString(), h:(h<10?'0':'')+h.toString(), m:(m<10?'0':'')+m.toString(), s:(s<10?'0':'')+s.toString(), f:(f<10?'00':(f<100?'0':''))+f.toString()};
 		}, 
 		prefixWithZero(num, digits){
 			return (digits===1 ? num : (digits===2 ? (num < 10 ? "0"+num : num ) : (digits===3 ? (num < 10 ? "00"+num : (num < 100 ? "0"+num : num ) ) : num ) ) ).toString();
