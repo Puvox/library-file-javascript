@@ -148,6 +148,9 @@ const puvox_library =
         }
         return out
     },
+	sortByValuesIntoArray(obj, ascending = true){
+		return Object.entries(obj).sort((a, b) => ascending ? a[1] - b[1] : b[1] - a[1]);
+	},
 	stringArrayToNumeric(arr){
 		let newArr = [];
 		for(let i=0; i<arr.length; i++){
@@ -3204,9 +3207,9 @@ const puvox_library =
     extend(...args) { return Object.assign ({}, ...args) ;}, // NB: side-effect free
     clone(x){ return (this.isArray (x) ? Array.from (x) : this.extend (x)) ;},
     index(x) { return new Set (this.values (x));},
-    ordered: (x) => x, // a stub to keep assoc keys in order (in JS it does nothing, it's mostly for Python)
+    ordered(x) { return x;}, // a stub to keep assoc keys in order (in JS it does nothing, it's mostly for Python)
     unique(x) { return Array.from (this.index (x));},
-    arrayConcat: (a, b) => a.concat (b),
+    arrayConcat (a, b) { return a.concat (b);},
     inArray (needle, haystack) {
         return haystack.includes (needle);
     },
@@ -3255,32 +3258,35 @@ const puvox_library =
         }
         return out;
     },
-    sortBy: (array, key, descending = false, direction = descending ? -1 : 1) => array.sort ((a, b) => {
-        if (a[key] < b[key]) {
-            return -direction;
-        } else if (a[key] > b[key]) {
-            return direction;
-        } else {
-            return 0;
-        }
-    }),
-    sortBy2: (array, key1, key2, descending = false, direction = descending ? -1 : 1) => array.sort ((a, b) => {
-        if (a[key1] < b[key1]) {
-            return -direction;
-        } else if (a[key1] > b[key1]) {
-            return direction;
-        } else {
-            if (a[key2] < b[key2]) {
-                return -direction;
-            } else if (a[key2] > b[key2]) {
-                return direction;
-            } else {
-                return 0;
-            }
-        }
-    }),
-    flatten: function flatten (x, out = []) {
-
+    sortBy (array, key, descending = false, direction = descending ? -1 : 1) {
+		return array.sort ((a, b) => {
+			if (a[key] < b[key]) {
+				return -direction;
+			} else if (a[key] > b[key]) {
+				return direction;
+			} else {
+				return 0;
+			}
+		});
+	},
+    sortBy2 (array, key1, key2, descending = false, direction = descending ? -1 : 1) {
+		return array.sort ((a, b) => {
+			if (a[key1] < b[key1]) {
+				return -direction;
+			} else if (a[key1] > b[key1]) {
+				return direction;
+			} else {
+				if (a[key2] < b[key2]) {
+					return -direction;
+				} else if (a[key2] > b[key2]) {
+					return direction;
+				} else {
+					return 0;
+				}
+			}
+		});
+	},
+    flatten (x, out = []) {
         for (const v of x) {
             if (this.isArray (v)) {
                 this.flatten (v, out);
@@ -3288,7 +3294,6 @@ const puvox_library =
                 out.push (v);
             }
         }
-
         return out;
     },
     pluck(x, k) { return this.values (x).filter ((v) => k in v).map ((v) => v[k]);},
@@ -3332,10 +3337,10 @@ const puvox_library =
 	isNumber: Number.isFinite,
     isInteger: Number.isInteger,
     isArray: Array.isArray,
-    hasProps: o => ((o !== undefined) && (o !== null)),
-    isString: s => (typeof s === 'string'),
-    isObject: o => ((o !== null) && (typeof o === 'object')),
-    isRegExp: o => (o instanceof RegExp),
+    hasProps (o){ return ((o !== undefined) && (o !== null));},
+    isString (s){ return (typeof s === 'string');},
+    isObject (o){ return ((o !== null) && (typeof o === 'object'));},
+    isRegExp (o){ return (o instanceof RegExp);},
     isDictionary(o ){return (this.isObject (o) && (Object.getPrototypeOf (o) === Object.prototype) && !this.isArray (o) && !this.isRegExp (o));},
     isStringCoercible(x){ return ((this.hasProps (x) && x.toString) || this.isNumber (x));},
 	prop (o, k) { return (this.isObject (o) && o[k] !== '' && o[k] !== null ? o[k] : undefined);},
@@ -3372,12 +3377,14 @@ const puvox_library =
 		const offset = timestamp % ms
 		return timestamp - offset + ((direction === ROUND_UP) ? ms : 0);
 	},
-	json:(data, params = undefined) => JSON.stringify (data),
-	isJsonEncodedObject: object => (
-        (typeof object === 'string') &&
-        (object.length >= 2) &&
-        ((object[0] === '{') || (object[0] === '['))
-    ),
+	json(data, params = undefined) { return JSON.stringify (data); },
+	isJsonEncodedObject (object) {
+		return (
+			(typeof object === 'string') &&
+			(object.length >= 2) &&
+			((object[0] === '{') || (object[0] === '['))
+		);
+	},
 	//htmlentities
     encode_html_entities (content) {
         return content.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
@@ -3400,13 +3407,13 @@ const puvox_library =
 	isNode: !(this.isBrowser || this.isWebWorker),
 	defaultFetch: fetch,
 	//string 
-	uuid: a => a ? (a ^ Math.random () * 16 >> a / 4).toString (16) : ([1e7]+-1e3+-4e3+-8e3+-1e11).replace (/[018]/g, uuid), 
-	capitalize: s => s.length ? (s.charAt (0).toUpperCase () + s.slice (1)) : s,
-    strip: s => s.replace(/^\s+|\s+$/g, ''),
+	uuid (a) { return a ? (a ^ Math.random () * 16 >> a / 4).toString (16) : ([1e7]+-1e3+-4e3+-8e3+-1e11).replace (/[018]/g, uuid);}, 
+	capitalize (s) {return s.length ? (s.charAt (0).toUpperCase () + s.slice (1)) : s;},
+    strip (s) { return s.replace(/^\s+|\s+$/g, '');},
 	// time
-	now: Date.now,
+	now : Date.now,
 	milliseconds: Date.now, //  milliseconds(){ return (new Date().getTime()); },
-	seconds: () => Math.floor (Date.now () / 1000),
+	seconds() { return Math.floor (Date.now () / 1000);},
 	// endregion: ####### from CCXT ##########
 
 
