@@ -359,6 +359,12 @@ const puvox_library =
 	},
 	removeAllWhitespaces(content){ return content.replace(/\s/g,''); },
 
+    replaceAllOccurences (input, search, replacement) {
+        const splited = input.split (search);
+        const joined = splited.join (replacement);
+        return joined;
+    },
+
 	// ####################### TYPE ##############################
 	
 	getVariableType(x) {
@@ -793,7 +799,24 @@ const puvox_library =
 		return array;
 	},
 
-	
+	// avoid ccxt's bug for undefined : https://jsfiddle.net/Lpxsthw4/
+	mergeDeep(target, source) {
+		let output = Object.assign({}, target);
+		if (this.isObject(target) && this.isObject(source)) {
+			Object.keys(source).forEach(key => {
+				if (this.isObject(source[key])) {
+					if (!(key in target))
+					Object.assign(output, { [key]: source[key] });
+					else
+					output[key] = this.mergeDeep(target[key], source[key]);
+				} else {
+					const val= source[key] !== undefined ? source[key] : target[key];
+					Object.assign(output, { [key]: val });
+				}
+			});
+		}
+		return output;
+	},
 	
 	getScrollbarWidth() {
 		var outer = document.createElement("div");
@@ -3338,7 +3361,7 @@ const puvox_library =
         const ns = xs.filter (isNumber); // leave only numbers
         return (ns.length > 0) ? ns.reduce ((a, b) => a + b, 0) : undefined;
     },
-    deepExtend: function deepExtend (...xs) {
+    deepExtend(...xs) {
         let out = undefined;
         for (const x of xs) {
             if (this.isDictionary (x)) {
