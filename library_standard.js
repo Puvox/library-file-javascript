@@ -675,7 +675,7 @@ const puvox_library =
 	
 	invertDictionary(obj) {
 		const newObj = {}; 
-		Object.keys(a).map (k=>newObj[obj[k]]=k);
+		Object.keys(obj).map (k=>newObj[obj[k]]=k);
 		return newObj;
 	},
 
