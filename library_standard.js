@@ -673,6 +673,12 @@ const puvox_library =
     //   var visible = isElementInViewport(el);
     //}
 	
+	invertDictionary(obj) {
+		const newObj = {}; 
+		Object.keys(a).map (k=>newObj[obj[k]]=k);
+		return newObj;
+	},
+
 	isElementInViewport (el) {
 		// Special bonus for those using jQuery
 		if (typeof jQuery === "function" && el instanceof jQuery) {
@@ -962,6 +968,7 @@ const puvox_library =
 			return (new Date()-date);
 		},
 		getYMDHISFfromDate(dt, utc=true){
+			// todo ? is +1 needed for month ??
 			if (utc) {
 				return [dt.getUTCFullYear(), dt.getUTCMonth()+1, dt.getUTCDate(), dt.getUTCHours(), dt.getUTCMinutes(), dt.getUTCSeconds(), dt.getUTCMilliseconds()];
 			} else {
@@ -1070,6 +1077,7 @@ const puvox_library =
 			return Math.floor((d2 - d1) / _MS_PER_DAY);
 		}
 	},
+	// ####### END OF DATETIME FUNCTIONS ####### //
 
 
 
