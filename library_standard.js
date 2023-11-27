@@ -3181,26 +3181,26 @@ const puvox_library =
 	// 	}
 	// }, 
 	file: {
-		set_Fs(module) { this.fs = module;},
-		set_Path(module) { this.path = module;},
-		set_Os(module) { this.os = module;},
+		set_Fs(module) { this.module_fs = module;},
+		set_Path(module) { this.module_path = module;},
+		set_Os(module) { this.module_os = module;},
 		fs() {
-			if(!this.fs) {
+			if(!this.module_fs) {
 				throw new Error ('at first, set puvox_library.set_FS(require("fs"))');
 			}
-			return this.fs;
+			return this.module_fs;
 		},
 		os() {
-			if(!this.os) {
+			if(!this.module_os) {
 				throw new Error ('at first, set puvox_library.set_FS(require("os"))');
 			}
-			return this.os;
+			return this.module_os;
 		},
 		path() {
-			if(!this.path) {
+			if(!this.module_path) {
 				throw new Error ('at first, set puvox_library.set_FS(require("path"))');
 			}
-			return this.path;
+			return this.module_path;
 		},
 		// ends with slash
 		tempDir(){ return puvox_library.trailingSlash(this.os().tmpdir()); },
