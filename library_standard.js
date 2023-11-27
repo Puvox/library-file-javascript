@@ -3456,7 +3456,8 @@ const puvox_library =
 	isElectron: typeof process !== 'undefined' && typeof process.versions !== 'undefined' && typeof process.versions.electron !== 'undefined',
 	isWebWorker: typeof WorkerGlobalScope !== 'undefined' && (self instanceof WorkerGlobalScope),
 	isWindows: typeof process !== 'undefined' && process.platform === "win32",
-	isNode: !(this.isBrowser || this.isWebWorker),
+	// isNode when it's not browser, neither webworker
+	isNode: typeof window === 'undefined' && !(typeof WorkerGlobalScope !== 'undefined' && (self instanceof WorkerGlobalScope)),
 	defaultFetch: fetch,
 	//string 
 	uuid (a) { return a ? (a ^ Math.random () * 16 >> a / 4).toString (16) : ([1e7]+-1e3+-4e3+-8e3+-1e11).replace (/[018]/g, uuid);}, 
