@@ -774,12 +774,15 @@ declare namespace puvox_library {
         }
     }
     export namespace file_1 {
-        export function fs(): any;
-        export function fs(): any;
-        export function os(): any;
-        export function os(): any;
-        export function path(): any;
-        export function path(): any;
+        export function set_Fs(module: any): void;
+        export function set_Fs(module: any): void;
+        export function set_Path(module: any): void;
+        export function set_Path(module: any): void;
+        export function set_Os(module: any): void;
+        export function set_Os(module: any): void;
+        export const fs: any;
+        export const os: any;
+        export const path: any;
         export function tempDir(): string;
         export function tempDir(): string;
         export function exists(filePath: any): any;
