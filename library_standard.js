@@ -2751,7 +2751,7 @@ const puvox_library =
 	openUrlInBrowser(url)
 	{
 		var cmd = (process.platform == 'darwin'? `open ${url}`: process.platform == 'win32'? `start ${url}`: `xdg-open ${url}`); 
-		require('child_process').exec(cmd);
+		// require('child_process').exec(cmd);
 	},
 
 	stringify(obj_or_str){
@@ -3181,9 +3181,27 @@ const puvox_library =
 	// 	}
 	// }, 
 	file: {
-		fs() {return require('fs');}, //puvox_library.modules('fs')
-		os() {return require('os');},
-		path() {return require('path');},
+		set_Fs(module) { this.fs = module;},
+		set_Path(module) { this.path = module;},
+		set_Os(module) { this.os = module;},
+		fs() {
+			if(!this.fs) {
+				throw new Error ('at first, set puvox_library.set_FS(require("fs"))');
+			}
+			return this.fs;
+		},
+		os() {
+			if(!this.os) {
+				throw new Error ('at first, set puvox_library.set_FS(require("os"))');
+			}
+			return this.os;
+		},
+		path() {
+			if(!this.path) {
+				throw new Error ('at first, set puvox_library.set_FS(require("path"))');
+			}
+			return this.path;
+		},
 		// ends with slash
 		tempDir(){ return puvox_library.trailingSlash(this.os().tmpdir()); },
 
