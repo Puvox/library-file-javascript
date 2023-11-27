@@ -3,6 +3,7 @@
   "version": "1.0.60",
   "description": "library-class-javascript",
   "main": "library_standard.js",
+  "type": "module",
   "scripts": {
   },
   "repository": {
