@@ -3500,4 +3500,4 @@ if (typeof window != 'undefined') {
 	window['PuvoxLibrary'] = puvox_library;
 }
 
-export default puvox_library;
+// export default puvox_library;
