@@ -3181,24 +3181,36 @@ const puvox_library =
 	// 	}
 	// }, 
 	file: {
-		set_Fs(module) { this.module_fs = module;},
-		set_Path(module) { this.module_path = module;},
-		set_Os(module) { this.module_os = module;},
+		// support for several native modules
+		set_module(module) { 
+			// 'fs'
+			if ('existsSync' in module && 'readFileSync' in module && 'writeFileSync' in module && 'unlinkSync' in module && 'mkdirSync' in module && 'readdirSync' in module && 'statSync' in module) {
+				this.module_fs = module;
+			}
+			// 'path'
+			else if ('isAbsolute' in module && 'basename' in module && 'dirname' in module) {
+				this.module_path = module;
+			}
+			// 'os'
+			else if ('hostname' in module && 'homedir' in module && 'tmpdir' in module && 'platform' in module) {
+				this.module_os = module;
+			}
+		},
 		fs() {
 			if(!this.module_fs) {
-				throw new Error ('at first, set puvox_library.set_FS(require("fs"))');
+				throw new Error ('at first, set puvox_library.set_module(require("fs"))');
 			}
 			return this.module_fs;
 		},
 		os() {
 			if(!this.module_os) {
-				throw new Error ('at first, set puvox_library.set_FS(require("os"))');
+				throw new Error ('at first, set puvox_library.set_module(require("os"))');
 			}
 			return this.module_os;
 		},
 		path() {
 			if(!this.module_path) {
-				throw new Error ('at first, set puvox_library.set_FS(require("path"))');
+				throw new Error ('at first, set puvox_library.set_module(require("path"))');
 			}
 			return this.module_path;
 		},
