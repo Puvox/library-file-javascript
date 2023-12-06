@@ -772,12 +772,8 @@ export declare namespace cache {
     }
 }
 export declare namespace file_1 {
-    export function set_Fs(module: any): void;
-    export function set_Fs(module: any): void;
-    export function set_Path(module: any): void;
-    export function set_Path(module: any): void;
-    export function set_Os(module: any): void;
-    export function set_Os(module: any): void;
+    export function set_module(module: any): void;
+    export function set_module(module: any): void;
     export function fs(): any;
     export function fs(): any;
     export function os(): any;
