@@ -16,7 +16,7 @@ export = PuvoxLibrary;
  *
 */
 declare class PuvoxLibrary {
-    self: PuvoxLibrary;
+    selfMain: PuvoxLibrary;
     arrayValue(obj_arr: any, key: any, default_: any): any;
     arrayValueLower(obj_arr: any, key: any, default_: any): any;
     arrayValueUpper(obj_arr: any, key: any, default_: any): any;
@@ -136,7 +136,7 @@ declare class PuvoxLibrary {
     animationClick(element: any, animation: any, removeOrNot: any): void;
     animationClickTarget(element: any, target: any, animation: any, removeOrNot: any): void;
     datetime: {
-        MAIN_CLASS: Window & typeof globalThis;
+        MAIN_CLASS: null;
         isBetweenHMS(target: any, start: any, end: any, equality: any): void;
         equalDays(d1: any, d2: any): boolean;
         IsTodayStart(dt: any): void;
@@ -371,7 +371,7 @@ declare class PuvoxLibrary {
     setAppName(name: any): void;
     getAppName(): never;
     Cookies: {
-        MAIN_CLASS: Window & typeof globalThis;
+        MAIN_CLASS: null;
         get(a: any, b: any): any;
         set(a: any, b: any, c: any): any;
         remove(a: any, b: any): any;
@@ -388,7 +388,7 @@ declare class PuvoxLibrary {
         cookies: () => any;
     };
     cache: {
-        MAIN_CLASS: Window & typeof globalThis;
+        MAIN_CLASS: null;
         helper_read(groupName: any, storageType: any, expireSeconds?: number): any;
         helper_write(groupName: any, content: any, storageType: any): true | undefined;
         helper_delete(groupName: any, storageType: any): true | undefined;
@@ -399,7 +399,7 @@ declare class PuvoxLibrary {
         setChild(groupName: any, optName: any, val: any, storageType?: string): void;
         deleteChild(groupName: any, optName: any, storageType?: string): void;
         file: {
-            MAIN_CLASS: Window & typeof globalThis;
+            MAIN_CLASS: null;
             customCacheDir: null;
             get_dir(): any;
             set_dir(dir: any, auto_clear_seconds?: null): any;
@@ -417,7 +417,7 @@ declare class PuvoxLibrary {
         };
     };
     file: {
-        MAIN_CLASS: Window & typeof globalThis;
+        MAIN_CLASS: null;
         set_module(module: any): void;
         module_fs: any;
         module_path: any;
