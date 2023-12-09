@@ -873,7 +873,10 @@ class PuvoxLibrary {
 
 
 	datetime = new (class{
-		MAIN_CLASS = selfMain;
+		MAIN_CLASS = null;
+		constructor(mainclass){
+			this.MAIN_CLASS = mainclass;
+		}
 		//  0940 type time-ints
 		isBetweenHMS(target, start,  end,  equality) { } // datetime, int/datetime, int/datetime, bool
 		equalDays(d1,d2) { 
@@ -1075,7 +1078,7 @@ class PuvoxLibrary {
 			}
 			return Math.floor((d2 - d1) / _MS_PER_DAY);
 		}
-	})();
+	})(this);
 	// ####### END OF DATETIME FUNCTIONS ####### //
 
 
@@ -2867,8 +2870,11 @@ class PuvoxLibrary {
 
 	
 	// ######## Cookies: https://github.com/ttodua/useful-javascript/blob/master/cookies-library.js ######## //
-	Cookies = new (class{
-		MAIN_CLASS = selfMain;
+	Cookies = new (class{ 
+		MAIN_CLASS = null;
+		constructor(mainclass){
+			this.MAIN_CLASS = mainclass;
+		}
 		get(a,b) { return this.cookies_instance().get(a,b); }
 		set(a,b,c) { return this.cookies_instance().set(a,b);  }
 		remove(a, b) {return this.cookies_instance().remove(a,b);   }
@@ -2934,11 +2940,14 @@ class PuvoxLibrary {
 		cookies_inited= null;
 		// https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js
 		cookies = function(){"use strict";function e(e){for(var t=1;t<arguments.length;t++){var n=arguments[t];for(var r in n)e[r]=n[r]}return e}var t={read:function(e){return e.replace(/(%[\dA-F]{2})+/gi,decodeURIComponent)},write:function(e){return encodeURIComponent(e).replace(/%(2[346BF]|3[AC-F]|40|5[BDE]|60|7[BCD])/g,decodeURIComponent)}};return function n(r,o){function i(t,n,i){if("undefined"!=typeof document){"number"==typeof(i=e({},o,i)).expires&&(i.expires=new Date(Date.now()+864e5*i.expires)),i.expires&&(i.expires=i.expires.toUTCString()),t=encodeURIComponent(t).replace(/%(2[346B]|5E|60|7C)/g,decodeURIComponent).replace(/[()]/g,escape),n=r.write(n,t);var c="";for(var u in i)i[u]&&(c+="; "+u,!0!==i[u]&&(c+="="+i[u].split(";")[0]));return document.cookie=t+"="+n+c}}return Object.create({set:i,get:function(e){if("undefined"!=typeof document&&(!arguments.length||e)){for(var n=document.cookie?document.cookie.split("; "):[],o={},i=0;i<n.length;i++){var c=n[i].split("="),u=c.slice(1).join("=");'"'===u[0]&&(u=u.slice(1,-1));try{var f=t.read(c[0]);if(o[f]=r.read(u,f),e===f)break}catch(e){}}return e?o[e]:o}},remove:function(t,n){i(t,"",e({},n,{expires:-1}))},withAttributes:function(t){return n(this.converter,e({},this.attributes,t))},withConverter:function(t){return n(e({},this.converter,t),this.attributes)}},{attributes:{value:Object.freeze(o)},converter:{value:Object.freeze(r)}})}(t,{path:"/"})}
-	})();
+	})(this);
 
 
 	cache = new (class{
-		MAIN_CLASS = selfMain;
+		MAIN_CLASS = null;
+		constructor(mainclass){
+			this.MAIN_CLASS = mainclass;
+		}
 		helper_read(groupName, storageType, expireSeconds = 0){
 			const appName = this.MAIN_CLASS.getAppName();
 			if (storageType === 'file'){
@@ -3040,7 +3049,10 @@ class PuvoxLibrary {
 
 
 		file = new (class {
-			MAIN_CLASS = selfMain;
+			MAIN_CLASS = null;
+			constructor(mainclass){
+				this.MAIN_CLASS = mainclass;
+			}
 			// ########## CACHE DIRS (server-side JS) ##########
 			customCacheDir = null;
 			get_dir(){  
@@ -3161,8 +3173,8 @@ class PuvoxLibrary {
 				}
 				return false;
 			}
-		})();
-	})();
+		})(this.MAIN_CLASS);
+	})(this);
 
 	// ################################################
 	// for node packs:_fs_instance :null,
@@ -3176,7 +3188,10 @@ class PuvoxLibrary {
 	// 	}
 	// }, 
 	file = new (class {
-		MAIN_CLASS = selfMain;
+		MAIN_CLASS = null;
+		constructor(mainclass){
+			this.MAIN_CLASS = mainclass;
+		}
 		// support for several native modules
 		set_module(module) { 
 			// 'fs'
@@ -3257,7 +3272,7 @@ class PuvoxLibrary {
 			});
 			return filesList;
 		}
-	})();
+	})(this);
 
 	catchUnhandledExceptions (callback) {
 		process.on('uncaughtException', (e) => { callback(e, "exc-uncaught"); });
