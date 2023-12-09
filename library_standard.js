@@ -16,7 +16,7 @@
 */
 
 class PuvoxLibrary {
-	self = this;
+	selfMain = this;
 
 	// ########## ARRAY ########## //
 	arrayValue(obj_arr, key, default_){
@@ -89,7 +89,7 @@ class PuvoxLibrary {
 		return source.filter(x => comparedTo.includes(x));
 	}
 	arrayDiffFull(o1,o2) {
-		const self = this;
+		const selfFunc = this;
 		const typeObject = function(o){
 			return typeof o === 'object';
 		};
@@ -113,7 +113,7 @@ class PuvoxLibrary {
 			else if (Object.is(o1, o2)) {
 				return undefined;
 			} else if (bothAreArrays(o1,o2)){
-				return self.arrayDiff(o1,o2);
+				return selfFunc.arrayDiff(o1,o2);
 			}
 			const keys = Object.keys(o2);
 			for (let i=0; i<keys.length; i++) {
@@ -873,7 +873,7 @@ class PuvoxLibrary {
 
 
 	datetime = new (class{
-		MAIN_CLASS = self;
+		MAIN_CLASS = selfMain;
 		//  0940 type time-ints
 		isBetweenHMS(target, start,  end,  equality) { } // datetime, int/datetime, int/datetime, bool
 		equalDays(d1,d2) { 
@@ -1174,7 +1174,7 @@ class PuvoxLibrary {
 		return prom;
 	}
 	async linesAmountInFile(filePath, delimiterN = true) {
-		const self = this;
+		const selfFunc = this;
 		// calblack format: callback(linesArray, isLastChunk)
 		let resolver = null;
 		let rejector = null;
@@ -1186,7 +1186,7 @@ class PuvoxLibrary {
 		let linesAmount = 0;
 		readStream.on('data', async function(chunk) {
 			const ch = chunk + '';
-			const curLenth = self.occurences_amount(ch, '\n');
+			const curLenth = selfFunc.occurences_amount(ch, '\n');
 			linesAmount = linesAmount + curLenth;
 		});
 		readStream.on('end', async function() {
@@ -2868,7 +2868,7 @@ class PuvoxLibrary {
 	
 	// ######## Cookies: https://github.com/ttodua/useful-javascript/blob/master/cookies-library.js ######## //
 	Cookies = new (class{
-		MAIN_CLASS = self;
+		MAIN_CLASS = selfMain;
 		get(a,b) { return this.cookies_instance().get(a,b); }
 		set(a,b,c) { return this.cookies_instance().set(a,b);  }
 		remove(a, b) {return this.cookies_instance().remove(a,b);   }
@@ -2938,7 +2938,7 @@ class PuvoxLibrary {
 
 
 	cache = new (class{
-		MAIN_CLASS = self;
+		MAIN_CLASS = selfMain;
 		helper_read(groupName, storageType, expireSeconds = 0){
 			const appName = this.MAIN_CLASS.getAppName();
 			if (storageType === 'file'){
@@ -3040,7 +3040,7 @@ class PuvoxLibrary {
 
 
 		file = new (class {
-			MAIN_CLASS = self;
+			MAIN_CLASS = selfMain;
 			// ########## CACHE DIRS (server-side JS) ##########
 			customCacheDir = null;
 			get_dir(){  
@@ -3176,7 +3176,7 @@ class PuvoxLibrary {
 	// 	}
 	// }, 
 	file = new (class {
-		MAIN_CLASS = self;
+		MAIN_CLASS = selfMain;
 		// support for several native modules
 		set_module(module) { 
 			// 'fs'
