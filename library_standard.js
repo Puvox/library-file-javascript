@@ -18,6 +18,11 @@
 class PuvoxLibrary {
 	selfMain = this;
 
+	constructor(appName) {
+		this.setAppName(appName);
+	}
+
+
 	// ########## ARRAY ########## //
 	arrayValue(obj_arr, key, default_){
 		return (obj_arr && key in obj_arr ? obj_arr[key] : default_);

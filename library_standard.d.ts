@@ -16,6 +16,7 @@ export = PuvoxLibrary;
  *
 */
 declare class PuvoxLibrary {
+    constructor(appName: any);
     selfMain: PuvoxLibrary;
     arrayValue(obj_arr: any, key: any, default_: any): any;
     arrayValueLower(obj_arr: any, key: any, default_: any): any;
