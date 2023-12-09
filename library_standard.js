@@ -15,8 +15,7 @@
  *
 */
 
-const puvox_library =
-{
+function PUVOX_LIBRARY() { return {
 	// ########## ARRAY ########## //
 	arrayValue(obj_arr, key, default_){
 		return (obj_arr && key in obj_arr ? obj_arr[key] : default_);
@@ -3499,17 +3498,15 @@ const puvox_library =
 	seconds() { return Math.floor (Date.now () / 1000);},
 	// endregion: ####### from CCXT ##########
 
-
-
-};
+}; }
 
 
 // export to outside world
 if (typeof module != 'undefined' && module.hasOwnProperty('exports')) {
-	module.exports = puvox_library;
+	module.exports = PUVOX_LIBRARY;
 }
 if (typeof window != 'undefined') {
-	window['PuvoxLibrary'] = puvox_library;
+	window['PuvoxLibrary'] = PUVOX_LIBRARY;
 }
 
 // export default puvox_library;
