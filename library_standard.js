@@ -15,39 +15,40 @@
  *
 */
 
-function PUVOX_LIBRARY() { return {
+class PuvoxLibrary {
+
 	// ########## ARRAY ########## //
 	arrayValue(obj_arr, key, default_){
 		return (obj_arr && key in obj_arr ? obj_arr[key] : default_);
-	},
+	}
 	arrayValueLower(obj_arr, key, default_){
 		const val = this.arrayValue(obj_arr, key, default_);
 		return (val===null ? null : val.toLowerCase());
-	},
+	}
 	arrayValueUpper(obj_arr, key, default_){
 		const val = this.arrayValue(obj_arr, key, default_);
 		return (val===null ? null : val.toUpperCase());
-	},
+	}
 	stringToArray(str, splitChar){
 		var splitChar= splitChar || '|';
 		let parts = str.split(splitChar);
 		return parts;
-	},
+	}
 	arrayColumn(array, columnName) {
 		return array.map(function(value,index) {
 			return value[columnName];
 		})
-	},
+	}
 	arrayUnique(array, removeEmpties){
 		//let uniqueItems = [...new Set(items)]
 		let res = array.filter(function(item, pos) {
 			return array.indexOf(item) == pos;
 		});
 		return (removeEmpties ? this.arrayRemoveEmpty(res) : res);
-	},
+	}
 	arrayMerge(ar1,ar2){
 		return ar1.concat(ar2);
-	},
+	}
 	objectsArrayTill(arrayBlocks, key, value)
 	{
 		let newArr = this.isObject(arrayBlocks) ? {} : [];
@@ -60,10 +61,10 @@ function PUVOX_LIBRARY() { return {
 			newArr[key_1] = obj_1;
 		}
 		return newArr;
-	},
-	arrayRemoveEmpty(array){  return array.filter(item => item); },
-	arrayLastMember(arr){  return arr[arr.length-1]; },
-	arrayLastItem(arr){ return this.arrayLastMember(arr); },
+	}
+	arrayRemoveEmpty(array){  return array.filter(item => item); }
+	arrayLastMember(arr){  return arr[arr.length-1]; }
+	arrayLastItem(arr){ return this.arrayLastMember(arr); }
 	removeKeys(obj, keysArr){
 		let newObj ={};
 		for (let [key,val] of Object.entries(obj)){
@@ -71,7 +72,7 @@ function PUVOX_LIBRARY() { return {
 				newObj[key]=val;
 		}
 		return newObj;
-	},
+	}
 	removeKeysExcept (obj, keysArr){
 		let newObj ={};
 		for (let [key,val] of Object.entries(obj)){
@@ -79,13 +80,13 @@ function PUVOX_LIBRARY() { return {
 				newObj[key]=val;
 		}
 		return newObj;
-	},
+	}
 	arrayDiff(source, comparedTo){
 		return source.filter(x => !comparedTo.includes(x));
-	},
+	}
 	arrayIntersect(source, comparedTo){
 		return source.filter(x => comparedTo.includes(x));
-	},
+	}
 	arrayDiffFull(o1,o2) {
 		const self = this;
 		const typeObject = function(o){
@@ -140,40 +141,40 @@ function PUVOX_LIBRARY() { return {
 			diff(o1,o2),
 			diff(o2,o1),
 		];
-	},
+	}
 	sortKeys (x, out = {}) {
         for (const k of Object.keys (x).sort ()) {
             out[k] = x[k]
         }
         return out
-    },
+    }
 	sortByValuesIntoArray(obj, ascending = true){
 		return Object.entries(obj).sort((a, b) => ascending ? a[1] - b[1] : b[1] - a[1]);
-	},
+	}
 	stringArrayToNumeric(arr){
 		let newArr = [];
 		for(let i=0; i<arr.length; i++){
 			newArr.push( parseFloat(arr[i]) );
 		}
 		return newArr;
-	},
+	}
 	stringToArrayToNumeric(arr){
 		return this.stringArrayToNumeric(this.stringToArray(arr));
-	},
+	}
  
 	objectCopy(obj){
 		return JSON.parse(JSON.stringify(obj));
-	},
+	}
 	// https://stackoverflow.com/a/44782052/2377343
     cloneObjectDestructuve(orig){
         return Object.assign(Object.create(Object.getPrototypeOf(orig)), orig);
-    },
+    }
 	// https://stackoverflow.com/a/41474987/2377343
     cloneObjectWithPrototype(orig){
         const clone = Object.assign( Object.create(orig), orig );
 		Object.setPrototypeOf( clone, Blah.prototype );
 		return clone;
-    },
+    }
     getKeyByValue (object, value) {
         const keys = Object.keys (object);
         for (let i = 0; i < keys.length; i++) {
@@ -183,7 +184,7 @@ function PUVOX_LIBRARY() { return {
             }
         }
         return undefined;
-    },    
+    } 
 	hasChildWithKeyValue (obj, targetKey, targetValue) {
         const keys = Object.keys (obj);
         for (let i = 0; i < keys.length; i++) {
@@ -195,8 +196,7 @@ function PUVOX_LIBRARY() { return {
             }
         }
         return false;
-    },
-
+    }
 
 
 
@@ -218,7 +218,7 @@ function PUVOX_LIBRARY() { return {
 				}
 			});
 		}
-	},
+	}
 	
 	// setTimeout( window[arguments.callee.name.toString() ], 500);
 	
@@ -229,14 +229,14 @@ function PUVOX_LIBRARY() { return {
 				jQuery( this ).attr( 'src', jQuery( this ).attr( 'data-src' ) );
 			}
 		);
-	},
+	}
 
 	move_to_top_in_parent(el_tag)
 	{
 		$(el_tag).each(function() {
 			$(this).parent().prepend(this);
 		});
-	},
+	}
 
 	//window.onload REPLACEMENT Both methods are used to achieve the same goal of attaching an event to an element.
 	// ttachEvent can only be used on older trident rendering engines ( IE5+ IE5-8*) and addEventListener is a W3 standard that is implemented in the majority of other browsers (FF, Webkit, Opera, IE9+).
@@ -262,7 +262,7 @@ function PUVOX_LIBRARY() { return {
 		}
 		//append in head
 		(document.head || document.getElementsByTagName('head')[0]).appendChild(x);
-	},
+	}
 	Append_To_Head(elemntType, content) {
 		var Is_Link = content.split(/\r\n|\r|\n/).length <= 1 && content.indexOf("/") > -1 && (content.substring(0, 4) == 'http' || content.substring(0, 2) == '//' || content.substring(0, 2) == './' || content.substring(0, 1) == '/');
 		if (Is_Link) {
@@ -298,7 +298,7 @@ function PUVOX_LIBRARY() { return {
 			}
 			document.head.appendChild(x);
 		}
-	},
+	}
 	// loadScript
 	appendScript(url, callback, defer=false){
 		var script = document.createElement('script');
@@ -307,24 +307,24 @@ function PUVOX_LIBRARY() { return {
 		if (defer)
 			script.defer = true;
 		document.head.appendChild(script);
-	},
+	}
 	appendScript2(url){
 		var script = document.createElement('script');
 		document.head.appendChild(script);
 		script.onload = function () { };
 		script.src = url;
-	},
+	}
 
 	blackground2(){
 		var innerDiv = document.createElement("div"); innerDiv.id = "my_black_backgr";
 		innerDiv.setAttribute("style", "background:black; height:4000px; left:0px; opacity:0.9; position:fixed; top:0px; width:100%; z-index:9990;");
 		var BODYYY = document.body;	BODYYY.insertBefore(innerDiv, BODYYY.childNodes[0]);
-	},
+	}
 	
 	getFileExtension(filename){
 		var ext = filename.split('.').pop();
 		return (ext===filename) ? '' : ext;
-	},
+	}
 	
 	// stackoverflow -best foreach
 	forEach(collection, callback, scope) {
@@ -339,30 +339,29 @@ function PUVOX_LIBRARY() { return {
 				callback.call(scope, collection[i], i, collection);
 			}
 		}
-	},
+	}
 
 	// ################
-	sanitize(str){ return str.trim().replace( /[^a-zA-Z0-9_\-]/g, "_"); },
-	sanitize_key(str, use_dash){ return str.trim().toLowerCase().replace( /[^a-z0-9_\-]/g, (use_dash===true ? '_' : (use_dash ? use_dash :'')) ); }, //same as wp
-	sanitize_key_dashed(str){ return this.sanitize_key(str, true).replace(/__/g,'_'); },
-	sanitize_variable_name(str)
-	{
-		return this.strip_non_word(str).replace(/-/g,"_");
-	},
-	sanitize_text(str, use_dash=false) { return str.trim().replace(/[^a-zA-Z0-9]+/g, (use_dash ? "_":"") ); },
+	sanitize(str){ return str.trim().replace( /[^a-zA-Z0-9_\-]/g, "_"); }
+
+	sanitize_key(str, use_dash){ return str.trim().toLowerCase().replace( /[^a-z0-9_\-]/g, (use_dash===true ? '_' : (use_dash ? use_dash :'')) ); } //same as wp
+
+	sanitize_key_dashed(str){ return this.sanitize_key(str, true).replace(/__/g,'_'); }
+
+	sanitize_variable_name(str) { return this.strip_non_word(str).replace(/-/g,"_"); }
+
+	sanitize_text(str, use_dash=false) { return str.trim().replace(/[^a-zA-Z0-9]+/g, (use_dash ? "_":"") ); }
 
 	//nonword
-	strip_non_word(str)
-	{
-		return str.replace(/[\W_]+/g,"-");
-	},
-	removeAllWhitespaces(content){ return content.replace(/\s/g,''); },
+	strip_non_word(str) { return str.replace(/[\W_]+/g,"-"); }
+
+	removeAllWhitespaces(content){ return content.replace(/\s/g,''); }
 
     replaceAllOccurences (input, search, replacement) {
         const splited = input.split (search);
         const joined = splited.join (replacement);
         return joined;
-    },
+    }
 
 	// ####################### TYPE ##############################
 	
@@ -374,26 +373,26 @@ function PUVOX_LIBRARY() { return {
 		else if (this.isArray(x))	return "array";
 		else if (this.isObject(x))	return "object";
 		return typeof x;
-	},
-	isInteger(x)	{ return Number.isInteger(x); },
-	isNumeric(x)	{ return Number.isFinite(x); },
-	isDecimal(x)	{ return this.isNumeric(x) && (!isNaN(parseFloat(x))); }, // avoid occasions like "1abc"
-	isBoolean(x)	{ return this.isBooleanReal(x) || (this.isString(x) && (x.toLowerCase() =="true" || x.toLowerCase() =="false")); },
-	isBooleanReal(x)	{ return x === true || x === false || toString.call(x) === '[object Boolean]'; },
-	isString(x)	{ return Object.prototype.toString.call(x) === "[object String]"; }, // return (typeof content === 'string' || content instanceof String);
+	}
+	isInteger(x)	{ return Number.isInteger(x); }
+	isNumeric(x)	{ return Number.isFinite(x); }
+	isDecimal(x)	{ return this.isNumeric(x) && (!isNaN(parseFloat(x))); } // avoid occasions like "1abc"
+	isBoolean(x)	{ return this.isBooleanReal(x) || (this.isString(x) && (x.toLowerCase() =="true" || x.toLowerCase() =="false")); }
+	isBooleanReal(x)	{ return x === true || x === false || toString.call(x) === '[object Boolean]'; }
+	isString(x)	{ return Object.prototype.toString.call(x) === "[object String]"; } // return (typeof content === 'string' || content instanceof String);
 	// https://stackoverflow.com/questions/8834126/
-	isObject(x)	{ return  ( !Array.isArray(x)  && Object.prototype.toString.call(x) !== '[object Array]' )  && (  (typeof x === 'object' && x !== null ) || ( (!!x) && (x.constructor === Object) ) || (typeof x === 'function' || typeof x === 'object' && !!x) ) ; },
+	isObject(x)	{ return  ( !Array.isArray(x)  && Object.prototype.toString.call(x) !== '[object Array]' )  && (  (typeof x === 'object' && x !== null ) || ( (!!x) && (x.constructor === Object) ) || (typeof x === 'function' || typeof x === 'object' && !!x) ) ; }
 	// https://stackoverflow.com/questions/8511281/check-if-a-value-is-an-object-in-javascript
 	isJsonObject(data){
 		// doesnt work for string return data!="" && (data=={} || JSON.stringify(data)!='{}');
 		return false;
-	}, 
-	isArray(x)	{ return ( (!!x) && (x.constructor === Array) ) || (Array.isArray(x)); },	
+	}
+	isArray(x)	{ return ( (!!x) && (x.constructor === Array) ) || (Array.isArray(x)); }	
 	
-	isSimpleVariableType(obj){ return this.isSimpleVariableTypeName(typeof obj); },
-	isSimpleVariableTypeName(typeName_){ return this.inArray( typeName_, [ "boolean", "integer", "float", "double", "decimal", "string"]);  },
-	isNumericVariableType(obj){ return this.isNumericVariableTypeName(typeof obj); },
-	isNumericVariableTypeName(typeName_){ return this.inArray(typeName_, [ "integer", "float", "double", "decimal"]); },
+	isSimpleVariableType(obj){ return this.isSimpleVariableTypeName(typeof obj); }
+	isSimpleVariableTypeName(typeName_){ return this.inArray( typeName_, [ "boolean", "integer", "float", "double", "decimal", "string"]);  }
+	isNumericVariableType(obj){ return this.isNumericVariableTypeName(typeof obj); }
+	isNumericVariableTypeName(typeName_){ return this.inArray(typeName_, [ "integer", "float", "double", "decimal"]); }
 
 	stringToBoolean(string){
 		switch(string.toLowerCase().trim()){
@@ -401,10 +400,10 @@ function PUVOX_LIBRARY() { return {
 			case "false": case "no": case "0": case null: return false;
 			default: return Boolean(string);
 		}
-	},
+	}
 	isException(e){
 		return e && e.stack && e.message;
-	},
+	}
 	IsJsonString (str) {
 		try {
 			JSON.parse(str);
@@ -412,10 +411,10 @@ function PUVOX_LIBRARY() { return {
 			return false;
 		}
 		return true;
-	},
+	}
 	is_object(variable){
 		return typeof variable === 'object' && variable !== null;
-	},
+	}
 	formItemsToJson(FormElement){    
 		let formDataEntries = new FormData(FormElement).entries();
 		const handleChild = function (obj,keysArr,value){
@@ -441,7 +440,7 @@ function PUVOX_LIBRARY() { return {
 		for (const [key, value]  of formDataEntries )
 			result= handleChild(result, key.split(/\[/), value); 
 		return result;
-	},
+	}
 
 	renameKey (obj, keyFrom, keyTo) {
 		for (const key of Object.keys(obj)) {
@@ -449,14 +448,14 @@ function PUVOX_LIBRARY() { return {
 			delete obj[keyFrom];
 		}
 		return obj;
-	},
+	}
 	renameSubKey (obj, keyFrom, keyTo, strict = false) {
 		for (const key of Object.keys(obj)) {
 			obj[key][keyTo] = strict ? obj[key][keyFrom] : (obj[key][keyFrom] || null);
 			delete obj[key][keyFrom];
 		}
 		return obj;
-	},
+	}
 
 	hasEmptyChild(obj){
 		let hasEmpty = false;
@@ -468,47 +467,47 @@ function PUVOX_LIBRARY() { return {
 			}
 		}
 		return hasEmpty;
-	},
+	}
 
 	filterObject(obj, callback) {
 		return Object.fromEntries(Object.entries(obj).
 		  filter(([key, val]) => callback(val, key)));
-	},
+	}
 	// #####################################$$$$$################
 	
 	
-	isBetween(a,b,c)   { return a< b && b< c; },
-	isBetweenEq(a,b,c) { return a<=b && b<=c; },
+	isBetween(a,b,c)   { return a< b && b< c; }
+	isBetweenEq(a,b,c) { return a<=b && b<=c; }
 	startsWithWhiteSpace(content){
 		return (/^\s/).test(content);
-	},
+	}
 	trimOnlyFromEnd(content){
 		return content.replace(/\s*$/,"");
-	},
+	}
 	startsWith(content, what){
 		return content.startsWith(what);
-	},
+	}
 	startsWithArray(content,array){
 		array.forEach(function(val){
 			if (content.startsWith(val)) return true;
 		})
 		return false;
-	},
+	}
 	endsWith(content, what){
 		return content.endsWith(what);
-	},
+	}
 	endsWithArray(content,array){
 		array.forEach(function(val){
 			if (content.endsWith(val)) return true;
 		})
 		return false;
-	},
+	}
 	startLetters(str, amountOfLetters){
 		return str.substr(0, amountOfLetters);
-	},
+	}
 	endLetters(str, amountOfLetters){
 		return str.substr(str.length - amountOfLetters);
-	},
+	}
 
 	ConvertNumbToRoman(num){
 		num= num.replace('40','XXXX');	num= num.replace('39','XXXIX');	num= num.replace('38','XXXVIII');	num= num.replace('37','XXXVII');
@@ -521,7 +520,7 @@ function PUVOX_LIBRARY() { return {
 		num= num.replace('12','XII');	num= num.replace('11','XI');	num= num.replace('10','X');			num= num.replace('9','IX');
 		num= num.replace('8','VIII');	num= num.replace('7','VII');	num= num.replace('6','VI');			num= num.replace('5','V');
 		num= num.replace('4','IV');		num= num.replace('3','III');	num= num.replace('2','II');			num= num.replace('1','I'); 		return num;
-	},
+	}
 
 	// encrypt decrypt: http://jsfiddle.net/kein1945/M9K2c/   |   https://stackoverflow.com/questions/18279141/    |    https://stackoverflow.com/questions/51531021/x
 
@@ -530,24 +529,24 @@ function PUVOX_LIBRARY() { return {
 	when_element_is_loaded(Id_or_class,functionname){	
 		Id_or_class=Id_or_class.trim(); var eName = Id_or_class.substr(1);  if('#'==Id_or_class.charAt(0)){var x=document.getElementById(eName);} else{var x=document.getElementsByClassName(eName)[0];}  
 		if(x) { functionname(); }	 else { setTimeout(when_element_is_loaded, 100,  Id_or_class, functionname); } 
-	},
+	}
 
 	// set document title
-	SetTitlee(title) { document.getElementsByTagName('title')[0].innerHTML =	title; },
+	SetTitlee(title) { document.getElementsByTagName('title')[0].innerHTML = title; }
 	
 	setUrl(urlPath, title) {
 		var title= title || false;
 		window.history.pushState( ( title ? {"pageTitle":title} : ""),"", urlPath);   //{"html":...,"pageTitle":....}
-	},
+	}
 	
 	requestUri(url){
 		var url = url || location.href;
 		return url.replace(origin,'');
-	},
+	}
 	// check if key exists in array
 	ArrayKeyExistss(keyname,array) {
 		return typeof array[keyname] !== 'undefined'; 
-	},
+	}
 
 	hashtageChangeOnClick(e) { 
 		function MyCallbackTemp (e)
@@ -568,17 +567,17 @@ function PUVOX_LIBRARY() { return {
 
 		if (document.addEventListener) document.addEventListener('click', MyCallbackTemp, false);
 		else document.attachEvent('onclick', MyCallbackTemp);	
-	},
+	}
 	
 	capitalizeFirstLetter(string) {
 		return string.charAt(0).toUpperCase() + string.slice(1);
-	},
+	}
 
 	addQueryArg(name,value, url)
 	{
 		var url = url || location.href;
 		return url + (url.indexOf("?")<0 ? "?":"&") +escape(name)+"="+escape(value);
-	},
+	}
 	buildQueryString(params){
 		if (!params)  return '';
 		return Object.entries(params)
@@ -586,7 +585,7 @@ function PUVOX_LIBRARY() { return {
 				return `${key}=${encodeURIComponent(value)}`;
 			})
 			.join('&');
-	},
+	}
 
 	// find home url (in wordpress)
 	wpHomeUrl  (){
@@ -594,9 +593,8 @@ function PUVOX_LIBRARY() { return {
 		if (typeof matches !== 'undefined' && matches != null && matches.length > 1 ){
 			homeURL = matches[2];
 		}
-	},
+	}
 	  
-  
 	LoadYoutubeApi(callback)
 	{
 		//  This code loads the IFrame Player API code asynchronously.
@@ -607,10 +605,10 @@ function PUVOX_LIBRARY() { return {
 		window.onYouTubeIframeAPIReady= function(){
 			callback();
 		};
-	},
+	}
 
-    argvsString(){ return process.argv[2]; },
-    argvsArray(){ return process.argv.slice(2); },
+    argvsString(){ return process.argv[2]; }
+    argvsArray(){ return process.argv.slice(2); }
 	argvs(){ 
 		let argvs= this.argvsArray();
 		let KeyValues= {};
@@ -639,14 +637,14 @@ function PUVOX_LIBRARY() { return {
 			}
 		}
 		return KeyValues;
-	},
+	}
 	argv(which, def = undefined){ 
 		let KeyValues= this.argvs();
 		return (which in KeyValues ? KeyValues[which] : def);
-	},
+	}
 	argvIsSet(which){
 		return this.inArray(which, this.argvsArray()) || this.argv(which)!=undefined;
-	},
+	}
 
 	
 	parseQuery(queryString) {
@@ -664,7 +662,7 @@ function PUVOX_LIBRARY() { return {
 			query[decodeURIComponent(pair[0])] = p2;
 		}
 		return query;
-	},
+	}
 	
 	//https://stackoverflow.com/questions/123999/how-can-i-tell-if-a-dom-element-is-visible-in-the-current-viewport
 	//  $(window).on('DOMContentLoaded load resize scroll', handler);
@@ -676,7 +674,7 @@ function PUVOX_LIBRARY() { return {
 		const newObj = {}; 
 		Object.keys(obj).map (k=>newObj[obj[k]]=k);
 		return newObj;
-	},
+	}
 
 	isElementInViewport (el) {
 		// Special bonus for those using jQuery
@@ -692,7 +690,7 @@ function PUVOX_LIBRARY() { return {
 			rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /* or $(window).height() */
 			rect.right <= (window.innerWidth || document.documentElement.clientWidth) /* or $(window).width() */
 		);
-	},
+	}
 
 	MakeIframeFullHeight(iframeElement, cycling, overwrite_margin){
 		cycling= cycling || false;
@@ -714,9 +712,9 @@ function PUVOX_LIBRARY() { return {
 		})();
 			//var funcname= arguments.callee.name;
 			//window.setTimeout( function(){ console.log(funcname); console.log(cycling); window[funcname](iframeElement, cycling); }, 500 );
-	},
+	}
 
-	getYtIdFromURL(URLL){let r=URLL.match(/^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/); return r[1];},
+	getYtIdFromURL(URLL){let r=URLL.match(/^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/); return r[1];}
 
 	//state url change
 	//function processAjaxData(response, urlPath){
@@ -742,7 +740,7 @@ function PUVOX_LIBRARY() { return {
 			};
 			tx[i].addEventListener("input", OnInput, false);
 		}
-	},
+	}
 
 	getAllMethods(obj, inherited_too)
 	{
@@ -753,7 +751,7 @@ function PUVOX_LIBRARY() { return {
 			}
 		}
 		return methods;
-	},
+	}
 	
 	hasMethod(obj, funcName, inherited_too)
 	{
@@ -765,19 +763,19 @@ function PUVOX_LIBRARY() { return {
 			}
 		}
 		return false;
-	},
+	}
 	
 
 	ConvertToHourMinSec(time){	//Output like "1:01" or "4:03:59" or "123:03:59" 
 		var hrs = ~~(time / 3600);	var mins = ~~((time % 3600) / 60);	var secs = time % 60;
 		var hms="";  hms +=""+hrs+":"+(mins< 10 ? "0":"");  hms +=""+mins+":"+(secs<10 ? "0":"");  hms +=""+secs;  return hms;
-	},
+	}
 
 	// =========== get device sizes ==========//
 	// http://ryanve.com/lab/dimensions/
 	getWindowSize(){
 		return {x:document.documentElement.clientWidth,  y:document.documentElement.clientHeight} ;
-	},
+	}
 
 	removeItem(arr, value) {
 		var i = 0;
@@ -789,20 +787,20 @@ function PUVOX_LIBRARY() { return {
 			}
 		}
 		return arr;
-	}, 
+	}
 	removeItemOnce(arr, value) { 
 		var index = arr.indexOf(value);
 		if (index > -1) {
 			arr.splice(index, 1);
 		}
 		return arr;
-	},
+	}
 	toggleItemInArray(array, value, condition)
 	{
 		if (condition) array.push(value);
 		else this.removeItemOnce(array,value);
 		return array;
-	},
+	}
 
 	// avoid ccxt's bug for undefined : https://jsfiddle.net/Lpxsthw4/
 	mergeDeep(target, source) {
@@ -821,7 +819,7 @@ function PUVOX_LIBRARY() { return {
 			});
 		}
 		return output;
-	},
+	}
 	
 	getScrollbarWidth() {
 		var outer = document.createElement("div");
@@ -837,7 +835,7 @@ function PUVOX_LIBRARY() { return {
 		var widthWithScroll = inner.offsetWidth;
 		outer.parentNode.removeChild(outer);
 		return widthNoScroll - widthWithScroll;
-	}, 
+	}
 
 	// animation-css https://codepen.io/AKGD/pen/yvwQYZ
     animationClick(element, animation, removeOrNot){
@@ -854,7 +852,7 @@ function PUVOX_LIBRARY() { return {
 				}
 			}
 		);
-    },
+    }
 	
     animationClickTarget(element, target, animation, removeOrNot){
 		var $=jQuery;
@@ -870,69 +868,69 @@ function PUVOX_LIBRARY() { return {
 				}
 			}
 		);
-    },
+    }
 
 
-	datetime : {
+	datetime = new (class{
 		//  0940 type time-ints
-		isBetweenHMS(target, start,  end,  equality) { }, // datetime, int/datetime, int/datetime, bool
+		isBetweenHMS(target, start,  end,  equality) { } // datetime, int/datetime, int/datetime, bool
 		equalDays(d1,d2) { 
 			return d1.getYear()==d2.getyear() && d1.getMonth()==d2.getMonth() && d1.getDate()==d2.getDate();
-		}, // DateTime, DateTime
-		IsTodayStart(dt) { }, // DateTime
-		GetWeekOfMonth(dt) { }, // DateTime
-		GetWeekOfYear(dt) { }, // DateTime
-		GetQuarter(dt) { }, // DateTime
-		NumberToHMSstring(hhmmss) { }, // int
+		} // DateTime, DateTime
+		IsTodayStart(dt) { } // DateTime
+		GetWeekOfMonth(dt) { } // DateTime
+		GetWeekOfYear(dt) { } // DateTime
+		GetQuarter(dt) { } // DateTime
+		NumberToHMSstring(hhmmss) { } // int
 		// ZZ incorrect, need LOCAL/UTC: DatetimeToHMSstring(dt) { }, // DateTime
 		// HMSToTimeSpan(hhmmss) { }, // int
-		addNumberToHMS(hhmmss, added_or_subtracted) { }, // int, int
+		addNumberToHMS(hhmmss, added_or_subtracted) { } // int, int
 		DatetimeToStringUtc(dt, withMS = true, withTZ = true) {
 			var str = (new Date( dt || new Date() )).toISOString();
 			let finalStr = (withTZ ? str : str.replace("T", " ").replace("Z", ""));
 			return withMS ? finalStr : finalStr.split('.')[0]; //2022-07-09 15:25:00.276
-		},
+		}
 		DatetimeToStringLocal(dt, withMS = true, withT = false) {
 			const str = (dt || new Date()).toLocaleString('sv', {year:'numeric', month:'numeric', day:'numeric', hour:'numeric', minute:'numeric', second:'numeric', fractionalSecondDigits: 3}).replace(',', '.');
 			let finalStr = (withT ? str.replace(' ', 'T') : str);
 			return withMS ? finalStr : finalStr.split('.')[0]; //2022-07-09 19:25:00.276
-		},
+		}
 		// in some langs, the date object has distinctions, so the two below needs separated methods. However, the "date" object returned from them, are same, just the representation can be local or UTC depending user.
-		StringToDatetimeUtc(str, format, culture) { return new Date(str); }, 
-		StringToDatetimeLocal(str, format, culture) { return new Date(str); }, 
-		StringToTimestamUtc(str, format, culture) { return new Date(str).getTime(); }, 
+		StringToDatetimeUtc(str, format, culture) { return new Date(str); }
+		StringToDatetimeLocal(str, format, culture) { return new Date(str); } 
+		StringToTimestamUtc(str, format, culture) { return new Date(str).getTime(); } 
 		DatetimeUtc() {  
 			var now = new Date();
 			var utc = new Date(now.getTime()); // + now.getTimezoneOffset() * 60000 is not needed !!!!!!
 			return utc;
-		}, UtcDatetime() { return this.DatetimeUtc(); },
+		} UtcDatetime() { return this.DatetimeUtc(); }
 		// UTC
 		TimestampUtc() { 
 			return Math.floor(new Date().getTime()); 
-		}, UtcTimestamp() { return this.TimestampUtc(); },
+		} UtcTimestamp() { return this.TimestampUtc(); }
 		//i.e. input:  "2021-03-08 11:59:00"      |  output : 1650000000000 (milliseconds)  
 		// [DONT CHANGE THIS FUNC, I'VE REVISED]
 		DatetimeToTimestampUtc(dt) { 
 			let offset = this.getOffsetFromUtc();
 			return ((((new Date( dt )).getTime()) / 1000) + 14400 - offset * 60* 60) * 1000; 
-		}, UtcTimestampFrom(dt) { return this.DatetimeToTimestampUtc(dt); },
+		} UtcTimestampFrom(dt) { return this.DatetimeToTimestampUtc(dt); }
 		TimestampUtcToDatetimeUtc(ts) {
 			var d = new Date(ts);
 			d.setHours(d.getHours());
 			return d;
-		}, UtcTimestampToUtcDatetime(ts) { return this.TimestampUtcToDatetimeUtc(ts); },
+		} UtcTimestampToUtcDatetime(ts) { return this.TimestampUtcToDatetimeUtc(ts); }
 		// shorthands
-		MaxDate(d1, d2, d3=null) {},
-		MinDate(d1, d2, d3=null) {},
-		localDatetimeToUtcString(dt){ },
-		areSameDays(d1, d2){ },
+		MaxDate(d1, d2, d3=null) {}
+		MinDate(d1, d2, d3=null) {}
+		localDatetimeToUtcString(dt){ }
+		areSameDays(d1, d2){ }
 
 
 		// ##### added to JS #####
-		GetDayOfYear(dt) { return (dt || new Date()).getUTCDate(); },
+		GetDayOfYear(dt) { return (dt || new Date()).getUTCDate(); }
 		StringToUtcString(str) {
 			return str.indexOf ('Z') > -1 || str.indexOf ('GMT') > -1 ? str : str  + ' GMT+0000';
-		},
+		}
 		//i.e. input:  1650000000000 (milliseconds)   |  output : "2021-03-08 11:59:00"
 		UtcTimestampToLocalDatetime(ts) {
 			var d = new Date(ts);
@@ -943,29 +941,29 @@ function PUVOX_LIBRARY() { return {
 			// var utc = d.getTime() + (d.getTimezoneOffset() * 60000);  //This converts to UTC 00:00
 			// var nd = new Date(utc + (3600000*offset));    
 			// return nd; return nd.toLocaleString();
-		},
+		}
 		//i.e. input:  1650000000000 (milliseconds)   |  output : "2021-07-14T21:08:00.000Z"
 		// [DONT CHANGE THIS FUNC, I'VE REVISED]
 		UtcTimestampToUtcDatetimeString_OLD_CORRECT(epochtime, withTZ){
 			let d = new Date(epochtime);
 			let str =d.toISOString();
 			return (withTZ ? str : str.replace("T", " ").replace("Z", ""));
-		}, 
+		}
 		UtcTimestampToUtcDatetimeString(epochtime, withTZ){
 			let d = this.UtcTimestampToUtcDatetime(epochtime);
 			return this.DatetimeToStringUtc(d, true, withTZ);
-		}, 
+		}
 		getOffsetFromUtc(){
 			var dt = new Date();
 			return -dt.getTimezoneOffset()/60;
-		},
+		}
 		// https://stackoverflow.com/questions/8579861/how-to-convert-milliseconds-into-a-readable-date
 		stringToDate(str){  // i.. "2021-04-05 15:59:55 GMT+4"
 			return new Date( Date.parse(str) );
-		},
+		}
 		msGoneAfter(date){
 			return (new Date()-date);
-		},
+		}
 		getYMDHISFfromDate(dt, utc=true){
 			// todo ? is +1 needed for month ??
 			if (utc) {
@@ -973,7 +971,7 @@ function PUVOX_LIBRARY() { return {
 			} else {
 				return [1900 + dt.getYear(), dt.getMonth()+1, dt.getDate(), dt.getHours(), dt.getMinutes(), dt.getSeconds(), dt.getMilliseconds()];
 			}
-		},
+		}
 		getYMDHISFfromDateWithZeros(dt, utc=true){
 			let y, M, d, h, m, s, f;
 			if (utc) {
@@ -994,28 +992,28 @@ function PUVOX_LIBRARY() { return {
 				f = dt.getMilliseconds();
 			}
 			return {y:y.toString(), M:(M<10?'0':'')+M.toString(), d:(d<10?'0':'')+d.toString(), h:(h<10?'0':'')+h.toString(), m:(m<10?'0':'')+m.toString(), s:(s<10?'0':'')+s.toString(), f:(f<10?'00':(f<100?'0':''))+f.toString()};
-		}, 
+		}
 		prefixWithZero(num, digits){
 			return (digits===1 ? num : (digits===2 ? (num < 10 ? "0"+num : num ) : (digits===3 ? (num < 10 ? "00"+num : (num < 100 ? "0"+num : num ) ) : num ) ) ).toString();
-		},
+		}
 		currentDatetimeIs(targetDate){ //"2021-03-30 13:33:45 GMT+0300"
 			var curr_dt = new Date( Date.now() ); 
 			var target_dt= new Date( Date.parse(targetDate) );
 			return curr_dt.getYear() ==target_dt.getYear() && curr_dt.getMonth() ==target_dt.getMonth() && curr_dt.getDate() ==target_dt.getDate() && curr_dt.getHours() ==target_dt.getHours() && curr_dt.getMinutes() ==target_dt.getMinutes() && curr_dt.getSeconds() ==target_dt.getSeconds();
-		},
+		}
 		dateCompare(date1, date2){ 
 			var date1 = puvox_library.isString(date1) ? Date.parse(date1) : date1;
 				date1 = new Date( date1 );
 			var date2 = date2 || new Date(Date.now());  
 			return (+date1 > +date2 ? 1 : +date1 < +date2 ? -1 : 0);
-		},
+		}
 		dateTill(date1, date2){ 
 			var date1 = puvox_library.isString(date1) ? Date.parse(date1) : date1;
 			date1 = new Date( date1 );
 			var date2 = date2 || new Date(Date.now()); 
 			var diff = new Date(date1.getTime()-date2.getTime());
 			return diff;
-		},
+		}
 		secondsTill(date1, date2){ 
 			var date1 = puvox_library.isString(date1) ? Date.parse(date1) : date1;
 			date1 = new Date( date1 );
@@ -1023,7 +1021,7 @@ function PUVOX_LIBRARY() { return {
 			var diffS = date1.getTime()-date2.getTime();
 			var seconds =  Math.round(diffS/1000);
 			return seconds;
-		},	  
+		}  
 		
 		/**
 		* Adds time to a date. Modelled after MySQL DATE_ADD function.
@@ -1051,16 +1049,16 @@ function PUVOX_LIBRARY() { return {
 				default       :  ret = undefined;  break;
 			}
 			return ret;
-	    },
+	    }
 		// this approach is correct, the other one: https://pastebin_com/GwsScXx1  has strange bug in node, might relate to: https://stackoverflow.com/a/19691491/2377343
 		addSeconds(date, seconds){ 
 			return new Date( Date.parse(date) + seconds*1000 );
-		},
+		}
 		addDays(date, days){ 
 			var result = new Date(date);
 			result.setDate(result.getDate() + days);
 			return result;
-		},
+		}
 		daysBetween(a, b, utc = true){
 			// https://stackoverflow.com/a/15289883/2377343
 			const _MS_PER_DAY = 1000 * 60 * 60 * 24;
@@ -1075,7 +1073,7 @@ function PUVOX_LIBRARY() { return {
 			}
 			return Math.floor((d2 - d1) / _MS_PER_DAY);
 		}
-	},
+	})();
 	// ####### END OF DATETIME FUNCTIONS ####### //
 
 
@@ -1098,14 +1096,14 @@ function PUVOX_LIBRARY() { return {
 				el.parentNode.removeChild(el);
 			}
 		}
-	},
+	}
 
 
 
 	contains(string, pattern){
 		var re = new RegExp(pattern);
 		return (re.test(string));
-	},
+	}
 	
 	hide_show_transprent(el, hide){
 		if(hide){
@@ -1116,11 +1114,11 @@ function PUVOX_LIBRARY() { return {
 			el.css("opacity", 1);
 			el.css("z-index", 0);
 		}
-	},
+	}
 		
 	get_extension_from_url( url ) {
 		return url.split(/\#|\?/)[0].split('.').pop().trim();
-	},
+	}
 	
 	
 	// https://stackoverflow.com/a/7924240/2377343 (has better performance than (ch.match(/\n/g) || []).length  or ch.split('\n').length - 1 )
@@ -1134,7 +1132,7 @@ function PUVOX_LIBRARY() { return {
 			if (pos >= 0) { ++n; pos += step; } else break;
 		}
 		return n;
-	},
+	}
 	
 	// startReadStream(__dirname + '/aa.csv', ()=>{});
 	async readLineByLine (filePath, callback, linesSize = 10000, delimiterN = true) {
@@ -1172,7 +1170,7 @@ function PUVOX_LIBRARY() { return {
 			rejector();
 		});
 		return prom;
-	},
+	}
 	async linesAmountInFile(filePath, delimiterN = true) {
 		const self = this;
 		// calblack format: callback(linesArray, isLastChunk)
@@ -1196,7 +1194,7 @@ function PUVOX_LIBRARY() { return {
 			rejector();
 		});
 		return prom;
-	},
+	}
 
 
 
@@ -1204,16 +1202,16 @@ function PUVOX_LIBRARY() { return {
 
 	oneSpace(cc){
 		return cc.replace(/\s\s+/g, ' ');
-	},
+	}
 	removeFirstAndLastChar(cc){
 		return this.oneSpace( cc.substring(1, cc.length-1 ) );
-	},
+	}
 	getWithin_X(cc, x){
 		return this.oneSpace( cc.replace(new RegExp('(.*?)'+x+'(.*)'+x+'(.*)', 'g'), '$2')  );
-	},
+	}
 	getWithin_XY(cc, x, y){
 		return this.oneSpace( cc.replace(new RegExp('(.*?)'+x+'(.*)'+y+'(.*)', 'g'), '$2')  );
-	},
+	}
 	// https://stackoverflow.com/q/6462578/2377343
 	removeIfOutsideQuotes(content, replaceWhat, replaceWith){ 
 		var regex = new RegExp('"[^"]+"|('+replaceWhat+')','g');
@@ -1222,31 +1220,31 @@ function PUVOX_LIBRARY() { return {
 			else return replaceWith;
 		});
 		return replaced;
-	},
+	}
 	// https://stackoverflow.com/questions/19414193/regex-extract-string-not-between-two-brackets
 	// https://stackoverflow.com/questions/62616023/regex-split-if-not-inside-the-two-characters
 	splitBy_X_NotInside_Y(str, x, y) //x: split by; y: not inside
 	{
 		return str.split( RegExp(x+'+(?=(?:(?:[^'+y+']*"){2})*[^'+y+']*$)', 'g' ) );
-	},
+	}
 	splitBy_X_NotInside_YZ(str, by, y, z) //x: split by; y&z: not inside
 	{
 		return str.split( RegExp(by+'+(?=(?:(?:[^'+y+']*"){2})*[^'+z+']*$)', 'g' ) );
-	},
+	}
 	splitOnlyFirstOccurence(str, what){
 		return str.split(new RegExp(what+'(.+)'));
-	},
+	}
 	//equal
 	splitByEqualNotInsideDoubleQuotes(str)
 	{
 		return str.split(/\=+(?=(?:(?:[^"]*"){2})*[^"]*$)/g);
-	},
+	}
 	//double equals
 	splitByEqualNotInsideDoubleQuotesAndDoubleEquals(str)
 	{
 		let newStr = str.replace(/==/g, "__DOUBLE_EQUAL__RAND294393494__");
 		return newStr.split(/\=+(?=(?:(?:[^"]*"){2})*[^"]*$)/g).map(x=> x.replace(/__DOUBLE_EQUAL__RAND294393494__/g,"==") );
-	},
+	}
 	
 	splitByNotInside2(str, splitChar,notInsideCharStart,notInsideCharEnd)
 	{
@@ -1269,7 +1267,7 @@ function PUVOX_LIBRARY() { return {
 		}
 
 		if (currentPart) parts.push(currentPart);
-	},
+	}
 
 	// i.e. if you want to get from first to last correct brackets 
 	//		 start ( "a1)" "b1)" 'c1)' ) aaaaa )  bbbbb ) cccccc)
@@ -1321,21 +1319,22 @@ function PUVOX_LIBRARY() { return {
 			}
 		}
 		return result;
-	},
+	}
 	
 	// https://stackoverflow.com/questions/9621825/escape-a-variable-within-a-regular-expression
 	preg_quote(str, delimiter) {
 		return (str + '').replace(new RegExp('[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\' + (delimiter || '') + '-]', 'g'), '\\$&');
-	},
+	}
 	escapeRegExp(string) {
 		return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
-	},
+	}
 
 	splitStringIntoChars(str){
 		return str.split(/(?=[\s\S])/u);
-	},
+	}
 	
-	empty(MyVar){ return this.is_empty_or_undefined(MyVar);},
+	empty(MyVar){ return this.is_empty_or_undefined(MyVar);}
+
 	is_empty_or_undefined (MyVar)
 	{
 	   return ( 
@@ -1357,7 +1356,7 @@ function PUVOX_LIBRARY() { return {
 						||
 			(/^\s*$/.test(MyVar))
 	  );
-	},
+	}
 	isEmptyValue(input){
 		//input is considered empty value: falsy value (like null, undefined, '', except false and 0),
 		// string with white space characters only, empty array, empty object
@@ -1365,17 +1364,17 @@ function PUVOX_LIBRARY() { return {
 			((input instanceof String || typeof input === 'string') && !input.trim()) ||
 			(Array.isArray(input) && !input.length) ||
 			(input instanceof Object && !Object.keys(input).length);
-	},
+	}
 	removeEmptyValue (obj) {
 		if (!(obj instanceof Object))
 			return {};
 		Object.keys(obj).forEach(key => this.isEmptyValue(obj[key]) && delete obj[key]);
 		return obj;
-	},
+	}
 	isIterable(obj) {
 		if (obj == null) { return false; }
 		return typeof obj[Symbol.iterator] === 'function';
-	},
+	}
 	insertRedErrorLine(array_){
 		var array = array_;
 		array["position"] = array["position"] || "before";
@@ -1391,7 +1390,7 @@ function PUVOX_LIBRARY() { return {
 			$(this).hide();
 		  }
 		);
-	} ,
+	}
 
 	// more from locutus: https://github.com/locutusjs/locutus/blob/master/src/php
 	stripTags (input, allowed) {
@@ -1401,9 +1400,9 @@ function PUVOX_LIBRARY() { return {
 		return input.replace(commentsAndPhpTags, '').replace(tags, function ($0, $1) {
 		return allowed.indexOf('<' + $1.toLowerCase() + '>') > -1 ? $0 : '';
 		});
-	},
+	}
 
-	br2nl(content) { return content.replace('/\<br(\s*)?\/?\>/i', "\n"); },
+	br2nl(content) { return content.replace('/\<br(\s*)?\/?\>/i', "\n"); }
 
 	jquery_popup(element, isModal, params){
 		var isModal = isModal || true;
@@ -1429,7 +1428,7 @@ function PUVOX_LIBRARY() { return {
 				$("#custom_overlay").remove();
 			}   
 		});  
-	},
+	}
 	jquery_popup_once(cookiename, key, text, duration, onComplete){
 		var text = text;
 		var cookieVal = this.Cookies.getOption(cookiename, "popup_shown_"+key, "true");
@@ -1445,7 +1444,7 @@ function PUVOX_LIBRARY() { return {
 		else{
 			onComplete();
 		}
-	},
+	}
 	
 	jquery_popup_one_time_checkbox(cookiename, key, text, callable_func, defaultCheckboxTxt){
 		var defaultCheckboxTxt = defaultCheckboxTxt || '<div class="dialog_dont_show_again" style=" bottom:0; right:0; font-size:0.7em; background:#e7e7e7; width:100%; margin: 2px; padding: 2px; display: inline-block;"><input type="checkbox" onclick="PuvoxLibrary.dialog_dont_show_again(event, \''+key+'\', \''+cookiename+'\')" /><span class="dont_show_again_inner">Don\'t show this window again</span></div>';
@@ -1461,23 +1460,22 @@ function PUVOX_LIBRARY() { return {
 		{
 			callable_func();
 		}
-	},
+	}
 	dialog_dont_show_again(event, key, cookiename)
 	{
 		this.Cookies.setOption(cookiename, "popup_checkbox_"+key, (event.target.checked ? "false" : "true") ); 
-	},
+	}
 	
 	dialogClose(){
 		window.parent.$('.ui-dialog-content:visible').dialog('close');
-	},
+	}
 	
 	
-	
-	
+
 	mergeObjects(obj1, obj2){
 		for (var attrname in obj2) { obj1[attrname] = obj2[attrname]; }
 		return obj1;
-	},
+	}
 
 	// returns a new object with the values at each key mapped using mapFn(value)
 	objectMap(obj, fn) {
@@ -1486,7 +1484,7 @@ function PUVOX_LIBRARY() { return {
 				([k, v], i) => [k, fn(v, k, i)]
 			)
 		)
-	},
+	}
 
 	fancyTimeFormat(time)
 	{   
@@ -1505,7 +1503,7 @@ function PUVOX_LIBRARY() { return {
 		ret += "" + mins + ":" + (secs < 10 ? "0" : "");
 		ret += "" + secs;
 		return ret;
-	},
+	}
 
 	getYtIdFromURL(URL_or_ID){
 		var id; 
@@ -1518,7 +1516,7 @@ function PUVOX_LIBRARY() { return {
 			id = r[1];
 		}
 		return id;
-	},
+	}
 
 	//
 	jsonToArray(json_data){
@@ -1526,16 +1524,16 @@ function PUVOX_LIBRARY() { return {
 		//for(var i in json_data)	result.push([i, json_data[i]]);
 		result = Object.keys(json_data).map((key) => [key, json_data[key]]);
 		return result;
-	},
+	}
 	
 	fixEntitiedJson(json_data){
 		return json_data.replace(/&#34;/g,'"');
-	},
+	}
 	
 	
 	setSelectByOptionName(selectEl, optName){
 		selectEl.find('option').filter(function () { var txt=$(this).html(); return (txt==optName); }).prop('selected', true);
-	},
+	}
 	ScrollTo(el, func, offset_distance)  //setHashInAddress
 	{
 		var offset_distance= offset_distance || 0;
@@ -1543,29 +1541,29 @@ function PUVOX_LIBRARY() { return {
 		$('html, body').animate({
 			scrollTop: $(el).offset().top - offset_distance
 		}, 1000, func);
-	},
+	}
 	sleep(ms) {
 		return new Promise(resolve => this.setTimeout_safe(resolve, ms));
-	},
+	}
 	// immitating ccxt setTimeout
 	setTimeout_safe (done, ms) {
 		const self = this; const targetTime = Date.now() + ms; if (ms >= 2147483647) { throw new Error ('setTimeout() function was called with unrealistic value of ' + ms.toString ()); }  let clearInnerTimeout = () => {}; let active = true; const id = setTimeout (() => { active = true; const rest = targetTime - Date.now (); if (rest > 0) { clearInnerTimeout = self.setTimeout_safe (done, rest, setTimeout, targetTime); } else { done (); } }, ms); return function clear () { if (active) { active = false; clearTimeout (id); } clearInnerTimeout (); };
-	},
+	}
 
 	scrollToBottom2(el)  //setHashInAddress
 	{
 		if (el && el[0])
 			el.scrollTop(el[0].scrollHeight - el.height());
-	},
+	}
 	scrollToBottom(el_or_id) {
 		var el = this.isObject(el_or_id) ? el_or_id : document.querySelector(el_or_id);
 		el.scrollTop = el.scrollHeight - el.clientHeight;
-	},
+	}
 	
 	scrollToBottom3(el_or_id) {
 		var el = this.isObject(el_or_id) ? el_or_id : document.querySelector(el_or_id);
 		el.scrollTop(el.scrollHeight - el.height());
-	},
+	}
 	
 	
 	// scroll to 
@@ -1574,18 +1572,18 @@ function PUVOX_LIBRARY() { return {
 		$('html, body').animate({
 			scrollTop: $(selector).offset().top-100
 		}, 1000);
-	},
+	}
 
 	
 	addLine(selector, text, first_or_last){
 		let elem = this.isObject(selector) ? selector : document.querySelector(selector);
 		elem.insertAdjacentHTML("beforeend", "\r\n - "+text);
-	},
+	}
 	removeLine(selector, first_or_last, ifMoreThanXlines) {
 		let elem = this.isObject(selector) ? selector : document.querySelector(selector);
 		//c( "a"+this.removeLineFromText(elem.innerHTML, first_or_last, ifMoreThanXlines));
 		elem.innerHTML = this.removeElementFromElement(elem.innerHTML, first_or_last, ifMoreThanXlines);
-	},
+	}
 
 	removeElementIfMoreThan(el, amount, first_or_last){
 		let childs = el.children; 
@@ -1593,13 +1591,13 @@ function PUVOX_LIBRARY() { return {
 		{
 			el.children[0].remove();
 		}
-	},
+	}
 	
 	removeElementIfMoreThanNEW(el, amount, first_or_last){
 		let newEl = el.cloneNode(true);
 		this.removeElementIfMoreThan(newEl, amount, first_or_last);
 		return newEl;
-	},
+	}
 	
 	//  if(setHashInAddress) {	window.location.hash = id_or_Name;	}
 	removeLine_old(selector, first_or_last, ifMoreThanXlines) {
@@ -1616,12 +1614,12 @@ function PUVOX_LIBRARY() { return {
 			else val.pop();
 		}
 		elem.value=val.join('\n') + '\r\n';
-	},
+	}
 
 	removeLineFromTextarea(selector, first_or_last, ifMoreThanXlines) {
 		let elem = document.querySelector(selector);
 		elem.value = this.removeLineFromText(elem.value, first_or_last, ifMoreThanXlines);
-	},
+	}
 	removeLineFromText(text, first_or_last, ifMoreThanXlines)
 	{
 		var ifMoreThanXlines= ifMoreThanXlines || 0;
@@ -1637,22 +1635,22 @@ function PUVOX_LIBRARY() { return {
 			else val.pop();
 			return val.join('\n') + '\r\n';
 		}
-	},
+	}
 	
 	
     arrayColumn(array, col)
     {
         return array.map(function(value,index) { return value[col]; });
-    }, 
+    }
 	arrayPart(array_, amount_, from)
 	{
 		var from = from || 'start'; //start|end
 		let count = array_.length;
 		return count<=amount_ ? array_ :  ( from=='start' ? array_.slice(0, amount_) :  array_.slice(-amount_) );
-	},
+	}
 	arrayInsertAt(array, index, value){
 		return array.splice(index, 0, value);
-	},
+	}
 	executeAfterTry(el, func, num)
 	{
 		var num=num || 0;
@@ -1663,14 +1661,14 @@ function PUVOX_LIBRARY() { return {
 			if( $(el).length ) func();
 			else setTimeout( function(){ this_.executeAfterTry(el, func, num+1); }, 100 );
 		}
-	},
+	}
 		
 	waitExecute(el, func)
 	{
 		var this_ = this;
 		if( jQuery(el).length ) func();
 		else setTimeout( function(){ this_.waitExecute(el, func); }, 700 );
-	}, 
+	}
 	
 	// https://stackoverflow.com/a/41407246/2377343
 	consoleLogColor (text, backgroundColor=null, foregroundColor=null) {
@@ -1690,10 +1688,10 @@ function PUVOX_LIBRARY() { return {
 			foreColorString = prefix + objectTree['foreground'][foregroundColor] + suffix;
 		}
 		console.log (backColorString + foreColorString + "%s" + prefix + objectTree.types.reset + suffix, text);
-	},
+	}
 	
-	toggleWindowsMessages_WindowConfirm() { return window.confirm },
-	toggleWindowsMessages_WindowAlert() { return window.alert },
+	toggleWindowsMessages_WindowConfirm() { return window.confirm }
+	toggleWindowsMessages_WindowAlert() { return window.alert }
 	toggleWindowsMessages(enable){
 		if (enable)
 		{
@@ -1705,7 +1703,7 @@ function PUVOX_LIBRARY() { return {
 			window.confirm = function() { return true; };
 			window.alert   = function() {};
 		}
-	},
+	}
 	suspressMessagesExecution(func){
 		var alert_	= window.alert;
 		var confirm_= window.confirm;
@@ -1714,7 +1712,7 @@ function PUVOX_LIBRARY() { return {
 		func();
 		window.confirm = alert_;
 		window.alert   = confirm_;
-	},
+	}
 			
 			
 	MakeIframeFullHeight (iframeElement, cycling, overwrite_margin){
@@ -1737,14 +1735,14 @@ function PUVOX_LIBRARY() { return {
 		})();
 			//var funcname= arguments.callee.name;
 			//window.setTimeout( function(){ console.log(funcname); console.log(cycling); window[funcname](iframeElement, cycling); }, 500 );	
-	},
+	}
 
 	in_array(needle, haystack) {
 		for(var i in haystack) {
 			if(haystack[i] == needle) return true;
 		}
 		return false;
-	},
+	}
 
 	CreateFrameIn(targetEl, frameContent, MakeItfullWH){	
 		var MakeItfullWH = MakeItfullWH || false;
@@ -1759,7 +1757,7 @@ function PUVOX_LIBRARY() { return {
 			this.MakeIframeFullHeight(iframe);
 		}
 		return iframe;
-	},
+	}
 
 	makeAllATargetBlank(el){
 		if(!el) return;
@@ -1769,7 +1767,7 @@ function PUVOX_LIBRARY() { return {
 				els[i].setAttribute("target", "_blank");
 			}
 		}
-	},
+	}
 
 	createDropdownFrom(arr, elementId, jqueriUi, appendToElement){
 		var jqueriUi = jqueriUi || false;
@@ -1785,7 +1783,7 @@ function PUVOX_LIBRARY() { return {
 			$(elementId).selectmenu();
 		}
 		return html;
-	},
+	}
 
 	//=====
 
@@ -1797,33 +1795,33 @@ function PUVOX_LIBRARY() { return {
 			function toSolidBytes(match, p1) {
 				return String.fromCharCode('0x' + p1);
 		}));
-	},
+	}
 
 	b64DecodeUnicode(str) {
 		// Going backwards: from bytestream, to percent-encoding, to original string.
 		return decodeURIComponent(atob(str).split('').map(function(c) {
 			return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
 		}).join(''));
-	},
+	}
 
 	round(num,decimals){
 		let v=Math.pow(10,decimals); return Math.round((num + Number.EPSILON) * v) / v;   //toFixed
-	},
+	}
 
 
-		
 
 	// ============================= get basename of url ============================
-	basename(path) {   return path.split('/').reverse()[0];	},
+	basename(path) {   return path.split('/').reverse()[0];	}
 
 
 	// ======== simple POPUP  ======== https://github.com/ttodua/useful-javascript/ ==============
 	show_my_popup(TEXTorID, AdditionalStyles ){
 			TEXTorID=TEXTorID.trim(); var FirstChar= TEXTorID.charAt(0); var eName = TEXTorID.substr(1); if ('#'==FirstChar || '.'==FirstChar){	if('#'==FirstChar){var x=document.getElementById(eName);} else{var x=document.getElementsByClassName(eName)[0];}} else { var x=document.createElement('div');x.innerHTML=TEXTorID;} var randm_id=Math.floor((Math.random()*100000000));
 		var DivAA = document.createElement('div');    DivAA.id = "blkBackgr_"+randm_id;  DivAA.className = "MyJsBackg";   DivAA.setAttribute("style", 'background:black; height:5000px; left:0px; opacity:0.9; position:fixed; top:0px; width:100%; z-index:99995;'); document.body.appendChild(DivAA);      AdditionalStyles= AdditionalStyles || '';
-		var DivBB = document.createElement('div');    DivBB.id = 'popupp_'+randm_id;     DivBB.className = "MyJsPopup";   DivBB.setAttribute("style",'background-color:white; border:6px solid white; border-radius:10px; display:block; min-height:1%; min-width:350px; width:auto; overflow:auto; max-height:80%; max-width:800px; padding:15px; position:fixed; text-align:left; top:10%; z-index:99995; left:0px; right:0px; margin-left:auto; margin-right:auto; width:80%;'+ AdditionalStyles); 	DivBB.innerHTML = '<div style="background-color:#C0BCBF; border-radius:55px; padding:5px; font-family:arial; float:right; font-weight:700; margin:-15px -10px 0px 0px; z-index: 88; "  class="CloseButtn" ><a href="javascript:my_popup_closee('+randm_id+');" style="display:block;margin:-5px 0 0 0;font-size:1.6em;">x</a></div>'; document.body.appendChild(DivBB);z=x.cloneNode(true);DivBB.appendChild(z); if(z.style.display=="none"){z.style.display="block";}       },
-		my_popup_closee(RandomIDD) { var x=document.getElementById("blkBackgr_"+RandomIDD); x.parentNode.removeChild(x);      var x=document.getElementById('popupp_'+RandomIDD); x.parentNode.removeChild(x);
-	},
+		var DivBB = document.createElement('div');    DivBB.id = 'popupp_'+randm_id;     DivBB.className = "MyJsPopup";   DivBB.setAttribute("style",'background-color:white; border:6px solid white; border-radius:10px; display:block; min-height:1%; min-width:350px; width:auto; overflow:auto; max-height:80%; max-width:800px; padding:15px; position:fixed; text-align:left; top:10%; z-index:99995; left:0px; right:0px; margin-left:auto; margin-right:auto; width:80%;'+ AdditionalStyles); 	DivBB.innerHTML = '<div style="background-color:#C0BCBF; border-radius:55px; padding:5px; font-family:arial; float:right; font-weight:700; margin:-15px -10px 0px 0px; z-index: 88; "  class="CloseButtn" ><a href="javascript:my_popup_closee('+randm_id+');" style="display:block;margin:-5px 0 0 0;font-size:1.6em;">x</a></div>'; document.body.appendChild(DivBB);z=x.cloneNode(true);DivBB.appendChild(z); if(z.style.display=="none"){z.style.display="block";}    
+	}
+	my_popup_closee(RandomIDD) { var x=document.getElementById("blkBackgr_"+RandomIDD); x.parentNode.removeChild(x);      var x=document.getElementById('popupp_'+RandomIDD); x.parentNode.removeChild(x);
+	}
 	// ========================================================== //
 
 
@@ -1833,7 +1831,7 @@ function PUVOX_LIBRARY() { return {
 	loaderImage(circleColor){
 		var circlecolor=circleColor || '#ffffff';
 		return '<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="90px" height="90px" viewBox="0 0 128 128" xml:space="preserve"><g><circle cx="16" cy="64" r="16" fill="'+circlecolor+'" fill-opacity="1"/><circle cx="16" cy="64" r="16" fill="'+circlecolor+'" fill-opacity="0.67" transform="rotate(45,64,64)"/><circle cx="16" cy="64" r="16" fill="#ffffff" fill-opacity="0.42" transform="rotate(90,64,64)"/><circle cx="16" cy="64" r="16" fill="'+circlecolor+'" fill-opacity="0.2" transform="rotate(135,64,64)"/><circle cx="16" cy="64" r="16" fill="'+circlecolor+'" fill-opacity="0.12" transform="rotate(180,64,64)"/><circle cx="16" cy="64" r="16" fill="'+circlecolor+'" fill-opacity="0.12" transform="rotate(225,64,64)"/><circle cx="16" cy="64" r="16" fill="'+circlecolor+'" fill-opacity="0.12" transform="rotate(270,64,64)"/><circle cx="16" cy="64" r="16" fill="'+circlecolor+'" fill-opacity="0.12" transform="rotate(315,64,64)"/><animateTransform attributeName="transform" type="rotate" values="0 64 64;315 64 64;270 64 64;225 64 64;180 64 64;135 64 64;90 64 64;45 64 64" calcMode="discrete" dur="720ms" repeatCount="indefinite"></animateTransform></g></svg>';
-	},
+	}
 	Loader(ShowOrHide, style, content_To_show)
 	{
 		var elementID = 'waiter_box_p';
@@ -1854,7 +1852,7 @@ function PUVOX_LIBRARY() { return {
 		else{
 			var x =document.getElementById(elementID); if (x) x.parentNode.removeChild(x); 
 		}
-	}, 
+	}
 	// ========================================================== //
 
 
@@ -1869,7 +1867,7 @@ function PUVOX_LIBRARY() { return {
 		xmlhttp.open(method,url, true); 
 		if (method  == "post"){xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");xmlhttp.send(parameters);}
 		else if (method  == "get"){xmlhttp.send(null);}
-	},
+	}
 	// ========================================================== //
 
 
@@ -1879,7 +1877,7 @@ function PUVOX_LIBRARY() { return {
 		for (index = 0; index < elmnts.length; ++index) {
 			elmnts[index].style.display= "none";	//elmnts[index].className = elmnts[index].className + " my_css_hide_class";
 		}
-	},
+	}
 	//window.onload = function(){ if(typeof MyTargetHideClass ==='String') hide_popuping_divs(MyTargetHideClass); };
 
 	get(url, parameters) {
@@ -1914,10 +1912,10 @@ function PUVOX_LIBRARY() { return {
 		// Make the request
 		req.send(params_);
 	  });
-	},
+	}
 	getJSON(url, parameters) {
 	  return this.get(url, parameters).then(JSON.parse);
-	},
+	}
 		
 	post(url, params, callback_1, callback_2){
 		return fetch(url, {
@@ -1928,16 +1926,16 @@ function PUVOX_LIBRARY() { return {
 				callback_1(text); 
 			});
 		}); // .then(function(data) { callback_error(data);  });
-	},
+	}
 
 
 	stringifyPretty(obj){
 		return JSON.stringify(obj, null, 2);
-	},
+	}
 
 	responseStringify(obj_or_text){
 		return ! this.is_object(obj_or_text) ? obj_or_text : ( 'responseText' in obj_or_text ? obj_or_text.responseText : JSON.stringify(obj_or_text) );
-	},
+	}
 	// ============================= getElementById from parent_node  ========== http://stackoverflow.com/a/5683184/2377343 ==========
 	//Element.prototype.getElementById_FROM_PARENT = function(req) {
 	getElementById_FROM_PARENT(req) {
@@ -1950,16 +1948,16 @@ function PUVOX_LIBRARY() { return {
 		else {id=elem.getElementById_FROM_PARENT(req); if(id) return id;}	// otherwise, search recursively within the child				
 	  }
 	  return null;												// if no match found
-	},
+	}
 	// ========================================================== //
 
 
 	inArray(needle, haystack) {
 		return haystack.indexOf(needle) > -1;
-	},
+	}
 	inKeys(key, obj){
 		return key in obj;
-	},
+	}
 	
 	partialObject(object_, array_) {
 		let newObj ={};
@@ -1969,7 +1967,7 @@ function PUVOX_LIBRARY() { return {
 			}
 		}
 		return newObj;
-	},
+	}
 
 
 	array_column_with_keys(object_, keyName_) {
@@ -1979,7 +1977,7 @@ function PUVOX_LIBRARY() { return {
 				new_[key_] = value_[keyName_];
 		}
 		return new_;
-	},
+	}
 	
 
 	// ============================= URL parameters  ============================= //
@@ -2010,7 +2008,7 @@ function PUVOX_LIBRARY() { return {
 		}
 	  } 
 	  return query_string;
-	},
+	}
 
 	// executed below
 	URLParser(url){
@@ -2136,7 +2134,7 @@ function PUVOX_LIBRARY() { return {
 			});
 		}
 		return obj;
-	},
+	}
 	/*
 	http://www.example.com:8082/index.php#tab2?foo=789
 
@@ -2170,7 +2168,7 @@ function PUVOX_LIBRARY() { return {
 			// });
 			// request.on('end', function(){ callback(qs.parse(stringData)); } );
 		}
-	},
+	}
 
 
 
@@ -2197,7 +2195,7 @@ function PUVOX_LIBRARY() { return {
 			
 			el.attr("href", CurrentUrlReplaced);
 		});
-	},
+	}
 
 
 	//replace parameter in query string
@@ -2209,22 +2207,22 @@ function PUVOX_LIBRARY() { return {
 			var part= param_name+'='+variations[eachProp]; if (url.indexOf(part) >= 0){url = url.replace(part, param_name+'='+param_new_val); }
 		}
 		return url;
-	},
+	}
 		
 
 
 	//if referrer is from same domain
-	refferer_is_same_domain(){ return document.referrer.indexOf(location.host) > -1;} ,
+	refferer_is_same_domain(){ return document.referrer.indexOf(location.host) > -1;}
 	//prevent default, better function
-	DoPrevent(e) {  e.preventDefault(); e.stopPropagation();	},
+	DoPrevent(e) {  e.preventDefault(); e.stopPropagation();	}
 	preventDefaultForAll(instantly){ 
 		var func = function(){  document.querySelectorAll('.preventDefault').forEach( function(item){ item.addEventListener('click', function(e){ e.preventDefault(); }); } ); };
 		if (instantly || false) func();
 		else this.trigger_on_load(func);
-	},
+	}
 	
 	//add hovered class on element
-	addHovered(elem){   if(  elem.hasClass("hoveredd")) { elem.removeClass("hoveredd");}    else { elem.addClass("hoveredd"); }	},
+	addHovered(elem){   if(  elem.hasClass("hoveredd")) { elem.removeClass("hoveredd");}    else { elem.addClass("hoveredd"); }	}
 	// ========================================================== //
 		
 		
@@ -2240,7 +2238,7 @@ function PUVOX_LIBRARY() { return {
 		var x = jQuery(target_hidding_selector); 
 		if( jQuery(selector+':checked').val() == desiredvalue)	{if(SHOW_or_hide) x.show(); else x.hide();} 
 		else 													{if(SHOW_or_hide) x.hide(); else x.show();}
-	},
+	}
 	
 	// string.containss(smth) 
 	// if (window.String && String.prototype && !String.prototype.containss) String.prototype.containss = function(arg) {	return (this.indexOf(arg) > -1);	} 
@@ -2248,7 +2246,7 @@ function PUVOX_LIBRARY() { return {
 	// get random from array 
 	GetRandomFromArray(my_array){
 		return my_array[this.random_number_minmax(0, my_array.length-1)]; 
-	},
+	}
 	//  make array random
 	array_shuffle(array) {
 	  var currentIndex = array.length, temporaryValue, randomIndex;
@@ -2263,7 +2261,7 @@ function PUVOX_LIBRARY() { return {
 		array[randomIndex] = temporaryValue;
 	  }
 	  return array;
-	},
+	}
 
 
 	// ============================= youtube modal popup ============================= //
@@ -2300,14 +2298,14 @@ function PUVOX_LIBRARY() { return {
 			});
 		}
 		if(options.oncall != ''){		window[options.oncall]();			}
-	},
+	}
 	
 	FadeOut_modalpp(){
 		$(".yt-modal").fadeOut(350, function() {
 			$(this).remove();
 			$(".modal-bg").remove();
 		});
-	},
+	}
 	// ============================= Youtube popup  ============================= //
 
 
@@ -2319,7 +2317,7 @@ function PUVOX_LIBRARY() { return {
 				}
 			}
 		};
-	},
+	}
 	forEachDefine2(){
 		if (!Object.prototype.forEach2) {
 			Object.defineProperty(Object.prototype, 'forEach2', {
@@ -2336,7 +2334,7 @@ function PUVOX_LIBRARY() { return {
 				}
 			});
 		}
-	},
+	}
 	filterDefine(){
 		Object.filter2 = function( obj, predicate) {
 			let result = {}, key;
@@ -2349,7 +2347,7 @@ function PUVOX_LIBRARY() { return {
 
 			return result;
 		};
-	},
+	}
 	filterDefine2(){
 		if (!Object.prototype.filter2) {
 			Object.defineProperty(Object.prototype, 'filter2', {
@@ -2372,10 +2370,10 @@ function PUVOX_LIBRARY() { return {
 				}
 			});
 		}
-	},
+	}
 	
 	
-	var_dump(array){ var o=""; for (x in array) {  o += x + ": " + array[x]+"; "; } window.console && console.log(o); },
+	var_dump(array){ var o=""; for (x in array) {  o += x + ": " + array[x]+"; "; } window.console && console.log(o); }
 
 	// =============================  POST REQUEST SEND (LIVE FORM CREATION) ============================= //
 	//USAGE:      postForm( {deletecityy:'hihi',  surname: 'blabla'}, 'Are you sure?' , 'http://yoursite.com' , '_blank');
@@ -2395,7 +2393,7 @@ function PUVOX_LIBRARY() { return {
 			}
 		}
 		document.body.appendChild(form); form.submit();
-	},
+	}
 	// ==========================================================
 
 
@@ -2407,7 +2405,7 @@ function PUVOX_LIBRARY() { return {
 		var NewClass = document.createElement('div');NewClass.innerHTML='.myHintClass{position:absolute; background:#eeeeee; z-index: 9999;}'; document.body.appendChild(NewClass);
 				//
 				this.SetPoistion=function(e){ e.target.style.top= parseInt(e.pageY+top)+'px';	e.target.style.left= parseInt(e.pageX + left) + 'px'; };
-	},
+	}
 	// ==========================================================
 		
 
@@ -2438,7 +2436,7 @@ function PUVOX_LIBRARY() { return {
 			
 		}
 		else{	window.console && console.log("img not defined.. error28475 in script");	}
-	},
+	}
 	
 	
 	Balanced_Image_proportions (classname, widthh, heightt, parentClassname){  var LOAD_Result; var myImages;   var FinalWidth=widthh;  var FinalHeight=heightt;
@@ -2485,7 +2483,7 @@ function PUVOX_LIBRARY() { return {
 		
 			
 		}
-	},
+	}
 	// ========================================================= //	
 	// ================= ### IMAGE PROPORTIONS ================= //
 	// ========================================================= //
@@ -2493,11 +2491,11 @@ function PUVOX_LIBRARY() { return {
 	show_after_pageload(el){
 		var el = el || '.show_after_pageload';
 		this.Append_To_Head("style", 'body '+el+' {opacity:1;}');
-	},
+	}
 	hide_after_pageload(el){
 		var el = el || '.hide_after_pageload';
 		this.Append_To_Head("style", 'body '+el+' {display:none;}');
-	}, 
+	}
 		
 	// ==================== Position ==================== //
 	Highlight_Current_Menu_link(Added_class_name, Ancestor_to_search_in, link_to_find){
@@ -2516,9 +2514,9 @@ function PUVOX_LIBRARY() { return {
 			}
 			if (condition) { A_elements[i].className += " "+Added_class_name; }
 		}
-	},
+	}
 	//remove # from location
-	RemoveHashString(str){  var hash=str.split("#")[1];  return str.replace("#"+hash,'');	},
+	RemoveHashString(str){  var hash=str.split("#")[1];  return str.replace("#"+hash,'');	}
 	// ===================================================================//
 
 	arrayRemoveValue(array, value) {
@@ -2528,14 +2526,14 @@ function PUVOX_LIBRARY() { return {
 			newArray.splice(index, 1);
 		}
 		return newArray;
-	},
+	}
 
 	getCharsFromStart(str, amount){
 		return str.substring(0, amount);
-	},
+	}
 	getCharsFromEnd(str, amount){
 		return str.substring(str.length-amount, str.length);
-	},
+	}
 		
 	// ============================= Position ============================= //
 	GetTopLeft(myyElement) {
@@ -2543,20 +2541,20 @@ function PUVOX_LIBRARY() { return {
 		var scrolled = {x : 0, y : 0};		this.GetScrolled (myyElement.parentNode, scrolled);
 		var posX = offset.x - scrolled.x;	var posY = offset.y - scrolled.y;
 		return {lefttt: posX , toppp: posY };
-	},
+	}
 	GetOffset(object, offset) {
 		if (!object) return;
 		offset.x += object.offsetLeft;       offset.y += object.offsetTop;
 		this.GetOffset (object.offsetParent, offset);
-	},
+	}
 	GetScrolled(object, scrolled) {
 		if (!object) return;
 		scrolled.x += object.scrollLeft;    scrolled.y += object.scrollTop;
 		if (object.tagName.toLowerCase () != "html") {          this.GetScrolled (object.parentNode, scrolled);        }
-	},
-	// ============================= ##Position ============================= //
+	}
+	// ======================== ##Position ======================== //
 
-	// ============================= ## jQUery Fixed navigation ============================= //		
+	// ================ ## jQUery Fixed navigation ================ //		
 	MakeFixed(selector, ExtraHeightToBody){
 		var sticky = $(selector);		
 		var StickyHeight=parseInt(sticky.height());
@@ -2568,7 +2566,7 @@ function PUVOX_LIBRARY() { return {
 		  if ($(window).scrollTop() > navPosition.top)	{ if(!sticky.hasClass('fixed_stickyy')){sticky.addClass('fixed_stickyy');} }
 		  else											{ if( sticky.hasClass('fixed_stickyy')){sticky.removeClass('fixed_stickyy');}  }
 		});
-	},
+	}
 	// ========================================================== //
 	
 	triggerWhenElementInView(el, func){
@@ -2602,7 +2600,7 @@ function PUVOX_LIBRARY() { return {
 			return (!(viewport.right < bounds.left || viewport.left > bounds.right || viewport.bottom < bounds.top || viewport.top > bounds.bottom));
 
 		};
-	},
+	}
 	
 	compare(a, operator, b) {
 		if(operator === '==') return a == b;
@@ -2614,7 +2612,7 @@ function PUVOX_LIBRARY() { return {
 		else if (operator === '<') return a < b;
 		else if (operator === '<=') return a <= b;
 		else throw "Unknown operator";
-	},
+	}
 	calculate(a, operator, b) {
 		if(operator === '+') return a + b;
 		else if (operator === '-') return a - b;
@@ -2622,15 +2620,15 @@ function PUVOX_LIBRARY() { return {
 		else if (operator === '/') return a / b;
 		else if (operator === '%') return a % b;
 		else throw "Unknown operator";
-	},
+	}
 
 	// random NUMBER or STRINGS
-	RandomNum(maxNum)		{ return Math.floor((Math.random() * maxNum) + 1); },
+	RandomNum(maxNum)		{ return Math.floor((Math.random() * maxNum) + 1); }
 
-	random_number(Length)	{ var length= length || 5;  return Math.floor((Math.random() * Math.pow(10, length)) + 1);},
-	randomNumber(Length)	{return this.random_number(length);},
-	random_number_minmax(min, max) { var min= min || 1; var max= max || 9999999999; return Math.floor(Math.random() * (max - min + 1)) + min;},
-	randomString(Length)	{ var length= length || 5;  return Math.random().toString(36).substr(2, length);},
+	random_number(Length)	{ var length= length || 5;  return Math.floor((Math.random() * Math.pow(10, length)) + 1);}
+	randomNumber(Length)	{return this.random_number(length);}
+	random_number_minmax(min, max) { var min= min || 1; var max= max || 9999999999; return Math.floor(Math.random() * (max - min + 1)) + min;}
+	randomString(Length)	{ var length= length || 5;  return Math.random().toString(36).substr(2, length);}
     //getRandomInt(max) {    return Math.floor(Math.random() * Math.floor(max)); },
 	
 	shuffle_Word(word){
@@ -2643,9 +2641,9 @@ function PUVOX_LIBRARY() { return {
 			word.splice(charIndex,1);
 		}
 		return shuffledWord;
-	},
+	}
 	
-	youtubeImage(id, quality) {  return 'http://img.youtube.com/vi/'+id+'/'+ (quality || "mqdefault") +'.jpg'; } ,
+	youtubeImage(id, quality) {  return 'http://img.youtube.com/vi/'+id+'/'+ (quality || "mqdefault") +'.jpg'; }
 	 
 	// ============================= detect mobile device ============================= //
 	IsMobileDevice(simpleORfull){
@@ -2658,7 +2656,7 @@ function PUVOX_LIBRARY() { return {
 			this.IsMobileDevice=  (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge 	|maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(navigtr)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(navigtr.substr(0,4)));
 		}
 		return IsMobileDevice;
-	},
+	}
 
 	backToTopBind(el){
 		if ($(el).length) {
@@ -2669,7 +2667,7 @@ function PUVOX_LIBRARY() { return {
 				}, 700);
 			});
 		}
-	},
+	}
 
 	enable_jquery_errors()
 	{
@@ -2677,7 +2675,7 @@ function PUVOX_LIBRARY() { return {
 			var elements = jQuery(selector, context);     if( !elements.length ) {  window.console && console.log("'" + selector + "' element(s) not found"); }
 			return elements;
 		}
-	},
+	}
 
 
 	// region ### TELEGRAM FUNCTIONS ###
@@ -2722,10 +2720,10 @@ function PUVOX_LIBRARY() { return {
 		} catch (ex) {
 			return {'ok': false, 'description': ex.message + ':::' + responseText };
 		}
-	},
+	}
 
-	telegram_interval_ms: 50, // telegram seems to accept around 30 times per second, so we'd better wait around that milliseconds
-	telegram_last_sent_time: 0,
+	telegram_interval_ms= 50; // telegram seems to accept around 30 times per second, so we'd better wait around that milliseconds
+	telegram_last_sent_time= 0;
 
 	async telegramMessageCached(text, chat_id, bot_key, extra_opts={}, customCacheId=null){
 		if (!extra_opts) extra_opts = {};
@@ -2745,17 +2743,17 @@ function PUVOX_LIBRARY() { return {
 		//if(is_callable([$this,'notifications_db_entry'])) 
 		//	$this->notifications_db_entry($key, $array['chat_id'], $this->stringify($res), time(), $ok );
 		//return $res;
-	},
+	}
 
 	openUrlInBrowser(url)
 	{
 		var cmd = (process.platform == 'darwin'? `open ${url}`: process.platform == 'win32'? `start ${url}`: `xdg-open ${url}`); 
 		// require('child_process').exec(cmd);
-	},
+	}
 
 	stringify(obj_or_str){
 		return this.isSimpleVariableType(obj_or_str) ? obj_or_str.toString() : JSON.stringify(obj_or_str);
-	},
+	}
 
 	stringify_plain(data){
 		var text='';
@@ -2776,21 +2774,21 @@ function PUVOX_LIBRARY() { return {
 			text = data;
 		}
 		return text;
-	},
+	}
 	CopyObject(obj) {
 		return JSON.parse(JSON.stringify(obj));
-	},
+	}
 	
 	uniqId(obj_or_str){
 		return this.md5( this.stringify(obj_or_str) );
-	},
+	}
 
 	stringifyWithUndefined(obj){
 		return JSON.stringify(obj, function(key, value){ return value === undefined ? null : value; });
-	},
+	}
 	// https://gist.github.com/PixnBits/8811212
 	//md5(str){ let name='crypto'; return require(name).createHash('md5').update(str).digest("hex"); }
-	md5(str){var md5cycle=function(x,k){var a=x[0],b=x[1],c=x[2],d=x[3];a=ff(a,b,c,d,k[0],7,-680876936);d=ff(d,a,b,c,k[1],12,-389564586);c=ff(c,d,a,b,k[2],17,606105819);b=ff(b,c,d,a,k[3],22,-1044525330);a=ff(a,b,c,d,k[4],7,-176418897);d=ff(d,a,b,c,k[5],12,1200080426);c=ff(c,d,a,b,k[6],17,-1473231341);b=ff(b,c,d,a,k[7],22,-45705983);a=ff(a,b,c,d,k[8],7,1770035416);d=ff(d,a,b,c,k[9],12,-1958414417);c=ff(c,d,a,b,k[10],17,-42063);b=ff(b,c,d,a,k[11],22,-1990404162);a=ff(a,b,c,d,k[12],7,1804603682);d=ff(d,a,b,c,k[13],12,-40341101);c=ff(c,d,a,b,k[14],17,-1502002290);b=ff(b,c,d,a,k[15],22,1236535329);a=gg(a,b,c,d,k[1],5,-165796510);d=gg(d,a,b,c,k[6],9,-1069501632);c=gg(c,d,a,b,k[11],14,643717713);b=gg(b,c,d,a,k[0],20,-373897302);a=gg(a,b,c,d,k[5],5,-701558691);d=gg(d,a,b,c,k[10],9,38016083);c=gg(c,d,a,b,k[15],14,-660478335);b=gg(b,c,d,a,k[4],20,-405537848);a=gg(a,b,c,d,k[9],5,568446438);d=gg(d,a,b,c,k[14],9,-1019803690);c=gg(c,d,a,b,k[3],14,-187363961);b=gg(b,c,d,a,k[8],20,1163531501);a=gg(a,b,c,d,k[13],5,-1444681467);d=gg(d,a,b,c,k[2],9,-51403784);c=gg(c,d,a,b,k[7],14,1735328473);b=gg(b,c,d,a,k[12],20,-1926607734);a=hh(a,b,c,d,k[5],4,-378558);d=hh(d,a,b,c,k[8],11,-2022574463);c=hh(c,d,a,b,k[11],16,1839030562);b=hh(b,c,d,a,k[14],23,-35309556);a=hh(a,b,c,d,k[1],4,-1530992060);d=hh(d,a,b,c,k[4],11,1272893353);c=hh(c,d,a,b,k[7],16,-155497632);b=hh(b,c,d,a,k[10],23,-1094730640);a=hh(a,b,c,d,k[13],4,681279174);d=hh(d,a,b,c,k[0],11,-358537222);c=hh(c,d,a,b,k[3],16,-722521979);b=hh(b,c,d,a,k[6],23,76029189);a=hh(a,b,c,d,k[9],4,-640364487);d=hh(d,a,b,c,k[12],11,-421815835);c=hh(c,d,a,b,k[15],16,530742520);b=hh(b,c,d,a,k[2],23,-995338651);a=ii(a,b,c,d,k[0],6,-198630844);d=ii(d,a,b,c,k[7],10,1126891415);c=ii(c,d,a,b,k[14],15,-1416354905);b=ii(b,c,d,a,k[5],21,-57434055);a=ii(a,b,c,d,k[12],6,1700485571);d=ii(d,a,b,c,k[3],10,-1894986606);c=ii(c,d,a,b,k[10],15,-1051523);b=ii(b,c,d,a,k[1],21,-2054922799);a=ii(a,b,c,d,k[8],6,1873313359);d=ii(d,a,b,c,k[15],10,-30611744);c=ii(c,d,a,b,k[6],15,-1560198380);b=ii(b,c,d,a,k[13],21,1309151649);a=ii(a,b,c,d,k[4],6,-145523070);d=ii(d,a,b,c,k[11],10,-1120210379);c=ii(c,d,a,b,k[2],15,718787259);b=ii(b,c,d,a,k[9],21,-343485551);x[0]=add32(a,x[0]);x[1]=add32(b,x[1]);x[2]=add32(c,x[2]);x[3]=add32(d,x[3])};var cmn=function(q,a,b,x,s,t){a=add32(add32(a,q),add32(x,t));return add32(a<<s|a>>>32-s,b)};var ff=function(a,b,c,d,x,s,t){return cmn(b&c|~b&d,a,b,x,s,t)};var gg=function(a,b,c,d,x,s,t){return cmn(b&d|c&~d,a,b,x,s,t)};var hh=function(a,b,c,d,x,s,t){return cmn(b^c^d,a,b,x,s,t)};var ii=function(a,b,c,d,x,s,t){return cmn(c^(b|~d),a,b,x,s,t)};var md51=function(s){var txt="",n=s.length,state=[1732584193,-271733879,-1732584194,271733878],i;for(i=64;i<=s.length;i+=64){md5cycle(state,md5blk(s.substring(i-64,i)))}s=s.substring(i-64);var tail=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];for(i=0;i<s.length;i++)tail[i>>2]|=s.charCodeAt(i)<<(i%4<<3);tail[i>>2]|=128<<(i%4<<3);if(i>55){md5cycle(state,tail);for(i=0;i<16;i++)tail[i]=0}tail[14]=n*8;md5cycle(state,tail);return state};var md5blk=function(s){var md5blks=[],i;for(i=0;i<64;i+=4){md5blks[i>>2]=s.charCodeAt(i)+(s.charCodeAt(i+1)<<8)+(s.charCodeAt(i+2)<<16)+(s.charCodeAt(i+3)<<24)}return md5blks};var hex_chr="0123456789abcdef".split("");var rhex=function(n){var s="",j=0;for(;j<4;j++)s+=hex_chr[n>>j*8+4&15]+hex_chr[n>>j*8&15];return s};var hex=function(x){for(var i=0;i<x.length;i++)x[i]=rhex(x[i]);return x.join("")};var md5_=function(s){return hex(md51(s))};var add32=function(a,b){return a+b&4294967295};if(md5_("hello")!="5d41402abc4b2a76b9719d911017c592"){var add32=function(x,y){var lsw=(x&65535)+(y&65535),msw=(x>>16)+(y>>16)+(lsw>>16);return msw<<16|lsw&65535}}return md5_(str)},
+	md5(str){var md5cycle=function(x,k){var a=x[0],b=x[1],c=x[2],d=x[3];a=ff(a,b,c,d,k[0],7,-680876936);d=ff(d,a,b,c,k[1],12,-389564586);c=ff(c,d,a,b,k[2],17,606105819);b=ff(b,c,d,a,k[3],22,-1044525330);a=ff(a,b,c,d,k[4],7,-176418897);d=ff(d,a,b,c,k[5],12,1200080426);c=ff(c,d,a,b,k[6],17,-1473231341);b=ff(b,c,d,a,k[7],22,-45705983);a=ff(a,b,c,d,k[8],7,1770035416);d=ff(d,a,b,c,k[9],12,-1958414417);c=ff(c,d,a,b,k[10],17,-42063);b=ff(b,c,d,a,k[11],22,-1990404162);a=ff(a,b,c,d,k[12],7,1804603682);d=ff(d,a,b,c,k[13],12,-40341101);c=ff(c,d,a,b,k[14],17,-1502002290);b=ff(b,c,d,a,k[15],22,1236535329);a=gg(a,b,c,d,k[1],5,-165796510);d=gg(d,a,b,c,k[6],9,-1069501632);c=gg(c,d,a,b,k[11],14,643717713);b=gg(b,c,d,a,k[0],20,-373897302);a=gg(a,b,c,d,k[5],5,-701558691);d=gg(d,a,b,c,k[10],9,38016083);c=gg(c,d,a,b,k[15],14,-660478335);b=gg(b,c,d,a,k[4],20,-405537848);a=gg(a,b,c,d,k[9],5,568446438);d=gg(d,a,b,c,k[14],9,-1019803690);c=gg(c,d,a,b,k[3],14,-187363961);b=gg(b,c,d,a,k[8],20,1163531501);a=gg(a,b,c,d,k[13],5,-1444681467);d=gg(d,a,b,c,k[2],9,-51403784);c=gg(c,d,a,b,k[7],14,1735328473);b=gg(b,c,d,a,k[12],20,-1926607734);a=hh(a,b,c,d,k[5],4,-378558);d=hh(d,a,b,c,k[8],11,-2022574463);c=hh(c,d,a,b,k[11],16,1839030562);b=hh(b,c,d,a,k[14],23,-35309556);a=hh(a,b,c,d,k[1],4,-1530992060);d=hh(d,a,b,c,k[4],11,1272893353);c=hh(c,d,a,b,k[7],16,-155497632);b=hh(b,c,d,a,k[10],23,-1094730640);a=hh(a,b,c,d,k[13],4,681279174);d=hh(d,a,b,c,k[0],11,-358537222);c=hh(c,d,a,b,k[3],16,-722521979);b=hh(b,c,d,a,k[6],23,76029189);a=hh(a,b,c,d,k[9],4,-640364487);d=hh(d,a,b,c,k[12],11,-421815835);c=hh(c,d,a,b,k[15],16,530742520);b=hh(b,c,d,a,k[2],23,-995338651);a=ii(a,b,c,d,k[0],6,-198630844);d=ii(d,a,b,c,k[7],10,1126891415);c=ii(c,d,a,b,k[14],15,-1416354905);b=ii(b,c,d,a,k[5],21,-57434055);a=ii(a,b,c,d,k[12],6,1700485571);d=ii(d,a,b,c,k[3],10,-1894986606);c=ii(c,d,a,b,k[10],15,-1051523);b=ii(b,c,d,a,k[1],21,-2054922799);a=ii(a,b,c,d,k[8],6,1873313359);d=ii(d,a,b,c,k[15],10,-30611744);c=ii(c,d,a,b,k[6],15,-1560198380);b=ii(b,c,d,a,k[13],21,1309151649);a=ii(a,b,c,d,k[4],6,-145523070);d=ii(d,a,b,c,k[11],10,-1120210379);c=ii(c,d,a,b,k[2],15,718787259);b=ii(b,c,d,a,k[9],21,-343485551);x[0]=add32(a,x[0]);x[1]=add32(b,x[1]);x[2]=add32(c,x[2]);x[3]=add32(d,x[3])};var cmn=function(q,a,b,x,s,t){a=add32(add32(a,q),add32(x,t));return add32(a<<s|a>>>32-s,b)};var ff=function(a,b,c,d,x,s,t){return cmn(b&c|~b&d,a,b,x,s,t)};var gg=function(a,b,c,d,x,s,t){return cmn(b&d|c&~d,a,b,x,s,t)};var hh=function(a,b,c,d,x,s,t){return cmn(b^c^d,a,b,x,s,t)};var ii=function(a,b,c,d,x,s,t){return cmn(c^(b|~d),a,b,x,s,t)};var md51=function(s){var txt="",n=s.length,state=[1732584193,-271733879,-1732584194,271733878],i;for(i=64;i<=s.length;i+=64){md5cycle(state,md5blk(s.substring(i-64,i)))}s=s.substring(i-64);var tail=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];for(i=0;i<s.length;i++)tail[i>>2]|=s.charCodeAt(i)<<(i%4<<3);tail[i>>2]|=128<<(i%4<<3);if(i>55){md5cycle(state,tail);for(i=0;i<16;i++)tail[i]=0}tail[14]=n*8;md5cycle(state,tail);return state};var md5blk=function(s){var md5blks=[],i;for(i=0;i<64;i+=4){md5blks[i>>2]=s.charCodeAt(i)+(s.charCodeAt(i+1)<<8)+(s.charCodeAt(i+2)<<16)+(s.charCodeAt(i+3)<<24)}return md5blks};var hex_chr="0123456789abcdef".split("");var rhex=function(n){var s="",j=0;for(;j<4;j++)s+=hex_chr[n>>j*8+4&15]+hex_chr[n>>j*8&15];return s};var hex=function(x){for(var i=0;i<x.length;i++)x[i]=rhex(x[i]);return x.join("")};var md5_=function(s){return hex(md51(s))};var add32=function(a,b){return a+b&4294967295};if(md5_("hello")!="5d41402abc4b2a76b9719d911017c592"){var add32=function(x,y){var lsw=(x&65535)+(y&65535),msw=(x>>16)+(y>>16)+(lsw>>16);return msw<<16|lsw&65535}}return md5_(str);}
 
 
 
@@ -2808,14 +2806,12 @@ function PUVOX_LIBRARY() { return {
 			}
 			return o1;
 		}
-	},
-
-
+	}
 
 
 	async fetch(url, postOptions = null, opts = {}){
 		return await this.getRemoteData(url, postOptions, opts);
-	},
+	}
 	async getRemoteData(url, postOptions = null, opts = {}){
 		// https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
 		const options = {};
@@ -2834,7 +2830,7 @@ function PUVOX_LIBRARY() { return {
 		// 		}).on ('error', (ex) => { reject (ex); });
 		// 	} catch (ex) { reject (ex); }
 		// });
-	},
+	}
 	//  if(setHashInAddress) {	window.location.hash = id_or_Name;	}
 	
 
@@ -2852,29 +2848,29 @@ function PUVOX_LIBRARY() { return {
 			str = str.slice(0, -1);
 		}
 		return str;
-	},
+	}
 	trailingSlash(str){
 		return this.unTrailingSlash(str) + '/';
-	},
+	}
 
 	// ######## CACHE ITEMS (client-side JS) ########
-	privateAppName__ : null, //override with anything you want
-	setAppName (name){ this.privateAppName__ = name; },
+	privateAppName__ = null; //override with anything you want
+	setAppName (name){ this.privateAppName__ = name; }
 	getAppName(){ 
 		if (!this.privateAppName__){
 			throw new Error ('Before you start using caching functions, please at first define your appplication\'s name(identifier) at first with .setAppName("whatever_my_app_name"), so it will get its own cache-storage');
 		}
 		return this.privateAppName__; 
-	},
+	}
 
 	
 	// ######## Cookies: https://github.com/ttodua/useful-javascript/blob/master/cookies-library.js ######## //
-	Cookies : {
-		get(a,b) { return this.cookies_instance().get(a,b); },
-		set(a,b,c) { return this.cookies_instance().set(a,b);  },
-		remove(a, b) {return this.cookies_instance().remove(a,b);   },
-		append(name, value, attributes) {return this.cookies_instance().set((this.get(name) || '')  + value, attributes);  },
-		isset(cookiename) {return this.get(cookiename)!="";}, // document.cookie.indexOf('; '+cookiename+'='); 
+	Cookies = new (class{
+		get(a,b) { return this.cookies_instance().get(a,b); }
+		set(a,b,c) { return this.cookies_instance().set(a,b);  }
+		remove(a, b) {return this.cookies_instance().remove(a,b);   }
+		append(name, value, attributes) {return this.cookies_instance().set((this.get(name) || '')  + value, attributes);  }
+		isset(cookiename) {return this.get(cookiename)!="";} // document.cookie.indexOf('; '+cookiename+'='); 
 		// WORKING WITH ARRAY/OBJECTS
 		getOption(cookieName, key, defaultValue)
 		{ 
@@ -2886,7 +2882,7 @@ function PUVOX_LIBRARY() { return {
 					return parsed[key];
 			}
 			return defaultValue;
-		},
+		}
 		setOption(cookieName, key, value, attributes)
 		{
 			var cookie = this.get(cookieName);
@@ -2896,7 +2892,7 @@ function PUVOX_LIBRARY() { return {
 			var attributes = attributes ||  { expires: 99999 };
 			this.set(cookieName, JSON.stringify(parsed), attributes);
 			return parsed;
-		},
+		}
 		removeOption(cookieName, key, attributes)
 		{
 			var cookie = this.get(cookieName);
@@ -2906,17 +2902,17 @@ function PUVOX_LIBRARY() { return {
 			var attributes = attributes ||  { expires: 99999 };
 			this.set(cookieName, JSON.stringify(parsed), attributes);
 			return parsed;
-		}, 
+		}
 		//sub-array
 		getOptionObject(cookieName, key){
 			return JSON.parse( this.getOption(cookieName, key, "{}") );
-		},
+		}
 		setOptionObject(cookieName, key, subKey, subValue){
 			var existing = JSON.parse( this.getOption(cookieName, key, "{}") );
 			if (subValue==null) delete existing[subKey];
 			else existing[subKey]=subValue;
 			this.setOption(cookieName, key, JSON.stringify(existing));
-		},
+		}
 		setOptionArray(cookieName, key, subValue, Add_or_remove)
 		{
 			var existing = JSON.parse( this.getOption(cookieName, key, "[]") );
@@ -2929,16 +2925,16 @@ function PUVOX_LIBRARY() { return {
 				existing = puvox_library.removeItem(existing, subValue);
 			}
 			this.setOption(cookieName, key, JSON.stringify(existing));
-		},
+		}
 		//
-		cookies_instance(){ if (!this.cookies_inited) this.cookies_inited=this.cookies(); return this.cookies_inited; } ,
-		cookies_inited: null,
+		cookies_instance(){ if (!this.cookies_inited) this.cookies_inited = this.cookies(); return this.cookies_inited; }
+		cookies_inited= null;
 		// https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js
-		cookies : function(){"use strict";function e(e){for(var t=1;t<arguments.length;t++){var n=arguments[t];for(var r in n)e[r]=n[r]}return e}var t={read:function(e){return e.replace(/(%[\dA-F]{2})+/gi,decodeURIComponent)},write:function(e){return encodeURIComponent(e).replace(/%(2[346BF]|3[AC-F]|40|5[BDE]|60|7[BCD])/g,decodeURIComponent)}};return function n(r,o){function i(t,n,i){if("undefined"!=typeof document){"number"==typeof(i=e({},o,i)).expires&&(i.expires=new Date(Date.now()+864e5*i.expires)),i.expires&&(i.expires=i.expires.toUTCString()),t=encodeURIComponent(t).replace(/%(2[346B]|5E|60|7C)/g,decodeURIComponent).replace(/[()]/g,escape),n=r.write(n,t);var c="";for(var u in i)i[u]&&(c+="; "+u,!0!==i[u]&&(c+="="+i[u].split(";")[0]));return document.cookie=t+"="+n+c}}return Object.create({set:i,get:function(e){if("undefined"!=typeof document&&(!arguments.length||e)){for(var n=document.cookie?document.cookie.split("; "):[],o={},i=0;i<n.length;i++){var c=n[i].split("="),u=c.slice(1).join("=");'"'===u[0]&&(u=u.slice(1,-1));try{var f=t.read(c[0]);if(o[f]=r.read(u,f),e===f)break}catch(e){}}return e?o[e]:o}},remove:function(t,n){i(t,"",e({},n,{expires:-1}))},withAttributes:function(t){return n(this.converter,e({},this.attributes,t))},withConverter:function(t){return n(e({},this.converter,t),this.attributes)}},{attributes:{value:Object.freeze(o)},converter:{value:Object.freeze(r)}})}(t,{path:"/"})}
-	},
+		cookies = function(){"use strict";function e(e){for(var t=1;t<arguments.length;t++){var n=arguments[t];for(var r in n)e[r]=n[r]}return e}var t={read:function(e){return e.replace(/(%[\dA-F]{2})+/gi,decodeURIComponent)},write:function(e){return encodeURIComponent(e).replace(/%(2[346BF]|3[AC-F]|40|5[BDE]|60|7[BCD])/g,decodeURIComponent)}};return function n(r,o){function i(t,n,i){if("undefined"!=typeof document){"number"==typeof(i=e({},o,i)).expires&&(i.expires=new Date(Date.now()+864e5*i.expires)),i.expires&&(i.expires=i.expires.toUTCString()),t=encodeURIComponent(t).replace(/%(2[346B]|5E|60|7C)/g,decodeURIComponent).replace(/[()]/g,escape),n=r.write(n,t);var c="";for(var u in i)i[u]&&(c+="; "+u,!0!==i[u]&&(c+="="+i[u].split(";")[0]));return document.cookie=t+"="+n+c}}return Object.create({set:i,get:function(e){if("undefined"!=typeof document&&(!arguments.length||e)){for(var n=document.cookie?document.cookie.split("; "):[],o={},i=0;i<n.length;i++){var c=n[i].split("="),u=c.slice(1).join("=");'"'===u[0]&&(u=u.slice(1,-1));try{var f=t.read(c[0]);if(o[f]=r.read(u,f),e===f)break}catch(e){}}return e?o[e]:o}},remove:function(t,n){i(t,"",e({},n,{expires:-1}))},withAttributes:function(t){return n(this.converter,e({},this.attributes,t))},withConverter:function(t){return n(e({},this.converter,t),this.attributes)}},{attributes:{value:Object.freeze(o)},converter:{value:Object.freeze(r)}})}(t,{path:"/"})}
+	})();
 
 
-	cache: {
+	cache = new (class{
 		helper_read(groupName, storageType, expireSeconds = 0){
 			const appName = puvox_library.getAppName();
 			if (storageType === 'file'){
@@ -2962,7 +2958,7 @@ function PUVOX_LIBRARY() { return {
 				if (typeof alert !== 'undefined') alert(`storageType ${storageType} not supported`);
 				throw new Error(`storageType ${storageType} not supported`);
 			}
-		},
+		}
 		helper_write(groupName, content, storageType){
 			content = puvox_library.isString (content) ? content : (puvox_library.isArray(content) || puvox_library.isObject(content) ? JSON.stringify(content) : content);
 			const appName = puvox_library.getAppName();
@@ -2985,7 +2981,7 @@ function PUVOX_LIBRARY() { return {
 				if (typeof alert !== 'undefined') alert(`storageType ${storageType} not supported`);
 				throw new Error(`storageType ${storageType} not supported`);
 			}
-		},
+		}
 		helper_delete(groupName, storageType){
 			const appName = puvox_library.getAppName();
 			if (storageType === 'file'){
@@ -3005,30 +3001,30 @@ function PUVOX_LIBRARY() { return {
 				alert(`storageType ${storageType} not supported`);
 				throw new Error(`storageType ${storageType} not supported`);
 			}
-		},
+		}
 
 		get(groupName, defaultVal = null, storageType = 'localStorage', expireSeconds = 0){
 			const content = this.helper_read(groupName, storageType, expireSeconds);
 			return (content !== null && content !== '') ? content : defaultVal;
-		},
+		}
 		set(groupName, content, storageType = 'localStorage'){
 			this.helper_write(groupName, content, storageType);
-		},
+		}
 		delete(groupName, storageType = 'localStorage'){
 			this.helper_delete(groupName, storageType);
-		},
+		}
 		getChild(groupName, optName, defaultVal = null, storageType = 'localStorage', expireSeconds = 0){
 			// todo: individual sub-item expiration
 			const content = this.get(groupName, '{}', storageType, expireSeconds);
 			const json = JSON.parse(content);
 			return (optName in json) ? json[optName] : defaultVal;
-		},
+		}
 		setChild(groupName, optName, val, storageType = 'localStorage'){
 			const content = this.get(groupName, '{}', storageType);
 			const json = JSON.parse(content);
 			json[optName] = val;
 			this.set(groupName, JSON.stringify(json), storageType);
-		},
+		}
 		deleteChild(groupName, optName, storageType = 'localStorage'){
 			const content = this.get(groupName, '{}', storageType, expireSeconds);
 			// if it's empty, no need to do anything
@@ -3036,19 +3032,19 @@ function PUVOX_LIBRARY() { return {
 			const json = JSON.parse(content);
 			delete json[optName];
 			this.set(groupName, JSON.stringify(json), storageType);
-		},
+		}
 
 
-		file: {
+		file = new (class {
 			// ########## CACHE DIRS (server-side JS) ##########
-			customCacheDir:null,
+			customCacheDir = null;
 			get_dir(){  
 				if (!this.customCacheDir){ 
 					this.customCacheDir = puvox_library.file.tempDir();
 				}
 				let finaldir = puvox_library.trailingSlash(this.customCacheDir + puvox_library.getAppName() + '_cache_');
 				return finaldir; 
-			},
+			}
 			set_dir(dir, auto_clear_seconds=null){ 
 				if(dir) this.customCacheDir = dir;
 				const res = puvox_library.file.createDirectory(this.customCacheDir);
@@ -3058,14 +3054,14 @@ function PUVOX_LIBRARY() { return {
 					//$this->clearCacheDir($auto_clear_seconds); 
 				}
 				return res;
-			},
+			}
 			filePath(uniqFileName){
 				const parent = puvox_library;
 				uniqFileName = parent.isString(uniqFileName) || parent.isNumeric(uniqFileName) ? uniqFileName : JSON.stringify(uniqFileName);
 				uniqFileName = parent.sanitize_key_dashed(parent.getCharsFromStart(uniqFileName, 15)) + "_"+ parent.md5(uniqFileName);
 				filePath= this.get_dir() + uniqFileName + "_tmp"; //"/". 
 				return filePath;
-			},
+			}
 			//
 			get(uniqFileName, defaultContent ='', expire_seconds=8640000, decode = true)
 			{
@@ -3099,17 +3095,14 @@ function PUVOX_LIBRARY() { return {
 				else {
 					return defaultContent;
 				}
-			},
+			}
 			set(uniqFileName, content)
 			{
 				const parent = puvox_library;
 				let filePath= this.filePath(uniqFileName);
 				let contentFinal = parent.isString(content) ? content : ((parent.isArray(content) || parent.isObject(content)) ? JSON.stringify(content) : content);
 				return parent.file.write(filePath, contentFinal);
-			},
-			
-
-
+			}
 
 			
 			//
@@ -3132,41 +3125,39 @@ function PUVOX_LIBRARY() { return {
 			// 		console.log("writeFileAppendJson", e); 
 			// 	}
 			// },
-			containerDefaultPrefix: "_cached_ids_",
-			tempIds:{},
+			containerDefaultPrefix = "_cached_ids_";
+			tempIds = {};
 			idForContent(slugOrContent){
 				return puvox_library.md5(puvox_library.isSimpleVariableType(slugOrContent) ? slugOrContent : JSON.stringify(slugOrContent)); 
-			},
+			}
 			existsId(containerSlug, id){
 				return (id in this.getIds(containerSlug));
-			},
+			}
 			getIds(containerSlug) {
 				if (! (containerSlug in this.tempIds)) {
 					const content = puvox_library.file.read(this.get_dir() + this.containerDefaultPrefix + containerSlug, '{}');
 					this.tempIds[containerSlug] = JSON.parse(content);
 				}
 				return this.tempIds[containerSlug];
-			},
+			}
 			setIds(containerSlug, idsDict) {
 				this.tempIds[containerSlug] = idsDict;
 				return puvox_library.file.write(this.get_dir() + this.containerDefaultPrefix + containerSlug, JSON.stringify(this.tempIds[containerSlug]));
-			},
+			}
 			addId(containerSlug, id){
 				const ids = this.getIds(containerSlug);
 				ids[id] = 1;
 				this.setIds(containerSlug, ids);
-			},
+			}
 			addIdIfNotExists(containerSlug, id){
 				if (! this.existsId(containerSlug, id)){
 					this.addId(containerSlug, id);
 					return true;
 				}
 				return false;
-			},
-		},
- 
-	
-	}, 
+			}
+		})();
+	})();
 
 	// ################################################
 	// for node packs:_fs_instance :null,
@@ -3179,7 +3170,7 @@ function PUVOX_LIBRARY() { return {
 	// 		return this._required_instances[name];
 	// 	}
 	// }, 
-	file: {
+	file = new (class {
 		// support for several native modules
 		set_module(module) { 
 			// 'fs'
@@ -3194,63 +3185,63 @@ function PUVOX_LIBRARY() { return {
 			else if ('hostname' in module && 'homedir' in module && 'tmpdir' in module && 'platform' in module) {
 				this.module_os = module;
 			}
-		},
+		}
 		fs() {
 			if(!this.module_fs) {
 				throw new Error ('at first, set puvox_library.set_module(require("fs"))');
 			}
 			return this.module_fs;
-		},
+		}
 		os() {
 			if(!this.module_os) {
 				throw new Error ('at first, set puvox_library.set_module(require("os"))');
 			}
 			return this.module_os;
-		},
+		}
 		path() {
 			if(!this.module_path) {
 				throw new Error ('at first, set puvox_library.set_module(require("path"))');
 			}
 			return this.module_path;
-		},
+		}
 		// ends with slash
-		tempDir(){ return puvox_library.trailingSlash(this.os().tmpdir()); },
+		tempDir(){ return puvox_library.trailingSlash(this.os().tmpdir()); }
 
 		exists(filePath){
 			return this.fs().existsSync(filePath);
-		},
+		}
 		mtime(filePath){
 			if (this.exists(filePath)) {
 				return (this.fs().statSync(filePath)).mtimeMs;
 			} else {
 				return null;
 			}
-		},
+		}
 		delete(filePath){
 			return (this.unlink(filePath));
-		},
+		}
 		unlink(filePath){
 			return (this.fs().unlinkSync(filePath));
-		},
+		}
 		createDirectory(dirPath){
 			if (!this.exists(dirPath)){
 				return this.fs().mkdirSync(dirPath, { recursive: true });
 			}
 			return true;
-		},
+		}
 		read(filePath, defaultContent = ''){
 			if (!this.exists(filePath)){
 				return defaultContent;
 			}
 			return this.fs().readFileSync(filePath);
-		},
+		}
 		write(filePath, content){
 			const dir = this.path().dirname(filePath);
 			this.createDirectory(dir);
 			this.fs().writeFileSync(filePath, content, 'utf8', function(err){
 				if (err) throw err;
 			});
-		},
+		}
 		getFilesListFromDir (dir) {
 			const filesList = [];
 			this.fs().readdirSync(dir, (err, files) => {
@@ -3259,14 +3250,14 @@ function PUVOX_LIBRARY() { return {
 				});
 			});
 			return filesList;
-		},
-	},
+		}
+	})();
 
 	catchUnhandledExceptions (callback) {
 		process.on('uncaughtException', (e) => { callback(e, "exc-uncaught"); });
 		process.on('unhandledRejection', (e) => { callback(e, "uexc-nhandled"); });
 		process.on('warning', e=>{ callback(e, "exc-warning"); });
-	},
+	}
 	
 
 
@@ -3283,32 +3274,32 @@ function PUVOX_LIBRARY() { return {
 	
 	// region: ####### from CCXT ##########
 	// generic
-	keys: Object.keys,
-    values(x) { return ((!this.isArray (x)) ? Object.values (x) : x);},
-    extend(...args) { return Object.assign ({}, ...args) ;}, // NB: side-effect free
-    clone(x){ return (this.isArray (x) ? Array.from (x) : this.extend (x)) ;},
-    index(x) { return new Set (this.values (x));},
-    ordered(x) { return x;}, // a stub to keep assoc keys in order (in JS it does nothing, it's mostly for Python)
-    unique(x) { return Array.from (this.index (x));},
-    arrayConcat (a, b) { return a.concat (b);},
+	keys= Object.keys;
+    values(x) { return ((!this.isArray (x)) ? Object.values (x) : x);}
+    extend(...args) { return Object.assign ({}, ...args) ;} // NB: side-effect free
+    clone(x){ return (this.isArray (x) ? Array.from (x) : this.extend (x)) ;}
+    index(x) { return new Set (this.values (x));}
+    ordered(x) { return x;} // a stub to keep assoc keys in order (in JS it does nothing, it's mostly for Python)
+    unique(x) { return Array.from (this.index (x));}
+    arrayConcat (a, b) { return a.concat (b);}
     inArray (needle, haystack) {
         return haystack.includes (needle);
-    },
+    }
     toArray (object) {
         return Object.values (object);
-    },
+    }
     isEmpty (object) {
         if (!object) {
             return true;
         }
         return (Array.isArray (object) ? object : Object.keys (object)).length < 1;
-    },
+    }
     keysort (x, out = {}) {
         for (const k of this.keys (x).sort ()) {
             out[k] = x[k];
         }
         return out;
-    },
+    }
     indexBy (x, k, out = {}) {
         //  description: https://github.com/ccxt/ccxt/blob/master/js/base/functions/generic.js
         for (const v of this.values (x)) {
@@ -3318,7 +3309,7 @@ function PUVOX_LIBRARY() { return {
         }
 
         return out;
-    },
+    }
     groupBy (x, k, out = {}) {
         //  description: https://github.com/ccxt/ccxt/blob/master/js/base/functions/generic.js
         for (const v of this.values (x)) {
@@ -3329,7 +3320,7 @@ function PUVOX_LIBRARY() { return {
             }
         }
         return out;
-    },
+    }
     filterBy (x, k, value = undefined, out = []) {
         //  description: https://github.com/ccxt/ccxt/blob/master/js/base/functions/generic.js
         for (const v of this.values (x)) {
@@ -3338,7 +3329,7 @@ function PUVOX_LIBRARY() { return {
             }
         }
         return out;
-    },
+    }
     sortBy (array, key, descending = false, direction = descending ? -1 : 1) {
 		return array.sort ((a, b) => {
 			if (a[key] < b[key]) {
@@ -3349,7 +3340,7 @@ function PUVOX_LIBRARY() { return {
 				return 0;
 			}
 		});
-	},
+	}
     sortBy2 (array, key1, key2, descending = false, direction = descending ? -1 : 1) {
 		return array.sort ((a, b) => {
 			if (a[key1] < b[key1]) {
@@ -3366,7 +3357,7 @@ function PUVOX_LIBRARY() { return {
 				}
 			}
 		});
-	},
+	}
     flatten (x, out = []) {
         for (const v of x) {
             if (this.isArray (v)) {
@@ -3376,8 +3367,8 @@ function PUVOX_LIBRARY() { return {
             }
         }
         return out;
-    },
-    pluck(x, k) { return this.values (x).filter ((v) => k in v).map ((v) => v[k]);},
+    }
+    pluck(x, k) { return this.values (x).filter ((v) => k in v).map ((v) => v[k]);}
     omit (x, ...args) {
         if (!Array.isArray (x)) {
             const out = this.clone (x);
@@ -3393,11 +3384,11 @@ function PUVOX_LIBRARY() { return {
             return out;
         }
         return x;
-    },
+    }
     sum (...xs) {
         const ns = xs.filter (isNumber); // leave only numbers
         return (ns.length > 0) ? ns.reduce ((a, b) => a + b, 0) : undefined;
-    },
+    }
     deepExtend(...xs) {
         let out = undefined;
         for (const x of xs) {
@@ -3413,22 +3404,21 @@ function PUVOX_LIBRARY() { return {
             }
         }
         return out;
-    },
+    }
 	// type
-	isNumber: Number.isFinite,
-    isInteger: Number.isInteger,
-    isArray: Array.isArray,
-    hasProps (o){ return ((o !== undefined) && (o !== null));},
-    isString (s){ return (typeof s === 'string');},
-    isObject (o){ return ((o !== null) && (typeof o === 'object'));},
-    isRegExp (o){ return (o instanceof RegExp);},
-    isDictionary(o ){return (this.isObject (o) && (Object.getPrototypeOf (o) === Object.prototype) && !this.isArray (o) && !this.isRegExp (o));},
-    isStringCoercible(x){ return ((this.hasProps (x) && x.toString) || this.isNumber (x));},
-	prop (o, k) { return (this.isObject (o) && o[k] !== '' && o[k] !== null ? o[k] : undefined);},
-	getValueFromKeysInArray(object, array) { return object[array.find (k => this.prop (object,k) !== undefined)];},
+	isNumber= Number.isFinite;
+    isInteger= Number.isInteger;
+    isArray= Array.isArray;
+    hasProps (o){ return ((o !== undefined) && (o !== null));}
+    isString (s){ return (typeof s === 'string');}
+    isObject (o){ return ((o !== null) && (typeof o === 'object'));}
+    isRegExp (o){ return (o instanceof RegExp);}
+    isDictionary(o ){return (this.isObject (o) && (Object.getPrototypeOf (o) === Object.prototype) && !this.isArray (o) && !this.isRegExp (o));}
+    isStringCoercible(x){ return ((this.hasProps (x) && x.toString) || this.isNumber (x));}
+	prop (o, k) { return (this.isObject (o) && o[k] !== '' && o[k] !== null ? o[k] : undefined);}
+	getValueFromKeysInArray(object, array) { return object[array.find (k => this.prop (object,k) !== undefined)];}
 	asFloat (x) { return ((this.isNumber (x) || (this.isString (x) && x.length !== 0)) ? parseFloat (x) : NaN);}
-    , 
-	asInteger(x) { return ((this.isNumber (x) || (this.isString (x) && x.length !== 0)) ? Math.trunc (Number(x)) : NaN);},
+	asInteger(x) { return ((this.isNumber (x) || (this.isString (x) && x.length !== 0)) ? Math.trunc (Number(x)) : NaN);}
 	// safeFloat:(o, k, $default, n = asFloat (prop (o, k))) => (this.isNumber (n) ? n : $default),
 	// safeInteger: (o, k, $default, n = asInteger (prop (o, k))) => (this.isNumber (n) ? n : $default),
 	// safeTimestamp: (o, k, $default, n = asFloat (prop (o, k))) => (isNumber (n) ? parseInt (n * 1000) : $default),
@@ -3451,62 +3441,61 @@ function PUVOX_LIBRARY() { return {
 		else if (unit === 's') { scale = 1;	} 
 		else {	throw new NotSupported ('timeframe unit ' + unit + ' is not supported'); }
 		return amount * scale;
-	},
+	}
 	roundTimeframe(timeframe, timestamp, direction = ROUND_DOWN) {
 		const ms = this.parseTimeframe (timeframe) * 1000
 		// Get offset based on timeframe in milliseconds
 		const offset = timestamp % ms
 		return timestamp - offset + ((direction === ROUND_UP) ? ms : 0);
-	},
-	json(data, params = undefined) { return JSON.stringify (data); },
+	}
+	json(data, params = undefined) { return JSON.stringify (data); }
 	isJsonEncodedObject (object) {
 		return (
 			(typeof object === 'string') &&
 			(object.length >= 2) &&
 			((object[0] === '{') || (object[0] === '['))
 		);
-	},
+	}
 	//htmlentities
     encode_html_entities (content) {
         return content.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
             return '&#'+i.charCodeAt(0)+';';
         });
-    },
+    }
 	// number
 	precisionFromString (string) {
 		const split = string.replace (/0+$/g, '').split ('.')
 		return (split.length > 1) ? (split[1].length) : 0
-	},
+	}
 	numberToString (x) { // avoids scientific notation for too large and too small numbers
 		if (x === undefined) return undefined; if (typeof x !== 'number') return x.toString (); const s = x.toString (); if (Math.abs (x) < 1.0) { const n_e = s.split ('e-'); const n = n_e[0].replace ('.', ''); const e = parseInt (n_e[1]); const neg = (s[0] === '-'); if (e) { x = (neg ? '-' : '') + '0.' + (new Array (e)).join ('0') + n.substring (neg); return x; } } else { const parts = s.split ('e'); if (parts[1]) { let e = parseInt (parts[1]); const m = parts[0].split ('.'); let part = ''; if (m[1]) { e -= m[1].length; part = m[1]; } return m[0] + part + (new Array (e + 1)).join ('0'); } }	return s;
-	},
+	}
 	// platform
-	isBrowser: typeof window !== 'undefined',
-	isElectron: typeof process !== 'undefined' && typeof process.versions !== 'undefined' && typeof process.versions.electron !== 'undefined',
-	isWebWorker: typeof WorkerGlobalScope !== 'undefined' && (self instanceof WorkerGlobalScope),
-	isWindows: typeof process !== 'undefined' && process.platform === "win32",
+	isBrowser=typeof window !== 'undefined';
+	isElectron= typeof process !== 'undefined' && typeof process.versions !== 'undefined' && typeof process.versions.electron !== 'undefined';
+	isWebWorker= typeof WorkerGlobalScope !== 'undefined' && (self instanceof WorkerGlobalScope);
+	isWindows= typeof process !== 'undefined' && process.platform === "win32";
 	// isNode when it's not browser, neither webworker
-	isNode: typeof window === 'undefined' && !(typeof WorkerGlobalScope !== 'undefined' && (self instanceof WorkerGlobalScope)),
-	defaultFetch: fetch,
+	isNode= typeof window === 'undefined' && !(typeof WorkerGlobalScope !== 'undefined' && (self instanceof WorkerGlobalScope));
+	defaultFetch=fetch;
 	//string 
-	uuid (a) { return a ? (a ^ Math.random () * 16 >> a / 4).toString (16) : ([1e7]+-1e3+-4e3+-8e3+-1e11).replace (/[018]/g, uuid);}, 
-	capitalize (s) {return s.length ? (s.charAt (0).toUpperCase () + s.slice (1)) : s;},
-    strip (s) { return s.replace(/^\s+|\s+$/g, '');},
+	uuid (a) { return a ? (a ^ Math.random () * 16 >> a / 4).toString (16) : ([1e7]+-1e3+-4e3+-8e3+-1e11).replace (/[018]/g, uuid);}
+	capitalize (s) {return s.length ? (s.charAt (0).toUpperCase () + s.slice (1)) : s;}
+    strip (s) { return s.replace(/^\s+|\s+$/g, '');}
 	// time
-	now : Date.now,
-	milliseconds: Date.now, //  milliseconds(){ return (new Date().getTime()); },
-	seconds() { return Math.floor (Date.now () / 1000);},
+	now = Date.now;
+	milliseconds=Date.now; //  milliseconds(){ return (new Date().getTime()); },
+	seconds() { return Math.floor (Date.now () / 1000);}
 	// endregion: ####### from CCXT ##########
-
-}; }
+}
 
 
 // export to outside world
 if (typeof module != 'undefined' && module.hasOwnProperty('exports')) {
-	module.exports = PUVOX_LIBRARY;
+	module.exports = PuvoxLibrary;
 }
 if (typeof window != 'undefined') {
-	window['PuvoxLibrary'] = PUVOX_LIBRARY;
+	window['PuvoxLibrary'] = PuvoxLibrary;
 }
 
 // export default puvox_library;
