@@ -3259,7 +3259,7 @@ class PuvoxLibrary {
 			if (!this.exists(filePath)){
 				return defaultContent;
 			}
-			return this.fs().readFileSync(filePath);
+			return this.fs().readFileSync(filePath, 'utf8');
 		}
 		write(filePath, content){
 			const dir = this.path().dirname(filePath);
