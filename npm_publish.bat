@@ -1,4 +1,4 @@
 start tsc
-timeout /t 5
+timeout /t 3
 npm publish
 pause 1

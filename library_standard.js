@@ -1828,7 +1828,7 @@ class PuvoxLibrary {
 	show_my_popup(TEXTorID, AdditionalStyles ){
 			TEXTorID=TEXTorID.trim(); var FirstChar= TEXTorID.charAt(0); var eName = TEXTorID.substr(1); if ('#'==FirstChar || '.'==FirstChar){	if('#'==FirstChar){var x=document.getElementById(eName);} else{var x=document.getElementsByClassName(eName)[0];}} else { var x=document.createElement('div');x.innerHTML=TEXTorID;} var randm_id=Math.floor((Math.random()*100000000));
 		var DivAA = document.createElement('div');    DivAA.id = "blkBackgr_"+randm_id;  DivAA.className = "MyJsBackg";   DivAA.setAttribute("style", 'background:black; height:5000px; left:0px; opacity:0.9; position:fixed; top:0px; width:100%; z-index:99995;'); document.body.appendChild(DivAA);      AdditionalStyles= AdditionalStyles || '';
-		var DivBB = document.createElement('div');    DivBB.id = 'popupp_'+randm_id;     DivBB.className = "MyJsPopup";   DivBB.setAttribute("style",'background-color:white; border:6px solid white; border-radius:10px; display:block; min-height:1%; min-width:350px; width:auto; overflow:auto; max-height:80%; max-width:800px; padding:15px; position:fixed; text-align:left; top:10%; z-index:99995; left:0px; right:0px; margin-left:auto; margin-right:auto; width:80%;'+ AdditionalStyles); 	DivBB.innerHTML = '<div style="background-color:#C0BCBF; border-radius:55px; padding:5px; font-family:arial; float:right; font-weight:700; margin:-15px -10px 0px 0px; z-index: 88; "  class="CloseButtn" ><a href="javascript:my_popup_closee('+randm_id+');" style="display:block;margin:-5px 0 0 0;font-size:1.6em;">x</a></div>'; document.body.appendChild(DivBB);z=x.cloneNode(true);DivBB.appendChild(z); if(z.style.display=="none"){z.style.display="block";}    
+		var DivBB = document.createElement('div');    DivBB.id = 'popupp_'+randm_id;     DivBB.className = "MyJsPopup";   DivBB.setAttribute("style",'background-color:white; border:6px solid white; border-radius:10px; display:block; min-height:1%; min-width:350px; width:auto; overflow:auto; max-height:80%; max-width:800px; padding:15px; position:fixed; text-align:left; top:10%; z-index:99995; left:0px; right:0px; margin-left:auto; margin-right:auto; width:80%;'+ AdditionalStyles); 	DivBB.innerHTML = '<div style="background-color:#C0BCBF; border-radius:55px; padding:5px; font-family:arial; float:right; font-weight:700; margin:-15px -10px 0px 0px; z-index: 88; "  class="CloseButtn" ><a href="javascript:my_popup_closee('+randm_id+');" style="display:block;margin:-5px 0 0 0;font-size:1.6em;">x</a></div>'; document.body.appendChild(DivBB);const z=x.cloneNode(true);DivBB.appendChild(z); if(z.style.display=="none"){z.style.display="block";}    
 	}
 	my_popup_closee(RandomIDD) { var x=document.getElementById("blkBackgr_"+RandomIDD); x.parentNode.removeChild(x);      var x=document.getElementById('popupp_'+RandomIDD); x.parentNode.removeChild(x);
 	}
@@ -2635,10 +2635,10 @@ class PuvoxLibrary {
 	// random NUMBER or STRINGS
 	RandomNum(maxNum)		{ return Math.floor((Math.random() * maxNum) + 1); }
 
-	random_number(Length)	{ var length= length || 5;  return Math.floor((Math.random() * Math.pow(10, length)) + 1);}
-	randomNumber(Length)	{return this.random_number(length);}
+	random_number(length)	{ var length= length || 5;  return Math.floor((Math.random() * Math.pow(10, length)) + 1);}
+	randomNumber(length)	{return this.random_number(length);}
 	random_number_minmax(min, max) { var min= min || 1; var max= max || 9999999999; return Math.floor(Math.random() * (max - min + 1)) + min;}
-	randomString(Length)	{ var length= length || 5;  return Math.random().toString(36).substr(2, length);}
+	randomString(length)	{ var length= length || 5;  return Math.random().toString(36).substr(2, length);}
     //getRandomInt(max) {    return Math.floor(Math.random() * Math.floor(max)); },
 	
 	shuffle_Word(word){

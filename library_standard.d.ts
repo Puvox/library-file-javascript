@@ -343,10 +343,10 @@ declare class PuvoxLibrary {
     compare(a: any, operator: any, b: any): boolean;
     calculate(a: any, operator: any, b: any): any;
     RandomNum(maxNum: any): number;
-    random_number(Length: any): number;
-    randomNumber(Length: any): number;
+    random_number(length: any): number;
+    randomNumber(length: any): number;
     random_number_minmax(min: any, max: any): any;
-    randomString(Length: any): string;
+    randomString(length: any): string;
     shuffle_Word(word: any): string;
     youtubeImage(id: any, quality: any): string;
     IsMobileDevice(simpleORfull: any): any;
