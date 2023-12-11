@@ -877,11 +877,13 @@ class PuvoxLibrary {
     }
 
 
-	datetime = new (class{
-		MAIN_CLASS = null;
-		constructor(mainclass){
-			this.MAIN_CLASS = mainclass;
+	datetime = new (class {
+		parentClass = null;
+		constructor(parentClass){
+			this.parentClass = parentClass;
 		}
+		mainClass() { return this.parentClass; }
+
 		//  0940 type time-ints
 		isBetweenHMS(target, start,  end,  equality) { } // datetime, int/datetime, int/datetime, bool
 		equalDays(d1,d2) { 
@@ -1012,20 +1014,20 @@ class PuvoxLibrary {
 			return curr_dt.getYear() ==target_dt.getYear() && curr_dt.getMonth() ==target_dt.getMonth() && curr_dt.getDate() ==target_dt.getDate() && curr_dt.getHours() ==target_dt.getHours() && curr_dt.getMinutes() ==target_dt.getMinutes() && curr_dt.getSeconds() ==target_dt.getSeconds();
 		}
 		dateCompare(date1, date2){ 
-			var date1 = this.MAIN_CLASS.isString(date1) ? Date.parse(date1) : date1;
+			var date1 = this.mainClass().isString(date1) ? Date.parse(date1) : date1;
 				date1 = new Date( date1 );
 			var date2 = date2 || new Date(Date.now());  
 			return (+date1 > +date2 ? 1 : +date1 < +date2 ? -1 : 0);
 		}
 		dateTill(date1, date2){ 
-			var date1 = this.MAIN_CLASS.isString(date1) ? Date.parse(date1) : date1;
+			var date1 = this.mainClass().isString(date1) ? Date.parse(date1) : date1;
 			date1 = new Date( date1 );
 			var date2 = date2 || new Date(Date.now()); 
 			var diff = new Date(date1.getTime()-date2.getTime());
 			return diff;
 		}
 		secondsTill(date1, date2){ 
-			var date1 = this.MAIN_CLASS.isString(date1) ? Date.parse(date1) : date1;
+			var date1 = this.mainClass().isString(date1) ? Date.parse(date1) : date1;
 			date1 = new Date( date1 );
 			var date2 = date2 || new Date(Date.now()); 
 			var diffS = date1.getTime()-date2.getTime();
@@ -2875,11 +2877,13 @@ class PuvoxLibrary {
 
 	
 	// ######## Cookies: https://github.com/ttodua/useful-javascript/blob/master/cookies-library.js ######## //
-	Cookies = new (class{ 
-		MAIN_CLASS = null;
-		constructor(mainclass){
-			this.MAIN_CLASS = mainclass;
+	Cookies = new (class { 
+		parentClass = null;
+		constructor(parentClass){
+			this.parentClass = parentClass;
 		}
+		mainClass() { return this.parentClass; }
+
 		get(a,b) { return this.cookies_instance().get(a,b); }
 		set(a,b,c) { return this.cookies_instance().set(a,b);  }
 		remove(a, b) {return this.cookies_instance().remove(a,b);   }
@@ -2936,7 +2940,7 @@ class PuvoxLibrary {
 			}
 			else if(!Add_or_remove && existing.includes(subValue) )
 			{
-				existing = this.MAIN_CLASS.removeItem(existing, subValue);
+				existing = this.mainClass().removeItem(existing, subValue);
 			}
 			this.setOption(cookieName, key, JSON.stringify(existing));
 		}
@@ -2948,18 +2952,20 @@ class PuvoxLibrary {
 	})(this);
 
 
-	cache = new (class{
-		MAIN_CLASS = null;
-		constructor(mainclass){
-			this.MAIN_CLASS = mainclass;
+	cache = new (class {
+		parentClass = null;
+		constructor(parentClass){
+			this.parentClass = parentClass;
 		}
+		mainClass() { return this.parentClass; }
+
 		helper_read(groupName, storageType, expireSeconds = 0){
-			const appName = this.MAIN_CLASS.getAppName();
+			const appName = this.mainClass().getAppName();
 			if (storageType === 'file'){
-				const dir = this.MAIN_CLASS.file.tempDir() + appName + '/';
+				const dir = this.mainClass().file.tempDir() + appName + '/';
 				const filepath = dir + groupName + '.json';
 				// todo: add expiration
-				return this.MAIN_CLASS.file.read(filepath);
+				return this.mainClass().file.read(filepath);
 			} else if (storageType === 'localStorage') {
 				const storage = window.localStorage;
 				let val = storage.getItem(appName + '_' + groupName);
@@ -2978,14 +2984,14 @@ class PuvoxLibrary {
 			}
 		}
 		helper_write(groupName, content, storageType){
-			content = this.MAIN_CLASS.isString (content) ? content : (this.MAIN_CLASS.isArray(content) || this.MAIN_CLASS.isObject(content) ? JSON.stringify(content) : content);
-			const appName = this.MAIN_CLASS.getAppName();
+			content = this.mainClass().isString (content) ? content : (this.mainClass().isArray(content) || this.mainClass().isObject(content) ? JSON.stringify(content) : content);
+			const appName = this.mainClass().getAppName();
 			if (storageType === 'file'){
-				const dir = this.MAIN_CLASS.file.tempDir() + appName + '/';
-				this.MAIN_CLASS.file.createDirectory(dir);
+				const dir = this.mainClass().file.tempDir() + appName + '/';
+				this.mainClass().file.createDirectory(dir);
 				const filepath = dir + groupName + '.json';
 				// todo: add expiration
-				this.MAIN_CLASS.file.write(filepath, content);
+				this.mainClass().file.write(filepath, content);
 				return true;
 			} else if (storageType === 'localStorage') {
 				try{ 
@@ -3001,11 +3007,11 @@ class PuvoxLibrary {
 			}
 		}
 		helper_delete(groupName, storageType){
-			const appName = this.MAIN_CLASS.getAppName();
+			const appName = this.mainClass().getAppName();
 			if (storageType === 'file'){
-				const filepath = this.MAIN_CLASS.file.tempDir() + appName + '/' + groupName + '.json';
+				const filepath = this.mainClass().file.tempDir() + appName + '/' + groupName + '.json';
 				// todo: better delete
-				this.MAIN_CLASS.file.delete(filepath);
+				this.mainClass().file.delete(filepath);
 				return true;
 			} else if (storageType === 'localStorage') {
 				try{ 
@@ -3054,22 +3060,24 @@ class PuvoxLibrary {
 
 
 		file = new (class {
-			MAIN_CLASS = null;
-			constructor(mainclass){
-				this.MAIN_CLASS = mainclass;
+			parentClass = null;
+			constructor(parentClass){
+				this.parentClass = parentClass;
 			}
+			mainClass() { return this.parentClass.parentClass; }
+
 			// ########## CACHE DIRS (server-side JS) ##########
 			customCacheDir = null;
 			get_dir(){  
 				if (!this.customCacheDir){ 
-					this.customCacheDir = this.MAIN_CLASS.file.tempDir();
+					this.customCacheDir = this.mainClass().file.tempDir();
 				}
-				let finaldir = this.MAIN_CLASS.trailingSlash(this.customCacheDir + this.MAIN_CLASS.getAppName() + '_cache_');
+				let finaldir = this.mainClass().trailingSlash(this.customCacheDir + this.mainClass().getAppName() + '_cache_');
 				return finaldir; 
 			}
 			set_dir(dir, auto_clear_seconds=null){ 
 				if(dir) this.customCacheDir = dir;
-				const res = this.MAIN_CLASS.file.createDirectory(this.customCacheDir);
+				const res = this.mainClass().file.createDirectory(this.customCacheDir);
 				if( !is_null(auto_clear_seconds))
 				{
 					throw new Error("Not implemented yet! 345346");
@@ -3078,7 +3086,7 @@ class PuvoxLibrary {
 				return res;
 			}
 			filePath(uniqFileName){
-				const parent = this.MAIN_CLASS;
+				const parent = this.mainClass();
 				uniqFileName = parent.isString(uniqFileName) || parent.isNumeric(uniqFileName) ? uniqFileName : JSON.stringify(uniqFileName);
 				uniqFileName = parent.sanitize_key_dashed(parent.getCharsFromStart(uniqFileName, 15)) + "_"+ parent.md5(uniqFileName);
 				filePath= this.get_dir() + uniqFileName + "_tmp"; //"/". 
@@ -3087,7 +3095,7 @@ class PuvoxLibrary {
 			//
 			get(uniqFileName, defaultContent ='', expire_seconds=8640000, decode = true)
 			{
-				const parent = this.MAIN_CLASS;
+				const parent = this.mainClass();
 				let filePath = this.filePath(uniqFileName);
 				if ( parent.file.exists(filePath) ){
 					if ( parent.file.mtime(filePath) + expire_seconds *1000 < (new Date()).getTime() ){
@@ -3120,7 +3128,7 @@ class PuvoxLibrary {
 			}
 			set(uniqFileName, content)
 			{
-				const parent = this.MAIN_CLASS;
+				const parent = this.mainClass();
 				let filePath= this.filePath(uniqFileName);
 				let contentFinal = parent.isString(content) ? content : ((parent.isArray(content) || parent.isObject(content)) ? JSON.stringify(content) : content);
 				return parent.file.write(filePath, contentFinal);
@@ -3132,14 +3140,14 @@ class PuvoxLibrary {
 			// 	try{
 			// 		var callback = callback || function(){};
 			// 		var self = this;
-			// 		this.MAIN_CLASS.modules('fs').readFile(filePath, 'utf8', function(err,data) {
+			// 		this.mainClass().modules('fs').readFile(filePath, 'utf8', function(err,data) {
 			// 			let json = {};
 			// 			if (typeof data !="undefined" && data!=''){
 			// 				json=JSON.parse(data);
 			// 			}
 			// 			let jsonNew = self.jsonConcat(json, jsonContent);
 			// 			let content = JSON.stringify(jsonNew);
-			// 			this.MAIN_CLASS.modules('fs').writeFile(filePath, content, 'utf8', function(callback_) {
+			// 			this.mainClass().modules('fs').writeFile(filePath, content, 'utf8', function(callback_) {
 			// 			}); 
 			// 		});
 			// 	}
@@ -3150,21 +3158,21 @@ class PuvoxLibrary {
 			containerDefaultPrefix = "_cached_ids_";
 			tempIds = {};
 			idForContent(slugOrContent){
-				return this.MAIN_CLASS.md5(this.MAIN_CLASS.isSimpleVariableType(slugOrContent) ? slugOrContent : JSON.stringify(slugOrContent)); 
+				return this.mainClass().md5(this.mainClass().isSimpleVariableType(slugOrContent) ? slugOrContent : JSON.stringify(slugOrContent)); 
 			}
 			existsId(containerSlug, id){
 				return (id in this.getIds(containerSlug));
 			}
 			getIds(containerSlug) {
 				if (! (containerSlug in this.tempIds)) {
-					const content = this.MAIN_CLASS.file.read(this.get_dir() + this.containerDefaultPrefix + containerSlug, '{}');
+					const content = this.mainClass().file.read(this.get_dir() + this.containerDefaultPrefix + containerSlug, '{}');
 					this.tempIds[containerSlug] = JSON.parse(content);
 				}
 				return this.tempIds[containerSlug];
 			}
 			setIds(containerSlug, idsDict) {
 				this.tempIds[containerSlug] = idsDict;
-				return this.MAIN_CLASS.file.write(this.get_dir() + this.containerDefaultPrefix + containerSlug, JSON.stringify(this.tempIds[containerSlug]));
+				return this.mainClass().file.write(this.get_dir() + this.containerDefaultPrefix + containerSlug, JSON.stringify(this.tempIds[containerSlug]));
 			}
 			addId(containerSlug, id){
 				const ids = this.getIds(containerSlug);
@@ -3178,7 +3186,7 @@ class PuvoxLibrary {
 				}
 				return false;
 			}
-		})(this.MAIN_CLASS);
+		})(this);
 	})(this);
 
 	// ################################################
@@ -3193,10 +3201,12 @@ class PuvoxLibrary {
 	// 	}
 	// }, 
 	file = new (class {
-		MAIN_CLASS = null;
-		constructor(mainclass){
-			this.MAIN_CLASS = mainclass;
+		parentClass = null;
+		constructor(parentClass){
+			this.parentClass = parentClass;
 		}
+		mainClass() { return this.parentClass; }
+
 		// support for several native modules
 		set_module(module) { 
 			// 'fs'
@@ -3231,7 +3241,7 @@ class PuvoxLibrary {
 			return this.module_path;
 		}
 		// ends with slash
-		tempDir(){ return this.MAIN_CLASS.trailingSlash(this.os().tmpdir()); }
+		tempDir(){ return this.mainClass().trailingSlash(this.os().tmpdir()); }
 
 		exists(filePath){
 			return this.fs().existsSync(filePath);
