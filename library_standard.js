@@ -3103,7 +3103,7 @@ class PuvoxLibrary {
 						return defaultContent;
 					}
 					else{	
-						cont = parent.file.read(filePath, null);
+						const cont = parent.file.read(filePath, null);
 						// if specifically array, then on empty, reckon as array
 						if (cont===null)
 						{
