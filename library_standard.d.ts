@@ -408,7 +408,7 @@ declare class PuvoxLibrary {
             customCacheDir: null;
             get_dir(): any;
             set_dir(dir: any, auto_clear_seconds?: null): any;
-            filePath(uniqFileName: any): any;
+            filePath(uniqFileName: any): string;
             get(uniqFileName: any, defaultContent?: string, expire_seconds?: number, decode?: boolean): any;
             set(uniqFileName: any, content: any): any;
             containerDefaultPrefix: string;
