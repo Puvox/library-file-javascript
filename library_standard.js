@@ -15,6 +15,8 @@
  *
 */
 
+const { response } = require("express");
+
 class PuvoxLibrary {
 	selfMain = this;
 
@@ -1337,7 +1339,10 @@ class PuvoxLibrary {
 	preg_quote(str, delimiter) {
 		return (str + '').replace(new RegExp('[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\' + (delimiter || '') + '-]', 'g'), '\\$&');
 	}
-	escapeRegExp(string) {
+	escapeRegex(string) {
+		return string.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
+	}
+	escapeRegExp2(string) {
 		return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 	}
 
@@ -2689,11 +2694,14 @@ class PuvoxLibrary {
 		}
 	}
 
+	encode_chars(str, chars = []){
+		chars.map(char => str = str.replace(new RegExp(this.escapeRegex(char), 'g'), encodeURIComponent(char)));
+        return str;
+	}
 
 	// region ### TELEGRAM FUNCTIONS ###
 	async telegramMessage(textOriginal, chat_id, bot_key, extra_opts={}){
 		if (!extra_opts) extra_opts = {};
-		const is_repeated_call = 'is_repeated_call' in extra_opts;
 		if (! ('parse_mode' in extra_opts)){
 			extra_opts['parse_mode'] = 'html';
 		}
@@ -2707,17 +2715,11 @@ class PuvoxLibrary {
 		text = this.br2nl(text);
 		text = this.stripTags(text,'<b><strong><i><em><u><ins><s><strike><del><a><code><pre>'); // allowed: https://core.telegram.org/bots/api#html-style
 		text = text.substring(0, 4095); //max telegram message length 4096
+		//
+		const is_repeated_call = ('is_repeated_call' in extra_opts);
+		delete extra_opts['is_repeated_call'];
 		const requestOpts = Object.assign({'chat_id':chat_id, 'text':text}, extra_opts);
-		delete requestOpts['cache'];
-		delete requestOpts['is_repeated_call'];
-		let responseText = undefined;
-		try {
-			responseText = await this.getRemoteData('https://api.telegram.org/bot'+ bot_key +'/sendMessage', requestOpts);  // pastebin_com/u0J1Cph3 //'sendMessage?'.http_build_query(opts, ''); 
-		} catch (ex) {
-			// todo: if html entities issue
-			requestOpts.text = this.encode_html_entities(requestOpts.text);
-			responseText = await this.getRemoteData('https://api.telegram.org/bot'+ bot_key +'/sendMessage', requestOpts);
-		}
+		let responseText = await this.getRemoteData('https://api.telegram.org/bot'+ bot_key +'/sendMessage', requestOpts);  // pastebin_com/u0J1Cph3 //'sendMessage?'.http_build_query(opts, ''); 
 		try {
 			const responseJson = JSON.parse(responseText);
 			if (responseJson.ok){
@@ -2726,12 +2728,14 @@ class PuvoxLibrary {
 			// for some reason, if still unsupported format submitted, resubmit the plain format
 			//i.e. {"ok":false,"error_code":400,"description":"Bad Request: can't parse entities: Unsupported start tag \"br/\" at byte offset 43"} 
 			else {
+				if (!responseJson.description) {
+					throw new Error('No description in response');
+				}
 				if( responseJson.description.indexOf ('Bad Request: can\'t parse entities')> -1 ){
 					if ( ! is_repeated_call ){
-						const extraOpts2 = this.objectCopy(opts);
-						text = "[SecondSend with stipped tags] \r\n" + this.stripTags(text) ;
-						extraOpts2['is_repeated_call'] = true;
-						return this.telegram_message(text, chat_id, bot_key, extraOpts2);
+						text = "[SecondSend with stipped tags] \r\n" + this.encode_html_entities (this.stripTags(text));
+						extra_opts['is_repeated_call'] = true;
+						return await this.telegram_message(text, chat_id, bot_key, extra_opts);
 					}
 				}
 				return responseJson;

@@ -1,20 +1,4 @@
 export = PuvoxLibrary;
-/**
- *
- *  ############################################################################
- *  #############################  Our JS Library   ############################
- *  ### Here we collect frequently used methods across our JS applications.  ###
- *  ### (Some of them are generic javascript functions, some are for NodeJS) ###
- *  ############################################################################
- *
- *  ########## Example usage: ##########
- *  const helpers = new PuvoxLibrary();
- *         console.log ( helpers.get_last_child_of_array(array) );
- *         console.log ( helpers.get_visitor_ip() );
- *         console.log ( helpers.telegramMessage("hello world", "1234567890", "BOTKEY123:456789") );
- *       ... etc
- *
-*/
 declare class PuvoxLibrary {
     constructor(appName: any);
     selfMain: PuvoxLibrary;
@@ -221,7 +205,8 @@ declare class PuvoxLibrary {
     splitByNotInside2(str: any, splitChar: any, notInsideCharStart: any, notInsideCharEnd: any): void;
     getFromX_tillY_ExcudingQuotes(content: any, from: any, till: any, regex_index: any): string;
     preg_quote(str: any, delimiter: any): string;
-    escapeRegExp(string: any): any;
+    escapeRegex(string: any): any;
+    escapeRegExp2(string: any): any;
     splitStringIntoChars(str: any): any;
     empty(MyVar: any): boolean;
     is_empty_or_undefined(MyVar: any): boolean;
@@ -353,6 +338,7 @@ declare class PuvoxLibrary {
     IsMobileDevice(simpleORfull: any): any;
     backToTopBind(el: any): void;
     enable_jquery_errors(): void;
+    encode_chars(str: any, chars?: any[]): any;
     telegramMessage(textOriginal: any, chat_id: any, bot_key: any, extra_opts?: {}): Promise<any>;
     telegram_interval_ms: number;
     telegram_last_sent_time: number;
