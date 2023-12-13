@@ -1410,7 +1410,7 @@ class PuvoxLibrary {
 		const tags = /<\/?([a-z][a-z0-9]*)\b[^>]*>/gi;
 		const commentsAndPhpTags = /<!--[\s\S]*?-->|<\?(?:php)?[\s\S]*?\?>/gi;
 		return input.replace(commentsAndPhpTags, '').replace(tags, function ($0, $1) {
-		return allowed.indexOf('<' + $1.toLowerCase() + '>') > -1 ? $0 : '';
+			return allowed.indexOf('<' + $1.toLowerCase() + '>') > -1 ? $0 : '';
 		});
 	}
 
@@ -2691,7 +2691,7 @@ class PuvoxLibrary {
 
 
 	// region ### TELEGRAM FUNCTIONS ###
-	async telegramMessage(text, chat_id, bot_key, extra_opts={}){
+	async telegramMessage(textOriginal, chat_id, bot_key, extra_opts={}){
 		if (!extra_opts) extra_opts = {};
 		const is_repeated_call = 'is_repeated_call' in extra_opts;
 		if (! ('parse_mode' in extra_opts)){
@@ -2703,16 +2703,23 @@ class PuvoxLibrary {
 		// whether it's without `-100` prefix
 		chat_id = chat_id.toString();
 		if (!this.startsWith(chat_id, '-100')) chat_id = '-100' + chat_id;
+		let text = textOriginal;
 		text = this.br2nl(text);
 		text = this.stripTags(text,'<b><strong><i><em><u><ins><s><strike><del><a><code><pre>'); // allowed: https://core.telegram.org/bots/api#html-style
-		text = this.encode_html_entities(text);
 		text = text.substring(0, 4095); //max telegram message length 4096
 		const requestOpts = Object.assign({'chat_id':chat_id, 'text':text}, extra_opts);
 		delete requestOpts['cache'];
 		delete requestOpts['is_repeated_call'];
-		const responseText = await this.getRemoteData('https://api.telegram.org/bot'+ bot_key +'/sendMessage', requestOpts);  // pastebin_com/u0J1Cph3 //'sendMessage?'.http_build_query(opts, ''); 
+		let response = undefined;
 		try {
-			const responseJson = JSON.parse(responseText);
+			response = await this.getRemoteData('https://api.telegram.org/bot'+ bot_key +'/sendMessage', requestOpts);  // pastebin_com/u0J1Cph3 //'sendMessage?'.http_build_query(opts, ''); 
+		} catch (ex) {
+			// todo: if html entities issue
+			requestOpts.text = this.encode_html_entities(requestOpts.text);
+			response = await this.getRemoteData('https://api.telegram.org/bot'+ bot_key +'/sendMessage', requestOpts);
+		}
+		try {
+			const responseJson = JSON.parse(response);
 			if (responseJson.ok){
 				return responseJson;
 			} 

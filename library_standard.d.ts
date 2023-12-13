@@ -353,7 +353,7 @@ declare class PuvoxLibrary {
     IsMobileDevice(simpleORfull: any): any;
     backToTopBind(el: any): void;
     enable_jquery_errors(): void;
-    telegramMessage(text: any, chat_id: any, bot_key: any, extra_opts?: {}): Promise<any>;
+    telegramMessage(textOriginal: any, chat_id: any, bot_key: any, extra_opts?: {}): Promise<any>;
     telegram_interval_ms: number;
     telegram_last_sent_time: number;
     telegramMessageCached(text: any, chat_id: any, bot_key: any, extra_opts?: {}, customCacheId?: null): Promise<any>;
