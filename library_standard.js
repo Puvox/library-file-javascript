@@ -2710,16 +2710,16 @@ class PuvoxLibrary {
 		const requestOpts = Object.assign({'chat_id':chat_id, 'text':text}, extra_opts);
 		delete requestOpts['cache'];
 		delete requestOpts['is_repeated_call'];
-		let response = undefined;
+		let responseText = undefined;
 		try {
-			response = await this.getRemoteData('https://api.telegram.org/bot'+ bot_key +'/sendMessage', requestOpts);  // pastebin_com/u0J1Cph3 //'sendMessage?'.http_build_query(opts, ''); 
+			responseText = await this.getRemoteData('https://api.telegram.org/bot'+ bot_key +'/sendMessage', requestOpts);  // pastebin_com/u0J1Cph3 //'sendMessage?'.http_build_query(opts, ''); 
 		} catch (ex) {
 			// todo: if html entities issue
 			requestOpts.text = this.encode_html_entities(requestOpts.text);
-			response = await this.getRemoteData('https://api.telegram.org/bot'+ bot_key +'/sendMessage', requestOpts);
+			responseText = await this.getRemoteData('https://api.telegram.org/bot'+ bot_key +'/sendMessage', requestOpts);
 		}
 		try {
-			const responseJson = JSON.parse(response);
+			const responseJson = JSON.parse(responseText);
 			if (responseJson.ok){
 				return responseJson;
 			} 
