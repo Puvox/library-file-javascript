@@ -15,8 +15,6 @@
  *
 */
 
-const { response } = require("express");
-
 class PuvoxLibrary {
 	selfMain = this;
 
@@ -2699,8 +2697,9 @@ class PuvoxLibrary {
         return str;
 	}
 
+
 	// region ### TELEGRAM FUNCTIONS ###
-	async telegramMessage(textOriginal, chat_id, bot_key, extra_opts={}){
+	async telegramMessage(textOriginal, chat_id, bot_key, extra_opts={}){ 
 		if (!extra_opts) extra_opts = {};
 		if (! ('parse_mode' in extra_opts)){
 			extra_opts['parse_mode'] = 'html';
@@ -2718,8 +2717,45 @@ class PuvoxLibrary {
 		//
 		const is_repeated_call = ('is_repeated_call' in extra_opts);
 		delete extra_opts['is_repeated_call'];
+		// ###############################################
+		// ############## support caching  ###############
+		// ########## (ppl can remove this part) #########
+		// ###############################################
+		//
+		// you can set custom random cache_id, so if that cache_id is found in store datas, it avoids sending the same message to telegram
+		//
+		if ('cache_id' in extra_opts){
+			if (!this.telegram_interval_ms) {
+				this.telegram_interval_ms= 50; // telegram seems to accept around 30 times per second, so we'd better wait around that milliseconds
+			}
+			if (!this.telegram_last_sent_timestamp) {
+				this.telegram_last_sent_timestamp= 0;
+			}
+			const curMS  = this.milliseconds();
+			const goneMS = curMS - this.telegram_last_sent_timestamp;
+			if ( goneMS < this.telegram_interval_ms ){
+				await this.sleep (this.telegram_interval_ms - goneMS);
+			}
+			this.telegram_last_sent_timestamp = curMS;
+			const opt_cache_id = extra_opts['cache_id'];
+			delete extra_opts['cache_id'];
+			const cacheId = opt_cache_id ? opt_cache_id : this.cache.file.idForContent( text +'_'+ chat_id +'_'+ bot_key +'_'+ JSON.stringify(extra_opts) );
+			if (!this.cache.file.addIdIfNotExists('function_telegram_message', cacheId) ){
+				return {'ok': true, 'cached':true};
+			}
+		}
+		// ###############################################
+		// ################ [ END CACHING ]###############
+		// ###############################################
 		const requestOpts = Object.assign({'chat_id':chat_id, 'text':text}, extra_opts);
-		let responseText = await this.getRemoteData('https://api.telegram.org/bot'+ bot_key +'/sendMessage', requestOpts);  // pastebin_com/u0J1Cph3 //'sendMessage?'.http_build_query(opts, ''); 
+		let responseText = undefined;
+		const isPhotoMessage = ('photo' in extra_opts);
+		if (!isPhotoMessage) {
+			responseText = await this.getRemoteData('https://api.telegram.org/bot'+ bot_key +'/sendMessage', requestOpts);  // pastebin_com/u0J1Cph3 //'sendMessage?'.http_build_query(opts, ''); 
+		} else {
+			requestOpts['caption'] = requestOpts['text'].substring(0, 1023);
+			responseText = await this.getRemoteData('https://api.telegram.org/bot'+ bot_key +'/sendPhoto', requestOpts);  // pastebin_com/u0J1Cph3 //'sendMessage?'.http_build_query(opts, ''); 
+		}
 		try {
 			const responseJson = JSON.parse(responseText);
 			if (responseJson.ok){
@@ -2743,29 +2779,6 @@ class PuvoxLibrary {
 		} catch (ex) {
 			return {'ok': false, 'description': ex.message + ':::' + responseText };
 		}
-	}
-
-	telegram_interval_ms= 50; // telegram seems to accept around 30 times per second, so we'd better wait around that milliseconds
-	telegram_last_sent_time= 0;
-
-	async telegramMessageCached(text, chat_id, bot_key, extra_opts={}, customCacheId=null){
-		if (!extra_opts) extra_opts = {};
-		const curMS  = this.milliseconds();
-		const goneMS = curMS - this.telegram_last_sent_time;
-		if ( goneMS < this.telegram_interval_ms ){
-			await this.sleep (this.telegram_interval_ms - goneMS);
-		}
-		this.telegram_last_sent_time = curMS;
-		const cacheId = customCacheId ? customCacheId : this.cache.file.idForContent( text +'_'+ chat_id +'_'+ bot_key +'_'+ JSON.stringify(extra_opts) );
-		if (this.cache.file.addIdIfNotExists('function_telegram_message', cacheId) ){
-			return this.telegramMessage(text, chat_id, bot_key, extra_opts);
-		}
-		else {
-			return false;
-		}
-		//if(is_callable([$this,'notifications_db_entry'])) 
-		//	$this->notifications_db_entry($key, $array['chat_id'], $this->stringify($res), time(), $ok );
-		//return $res;
 	}
 
 	openUrlInBrowser(url)

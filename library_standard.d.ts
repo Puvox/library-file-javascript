@@ -1,4 +1,20 @@
 export = PuvoxLibrary;
+/**
+ *
+ *  ############################################################################
+ *  #############################  Our JS Library   ############################
+ *  ### Here we collect frequently used methods across our JS applications.  ###
+ *  ### (Some of them are generic javascript functions, some are for NodeJS) ###
+ *  ############################################################################
+ *
+ *  ########## Example usage: ##########
+ *  const helpers = new PuvoxLibrary();
+ *         console.log ( helpers.get_last_child_of_array(array) );
+ *         console.log ( helpers.get_visitor_ip() );
+ *         console.log ( helpers.telegramMessage("hello world", "1234567890", "BOTKEY123:456789") );
+ *       ... etc
+ *
+*/
 declare class PuvoxLibrary {
     constructor(appName: any);
     selfMain: PuvoxLibrary;
@@ -340,9 +356,8 @@ declare class PuvoxLibrary {
     enable_jquery_errors(): void;
     encode_chars(str: any, chars?: any[]): any;
     telegramMessage(textOriginal: any, chat_id: any, bot_key: any, extra_opts?: {}): Promise<any>;
-    telegram_interval_ms: number;
-    telegram_last_sent_time: number;
-    telegramMessageCached(text: any, chat_id: any, bot_key: any, extra_opts?: {}, customCacheId?: null): Promise<any>;
+    telegram_interval_ms: number | undefined;
+    telegram_last_sent_timestamp: number | undefined;
     openUrlInBrowser(url: any): void;
     stringify(obj_or_str: any): any;
     stringify_plain(data: any): string;
