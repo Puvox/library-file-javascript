@@ -3117,37 +3117,30 @@ class PuvoxLibrary {
 				return filePath;
 			}
 			//
-			get(uniqFileName, defaultContent ='', expire_seconds=8640000, decode = true)
+			get(uniqFileName, defaultValue ='', expire_seconds=8640000, decode = true)
 			{
 				const parent = this.mainClass();
 				let filePath = this.filePath(uniqFileName);
-				if ( parent.file.exists(filePath) ){
+				if ( !parent.file.exists(filePath) ){
+					return defaultValue;
+				} else {
 					if ( parent.file.mtime(filePath) + expire_seconds *1000 < (new Date()).getTime() ){
 						parent.file.unlink(filePath);
-						return defaultContent;
+						return defaultValue;
 					}
 					else{	
 						const cont = parent.file.read(filePath, null);
 						// if specifically array, then on empty, reckon as array
 						if (cont===null)
 						{
-							return defaultContent;
+							return defaultValue;
 						}
 						if (decode){
-							try{
-								return JSON.parse(cont);
-							}
-							catch(ex){
-								return cont;
-							}
+							try { return JSON.parse(cont); }
+							catch(ex){ }
 						}
-						else{
-							return cont;
-						}
+						return cont;
 					}
-				}
-				else {
-					return defaultContent;
 				}
 			}
 			set(uniqFileName, content)
