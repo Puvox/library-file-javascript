@@ -2995,16 +2995,16 @@ class PuvoxLibrary {
 		}
 		mainClass() { return this.parentClass; }
  
-		get_child(instanceClass, optName, subKeyName, defaultVal = null, expireSeconds = 0){
+		helper_get_child(instanceClass, optName, subKeyName, defaultVal = null, expireSeconds = 0){
 			const json = instanceClass.get(optName, {}, true, expireSeconds);
 			return (subKeyName in json) ? json[subKeyName] : defaultVal;
 		}
-		set_child(instanceClass, optName, subKeyName, val){
+		helper_set_child(instanceClass, optName, subKeyName, val){
 			const json = instanceClass.get(optName, {}, true, 0);
 			json[subKeyName] = val;
 			instanceClass.set(optName, json);
 		}
-		delete_child(instanceClass, optName, subKeyName){
+		helper_delete_child(instanceClass, optName, subKeyName){
 			const json = instanceClass.get(optName, {}, true, 0);
 			delete json[subKeyName];
 			instanceClass.set(optName, json);
@@ -3053,13 +3053,13 @@ class PuvoxLibrary {
 			}
 			// ################ child methods ################## //
 			get_child(optName, subKeyName, defaultVal = null, expireSeconds = 0){
-				return this.parentClass.get_child(this, optName, subKeyName, defaultVal, expireSeconds);
+				return this.parentClass.helper_get_child(this, optName, subKeyName, defaultVal, expireSeconds);
 			}
 			set_child(optName, subKeyName, val){
-				return this.parentClass.set_child(this, optName, subKeyName, val);
+				return this.parentClass.helper_set_child(this, optName, subKeyName, val);
 			}
 			delete_child(optName, subKeyName){
-				return this.parentClass.delete_child(this, optName, subKeyName);
+				return this.parentClass.helper_delete_child(this, optName, subKeyName);
 			}
 			// ########################################### //
 		})(this);
@@ -3073,6 +3073,7 @@ class PuvoxLibrary {
 			}
 			mainClass() { return this.parentClass.parentClass; }
 
+			// ###################
 			customCacheDir = null;
 			file_path(optName) {
 				if (!this.customCacheDir){ 
@@ -3086,20 +3087,20 @@ class PuvoxLibrary {
 			}
 			set(optName, content)
 			{
-				return this.mainClass().file.writeCustom(this.file_path(optName), content, decode, expire_seconds);
+				return this.mainClass().file.write(this.file_path(optName), content);
 			}
 			delete (optName) {
 				return this.mainClass().file.delete(this.file_path(optName));
 			}
 			// ################ child methods ################## //
 			get_child(optName, subKeyName, defaultVal = null, expireSeconds = 0){
-				return this.parentClass.get_child(this, optName, subKeyName, defaultVal, expireSeconds);
+				return this.parentClass.helper_get_child(this, optName, subKeyName, defaultVal, expireSeconds);
 			}
 			set_child(optName, subKeyName, val){
-				return this.parentClass.set_child(this, optName, subKeyName, val);
+				return this.parentClass.helper_set_child(this, optName, subKeyName, val);
 			}
 			delete_child(optName, subKeyName){
-				return this.parentClass.delete_child(this, optName, subKeyName);
+				return this.parentClass.helper_delete_child(this, optName, subKeyName);
 			}
 			// #############################################
 

@@ -373,6 +373,7 @@ declare class PuvoxLibrary {
     privateAppName__: null;
     setAppName(name: any): void;
     getAppName(): never;
+    stringifyForWrite(content: any): any;
     Cookies: {
         parentClass: null;
         mainClass(): null;
@@ -394,24 +395,32 @@ declare class PuvoxLibrary {
     cache: {
         parentClass: null;
         mainClass(): null;
-        helper_read(groupName: any, storageType: any, expireSeconds?: number): any;
-        helper_write(groupName: any, content: any, storageType: any): true | undefined;
-        helper_delete(groupName: any, storageType: any): true | undefined;
-        get(groupName: any, defaultVal?: null, storageType?: string, expireSeconds?: number): any;
-        set(groupName: any, content: any, storageType?: string): void;
-        delete(groupName: any, storageType?: string): void;
-        getChild(groupName: any, optName: any, defaultVal?: null, storageType?: string, expireSeconds?: number): any;
-        setChild(groupName: any, optName: any, val: any, storageType?: string): void;
-        deleteChild(groupName: any, optName: any, storageType?: string): void;
+        get_child(instanceClass: any, optName: any, subKeyName: any, defaultVal?: null, expireSeconds?: number): any;
+        set_child(instanceClass: any, optName: any, subKeyName: any, val: any): void;
+        delete_child(instanceClass: any, optName: any, subKeyName: any): void;
+        localstorage: {
+            parentClass: null;
+            mainClass(): any;
+            get(optName: any, defaultValue?: null, decode?: boolean, expireSeconds?: number): any;
+            set(optName: any, content: any): true | undefined;
+            delete(optName: any): boolean;
+            get_child(optName: any, subKeyName: any, defaultVal?: null, expireSeconds?: number): any;
+            set_child(optName: any, subKeyName: any, val: any): any;
+            delete_child(optName: any, subKeyName: any): any;
+        };
         file: {
             parentClass: null;
             mainClass(): any;
             customCacheDir: null;
-            get_dir(): any;
+            file_path(optName: any): string;
+            get(optName: any, defaultValue?: null, decode?: boolean, expire_seconds?: number): any;
+            set(optName: any, content: any): any;
+            delete(optName: any): any;
+            get_child(optName: any, subKeyName: any, defaultVal?: null, expireSeconds?: number): any;
+            set_child(optName: any, subKeyName: any, val: any): any;
+            delete_child(optName: any, subKeyName: any): any;
             set_dir(dir: any, auto_clear_seconds?: null): any;
             filePath(uniqFileName: any): string;
-            get(uniqFileName: any, defaultContent?: string, expire_seconds?: number, decode?: boolean): any;
-            set(uniqFileName: any, content: any): any;
             containerDefaultPrefix: string;
             tempIds: {};
             idForContent(slugOrContent: any): any;
@@ -439,7 +448,8 @@ declare class PuvoxLibrary {
         unlink(filePath: any): any;
         createDirectory(dirPath: any): any;
         read(filePath: any, defaultContent?: string): any;
-        write(filePath: any, content: any): void;
+        readCustom(filePath: any, defaultContent?: string, decode?: boolean, expireSeconds?: number): any;
+        write(filePath: any, content: any): any;
         getFilesListFromDir(dir: any): any[];
     };
     catchUnhandledExceptions(callback: any): void;
