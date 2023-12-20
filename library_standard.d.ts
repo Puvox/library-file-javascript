@@ -395,9 +395,9 @@ declare class PuvoxLibrary {
     cache: {
         parentClass: null;
         mainClass(): null;
-        get_child(instanceClass: any, optName: any, subKeyName: any, defaultVal?: null, expireSeconds?: number): any;
-        set_child(instanceClass: any, optName: any, subKeyName: any, val: any): void;
-        delete_child(instanceClass: any, optName: any, subKeyName: any): void;
+        helper_get_child(instanceClass: any, optName: any, subKeyName: any, defaultVal?: null, expireSeconds?: number): any;
+        helper_set_child(instanceClass: any, optName: any, subKeyName: any, val: any): void;
+        helper_delete_child(instanceClass: any, optName: any, subKeyName: any): void;
         localstorage: {
             parentClass: null;
             mainClass(): any;
@@ -447,8 +447,8 @@ declare class PuvoxLibrary {
         delete(filePath: any): any;
         unlink(filePath: any): any;
         createDirectory(dirPath: any): any;
-        read(filePath: any, defaultContent?: string): any;
-        readCustom(filePath: any, defaultContent?: string, decode?: boolean, expireSeconds?: number): any;
+        read(filePath: any, defaultValue?: string): any;
+        readCustom(filePath: any, defaultValue?: string, decode?: boolean, expireSeconds?: number): any;
         write(filePath: any, content: any): any;
         getFilesListFromDir(dir: any): any[];
     };
