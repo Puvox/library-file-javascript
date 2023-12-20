@@ -3254,15 +3254,15 @@ class PuvoxLibrary {
 			}
 			return true;
 		}
-		read(filePath, defaultContent = ''){
+		read(filePath, defaultValue = ''){
 			if (!this.exists(filePath)){
-				return defaultContent;
+				return defaultValue;
 			}
 			return this.fs().readFileSync(filePath, 'utf8');
 		}
-		readCustom(filePath, defaultContent = '', decode = true, expireSeconds = 0){
+		readCustom(filePath, defaultValue = '', decode = true, expireSeconds = 0){
 			if (!this.exists(filePath)){
-				return defaultContent;
+				return defaultValue;
 			}
 			else {
 				if ( this.mtime(filePath) + expireSeconds*1000 < (new Date()).getTime() ){
