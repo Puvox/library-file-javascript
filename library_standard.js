@@ -3267,7 +3267,7 @@ class PuvoxLibrary {
 				return defaultValue;
 			}
 			else {
-				if ( this.mtime(filePath) + expireSeconds*1000 < (new Date()).getTime() ){
+				if (expireSeconds!==0 && this.mtime(filePath) + expireSeconds*1000 < (new Date()).getTime() ){
 					this.unlink(filePath);
 					return defaultValue;
 				}
