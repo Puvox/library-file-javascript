@@ -2995,6 +2995,21 @@ class PuvoxLibrary {
 		}
 		mainClass() { return this.parentClass; }
  
+		get_child(instanceClass, optName, subKeyName, defaultVal = null, expireSeconds = 0){
+			const json = instanceClass.get(optName, {}, true, expireSeconds);
+			return (subKeyName in json) ? json[subKeyName] : defaultVal;
+		}
+		set_child(instanceClass, optName, subKeyName, val){
+			const json = instanceClass.get(optName, {}, true, 0);
+			json[subKeyName] = val;
+			instanceClass.set(optName, json);
+		}
+		delete_child(instanceClass, optName, subKeyName){
+			const json = instanceClass.get(optName, {}, true, 0);
+			delete json[subKeyName];
+			instanceClass.set(optName, json);
+		}
+
 		// lets localstrage be under cache class
 		localstorage = new (class {
 			parentClass = null;
@@ -3020,7 +3035,6 @@ class PuvoxLibrary {
 					return val;
 				}
 			}
-
 			set(optName, content){
 				try{ 
 					const storage = window.localStorage;
@@ -3031,10 +3045,27 @@ class PuvoxLibrary {
 				}
 				catch(ex){ alert("Can't save value. Might be exceeding cache size. err598 |" + ex.message); }
 			}
-
+			delete(optName){
+				const storage = window.localStorage;
+				storage.removeItem(appName + '_' + optName); 
+				storage.removeItem(appName + '_' + optName + '_t'); 
+				return true; 
+			}
+			// ################ child methods ################## //
+			get_child(optName, subKeyName, defaultVal = null, expireSeconds = 0){
+				return this.parentClass.get_child(this, optName, subKeyName, defaultVal, expireSeconds);
+			}
+			set_child(optName, subKeyName, val){
+				return this.parentClass.set_child(this, optName, subKeyName, val);
+			}
+			delete_child(optName, subKeyName){
+				return this.parentClass.delete_child(this, optName, subKeyName);
+			}
+			// ########################################### //
 		})(this);
 
 		
+		// server-side caching
 		file = new (class {
 			parentClass = null;
 			constructor(parentClass){
@@ -3042,7 +3073,6 @@ class PuvoxLibrary {
 			}
 			mainClass() { return this.parentClass.parentClass; }
 
-			// ########## CACHE DIRS (server-side JS) ##########
 			customCacheDir = null;
 			file_path(optName) {
 				if (!this.customCacheDir){ 
@@ -3061,21 +3091,17 @@ class PuvoxLibrary {
 			delete (optName) {
 				return this.mainClass().file.delete(this.file_path(optName));
 			}
+			// ################ child methods ################## //
 			get_child(optName, subKeyName, defaultVal = null, expireSeconds = 0){
-				const json = this.get(optName, {}, true, expireSeconds);
-				return (subKeyName in json) ? json[subKeyName] : defaultVal;
+				return this.parentClass.get_child(this, optName, subKeyName, defaultVal, expireSeconds);
 			}
 			set_child(optName, subKeyName, val){
-				const json = this.get(optName, {}, true, 0);
-				json[subKeyName] = val;
-				this.set(optName, json);
+				return this.parentClass.set_child(this, optName, subKeyName, val);
 			}
-			delete_child(optName, optName){
-				const json = this.get(optName, {}, true, 0);
-				delete json[subKeyName];
-				this.set(optName, json);
+			delete_child(optName, subKeyName){
+				return this.parentClass.delete_child(this, optName, subKeyName);
 			}
-	
+			// #############################################
 
 			// old 
 			set_dir(dir, auto_clear_seconds=null){ 
