@@ -3037,15 +3037,17 @@ class PuvoxLibrary {
 			}
 			set(optName, content){
 				try{ 
+					const appName = this.mainClass().getAppName();
 					const storage = window.localStorage;
 					const finalContent = this.mainClass().stringifyForWrite(content);
 					storage.setItem(appName + '_' + optName, finalContent); 
 					storage.setItem(appName + '_' + optName + '_t', (new Date()).getTime()); 
 					return true; 
 				}
-				catch(ex){ alert("Can't save value. Might be exceeding cache size. err598 |" + ex.message); }
+				catch(ex){ alert("Can't save value to localstorage. err598 |" + ex.message); }
 			}
 			delete(optName){
+				const appName = this.mainClass().getAppName();
 				const storage = window.localStorage;
 				storage.removeItem(appName + '_' + optName); 
 				storage.removeItem(appName + '_' + optName + '_t'); 
