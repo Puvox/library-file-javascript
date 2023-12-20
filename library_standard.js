@@ -2899,6 +2899,18 @@ class PuvoxLibrary {
 		return this.privateAppName__; 
 	}
 
+	stringifyForWrite(content) {
+		if (this.isString(content)) {
+			return content;
+		}
+		else if (this.isNumeric(content)) {
+			return content.toString();
+		}
+		else if (this.isObject(content) || this.isArray(content)) {
+			return JSON.stringify(content);
+		}
+		return content;
+	}
 	
 	// ######## Cookies: https://github.com/ttodua/useful-javascript/blob/master/cookies-library.js ######## //
 	Cookies = new (class { 
@@ -2982,107 +2994,47 @@ class PuvoxLibrary {
 			this.parentClass = parentClass;
 		}
 		mainClass() { return this.parentClass; }
+ 
+		// lets localstrage be under cache class
+		localstorage = new (class {
+			parentClass = null;
+			constructor(parentClass){
+				this.parentClass = parentClass;
+			}
+			mainClass() { return this.parentClass.parentClass; }
 
-		helper_read(groupName, storageType, expireSeconds = 0){
-			const appName = this.mainClass().getAppName();
-			if (storageType === 'file'){
-				const dir = this.mainClass().file.tempDir() + appName + '/';
-				const filepath = dir + groupName + '.json';
-				// todo: add expiration
-				return this.mainClass().file.read(filepath);
-			} else if (storageType === 'localStorage') {
+			// ###################
+			get(optName, defaultValue = null, decode = true, expireSeconds = 0){
+				const appName = this.mainClass().getAppName();
 				const storage = window.localStorage;
-				let val = storage.getItem(appName + '_' + groupName);
-				let expireVal = parseInt(storage.getItem(appName + '_' + groupName + '_t'));
+				const tsValue = storage.getItem(appName + '_' + optName + '_t');
+				let expireVal = tsValue ? parseInt(tsValue) : 0;
 				// if it's expired, then return null
 				if (expireSeconds !== 0 && (new Date()).getTime() - expireVal > expireSeconds*1000){
-					this.storage.removeItem(appName + '_' + groupName);
-					this.storage.removeItem(appName + '_' + groupName + '_t');
-					return null;
+					storage.removeItem(appName + '_' + optName);
+					storage.removeItem(appName + '_' + optName + '_t');
+					return defaultValue;
 				} else {
+					const val = storage.getItem(appName + '_' + optName);
+					if (decode) { try { return JSON.parse(val) } catch(e) {} }
 					return val;
 				}
-			} else {
-				if (typeof alert !== 'undefined') alert(`storageType ${storageType} not supported`);
-				throw new Error(`storageType ${storageType} not supported`);
 			}
-		}
-		helper_write(groupName, content, storageType){
-			content = this.mainClass().isString (content) ? content : (this.mainClass().isArray(content) || this.mainClass().isObject(content) ? JSON.stringify(content) : content);
-			const appName = this.mainClass().getAppName();
-			if (storageType === 'file'){
-				const dir = this.mainClass().file.tempDir() + appName + '/';
-				this.mainClass().file.createDirectory(dir);
-				const filepath = dir + groupName + '.json';
-				// todo: add expiration
-				this.mainClass().file.write(filepath, content);
-				return true;
-			} else if (storageType === 'localStorage') {
+
+			set(optName, content){
 				try{ 
 					const storage = window.localStorage;
-					storage.setItem(appName + '_' + groupName, content); 
-					storage.setItem(appName + '_' + groupName + '_t', (new Date()).getTime()); 
+					const finalContent = this.mainClass().stringifyForWrite(content);
+					storage.setItem(appName + '_' + optName, finalContent); 
+					storage.setItem(appName + '_' + optName + '_t', (new Date()).getTime()); 
 					return true; 
 				}
-				catch(ex){ alert("Cache storage quote exceeded. can't save value. err598 |" + ex.message); }
-			} else {
-				if (typeof alert !== 'undefined') alert(`storageType ${storageType} not supported`);
-				throw new Error(`storageType ${storageType} not supported`);
+				catch(ex){ alert("Can't save value. Might be exceeding cache size. err598 |" + ex.message); }
 			}
-		}
-		helper_delete(groupName, storageType){
-			const appName = this.mainClass().getAppName();
-			if (storageType === 'file'){
-				const filepath = this.mainClass().file.tempDir() + appName + '/' + groupName + '.json';
-				// todo: better delete
-				this.mainClass().file.delete(filepath);
-				return true;
-			} else if (storageType === 'localStorage') {
-				try{ 
-					const storage = window.localStorage;
-					storage.setItem(appName + '_' + groupName, content); 
-					storage.setItem(appName + '_' + groupName + '_t', (new Date()).getTime()); 
-					return true; 
-				}
-				catch(ex){ alert("Cache storage quote exceeded. can't save value. err598 |" + ex.message); }
-			} else {
-				alert(`storageType ${storageType} not supported`);
-				throw new Error(`storageType ${storageType} not supported`);
-			}
-		}
 
-		get(groupName, defaultVal = null, storageType = 'localStorage', expireSeconds = 0){
-			const content = this.helper_read(groupName, storageType, expireSeconds);
-			return (content !== null && content !== '') ? content : defaultVal;
-		}
-		set(groupName, content, storageType = 'localStorage'){
-			this.helper_write(groupName, content, storageType);
-		}
-		delete(groupName, storageType = 'localStorage'){
-			this.helper_delete(groupName, storageType);
-		}
-		getChild(groupName, optName, defaultVal = null, storageType = 'localStorage', expireSeconds = 0){
-			// todo: individual sub-item expiration
-			const content = this.get(groupName, '{}', storageType, expireSeconds);
-			const json = JSON.parse(content);
-			return (optName in json) ? json[optName] : defaultVal;
-		}
-		setChild(groupName, optName, val, storageType = 'localStorage'){
-			const content = this.get(groupName, '{}', storageType);
-			const json = JSON.parse(content);
-			json[optName] = val;
-			this.set(groupName, JSON.stringify(json), storageType);
-		}
-		deleteChild(groupName, optName, storageType = 'localStorage'){
-			const content = this.get(groupName, '{}', storageType, expireSeconds);
-			// if it's empty, no need to do anything
-			if (content === '{}') return;
-			const json = JSON.parse(content);
-			delete json[optName];
-			this.set(groupName, JSON.stringify(json), storageType);
-		}
+		})(this);
 
-
+		
 		file = new (class {
 			parentClass = null;
 			constructor(parentClass){
@@ -3092,13 +3044,40 @@ class PuvoxLibrary {
 
 			// ########## CACHE DIRS (server-side JS) ##########
 			customCacheDir = null;
-			get_dir(){  
+			file_path(optName) {
 				if (!this.customCacheDir){ 
-					this.customCacheDir = this.mainClass().file.tempDir();
+					this.customCacheDir = this.mainClass().file.tempDir() + this.mainClass().getAppName() + '/';
 				}
-				let finaldir = this.mainClass().trailingSlash(this.customCacheDir + this.mainClass().getAppName() + '_cache_');
-				return finaldir; 
+				return this.customCacheDir + optName + '.json';
 			}
+			get(optName, defaultValue = null, decode = true, expire_seconds=0)
+			{
+				return this.mainClass().file.readCustom(this.file_path(optName), defaultValue, decode, expire_seconds);
+			}
+			set(optName, content)
+			{
+				return this.mainClass().file.writeCustom(this.file_path(optName), content, decode, expire_seconds);
+			}
+			delete (optName) {
+				return this.mainClass().file.delete(this.file_path(optName));
+			}
+			get_child(optName, subKeyName, defaultVal = null, expireSeconds = 0){
+				const json = this.get(optName, {}, true, expireSeconds);
+				return (subKeyName in json) ? json[subKeyName] : defaultVal;
+			}
+			set_child(optName, subKeyName, val){
+				const json = this.get(optName, {}, true, 0);
+				json[subKeyName] = val;
+				this.set(optName, json);
+			}
+			delete_child(optName, optName){
+				const json = this.get(optName, {}, true, 0);
+				delete json[subKeyName];
+				this.set(optName, json);
+			}
+	
+
+			// old 
 			set_dir(dir, auto_clear_seconds=null){ 
 				if(dir) this.customCacheDir = dir;
 				const res = this.mainClass().file.createDirectory(this.customCacheDir);
@@ -3116,62 +3095,8 @@ class PuvoxLibrary {
 				const filePath = this.get_dir() + uniqFileName + "_tmp"; //"/". 
 				return filePath;
 			}
-			//
-			get(uniqFileName, defaultValue ='', expire_seconds=8640000, decode = true)
-			{
-				const parent = this.mainClass();
-				let filePath = this.filePath(uniqFileName);
-				if ( !parent.file.exists(filePath) ){
-					return defaultValue;
-				} else {
-					if ( parent.file.mtime(filePath) + expire_seconds *1000 < (new Date()).getTime() ){
-						parent.file.unlink(filePath);
-						return defaultValue;
-					}
-					else{	
-						const cont = parent.file.read(filePath, null);
-						// if specifically array, then on empty, reckon as array
-						if (cont===null)
-						{
-							return defaultValue;
-						}
-						if (decode){
-							try { return JSON.parse(cont); }
-							catch(ex){ }
-						}
-						return cont;
-					}
-				}
-			}
-			set(uniqFileName, content)
-			{
-				const parent = this.mainClass();
-				let filePath= this.filePath(uniqFileName);
-				let contentFinal = parent.isString(content) ? content : ((parent.isArray(content) || parent.isObject(content)) ? JSON.stringify(content) : content);
-				return parent.file.write(filePath, contentFinal);
-			}
 
-			
-			//
-			// writeFileAppendJson(filePath, jsonContent, callback){
-			// 	try{
-			// 		var callback = callback || function(){};
-			// 		var self = this;
-			// 		this.mainClass().modules('fs').readFile(filePath, 'utf8', function(err,data) {
-			// 			let json = {};
-			// 			if (typeof data !="undefined" && data!=''){
-			// 				json=JSON.parse(data);
-			// 			}
-			// 			let jsonNew = self.jsonConcat(json, jsonContent);
-			// 			let content = JSON.stringify(jsonNew);
-			// 			this.mainClass().modules('fs').writeFile(filePath, content, 'utf8', function(callback_) {
-			// 			}); 
-			// 		});
-			// 	}
-			// 	catch(e){
-			// 		console.log("writeFileAppendJson", e); 
-			// 	}
-			// },
+			// ids
 			containerDefaultPrefix = "_cached_ids_";
 			tempIds = {};
 			idForContent(slugOrContent){
@@ -3203,6 +3128,26 @@ class PuvoxLibrary {
 				}
 				return false;
 			}
+			//
+			// writeFileAppendJson(filePath, jsonContent, callback){
+			// 	try{
+			// 		var callback = callback || function(){};
+			// 		var self = this;
+			// 		this.mainClass().modules('fs').readFile(filePath, 'utf8', function(err,data) {
+			// 			let json = {};
+			// 			if (typeof data !="undefined" && data!=''){
+			// 				json=JSON.parse(data);
+			// 			}
+			// 			let jsonNew = self.jsonConcat(json, jsonContent);
+			// 			let content = JSON.stringify(jsonNew);
+			// 			this.mainClass().modules('fs').writeFile(filePath, content, 'utf8', function(callback_) {
+			// 			}); 
+			// 		});
+			// 	}
+			// 	catch(e){
+			// 		console.log("writeFileAppendJson", e); 
+			// 	}
+			// },
 		})(this);
 	})(this);
 
@@ -3288,10 +3233,34 @@ class PuvoxLibrary {
 			}
 			return this.fs().readFileSync(filePath, 'utf8');
 		}
+		readCustom(filePath, defaultContent = '', decode = true, expireSeconds = 0){
+			if (!this.exists(filePath)){
+				return defaultContent;
+			}
+			else {
+				if ( this.mtime(filePath) + expireSeconds*1000 < (new Date()).getTime() ){
+					this.unlink(filePath);
+					return defaultValue;
+				}
+				else{	
+					const cont = this.read(filePath, null);
+					// if specifically array, then on empty, reckon as array
+					if (cont===null) {
+						return defaultValue;
+					}
+					if (decode){
+						try { return JSON.parse(cont); }
+						catch(ex){ }
+					}
+					return cont;
+				}
+			}
+		}
 		write(filePath, content){
 			const dir = this.path().dirname(filePath);
 			this.createDirectory(dir);
-			this.fs().writeFileSync(filePath, content, 'utf8', function(err){
+			const finalContent = this.mainClass().stringifyForWrite(content);
+			return this.fs().writeFileSync(filePath, finalContent, 'utf8', function(err){
 				if (err) throw err;
 			});
 		}
