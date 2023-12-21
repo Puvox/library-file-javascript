@@ -3076,12 +3076,15 @@ class PuvoxLibrary {
 			mainClass() { return this.parentClass.parentClass; }
 
 			// ###################
-			customCacheDir = null;
-			file_path(optName) {
+			custom_cache_dir = null;
+			get_cache_temp_dir(){
 				if (!this.customCacheDir){ 
-					this.customCacheDir = this.mainClass().file.tempDir() + this.mainClass().getAppName() + '/';
+					this.custom_cache_dir = this.mainClass().file.tempDir() + this.mainClass().getAppName() + '/';
 				}
-				return this.customCacheDir + optName + '.json';
+				return this.custom_cache_dir;
+			}
+			file_path(optName) {
+				return this.get_cache_temp_dir() + optName + '.json';
 			}
 			get(optName, defaultValue = null, decode = true, expire_seconds=0)
 			{
@@ -3107,6 +3110,8 @@ class PuvoxLibrary {
 			// #############################################
 
 			// old 
+			customCacheDir = null; 
+
 			set_dir(dir, auto_clear_seconds=null){ 
 				if(dir) this.customCacheDir = dir;
 				const res = this.mainClass().file.createDirectory(this.customCacheDir);
@@ -3121,7 +3126,7 @@ class PuvoxLibrary {
 				const parent = this.mainClass();
 				uniqFileName = parent.isString(uniqFileName) || parent.isNumeric(uniqFileName) ? uniqFileName : JSON.stringify(uniqFileName);
 				uniqFileName = parent.sanitize_key_dashed(parent.getCharsFromStart(uniqFileName, 15)) + "_"+ parent.md5(uniqFileName);
-				const filePath = this.get_dir() + uniqFileName + "_tmp"; //"/". 
+				const filePath = this.get_cache_temp_dir() + uniqFileName + "_tmp"; //"/". 
 				return filePath;
 			}
 
@@ -3136,14 +3141,14 @@ class PuvoxLibrary {
 			}
 			getIds(containerSlug) {
 				if (! (containerSlug in this.tempIds)) {
-					const content = this.mainClass().file.read(this.get_dir() + this.containerDefaultPrefix + containerSlug, '{}');
+					const content = this.mainClass().file.read(this.get_cache_temp_dir() + this.containerDefaultPrefix + containerSlug, '{}');
 					this.tempIds[containerSlug] = JSON.parse(content);
 				}
 				return this.tempIds[containerSlug];
 			}
 			setIds(containerSlug, idsDict) {
 				this.tempIds[containerSlug] = idsDict;
-				return this.mainClass().file.write(this.get_dir() + this.containerDefaultPrefix + containerSlug, JSON.stringify(this.tempIds[containerSlug]));
+				return this.mainClass().file.write(this.get_cache_temp_dir() + this.containerDefaultPrefix + containerSlug, JSON.stringify(this.tempIds[containerSlug]));
 			}
 			addId(containerSlug, id){
 				const ids = this.getIds(containerSlug);
