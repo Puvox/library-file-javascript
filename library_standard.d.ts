@@ -411,7 +411,8 @@ declare class PuvoxLibrary {
         file: {
             parentClass: null;
             mainClass(): any;
-            customCacheDir: null;
+            custom_cache_dir: null;
+            get_cache_temp_dir(): null;
             file_path(optName: any): string;
             get(optName: any, defaultValue?: null, decode?: boolean, expire_seconds?: number): any;
             set(optName: any, content: any): any;
@@ -419,6 +420,7 @@ declare class PuvoxLibrary {
             get_child(optName: any, subKeyName: any, defaultVal?: null, expireSeconds?: number): any;
             set_child(optName: any, subKeyName: any, val: any): any;
             delete_child(optName: any, subKeyName: any): any;
+            customCacheDir: null;
             set_dir(dir: any, auto_clear_seconds?: null): any;
             filePath(uniqFileName: any): string;
             containerDefaultPrefix: string;
