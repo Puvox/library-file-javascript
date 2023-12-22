@@ -11,7 +11,7 @@ export = PuvoxLibrary;
  *  const helpers = new PuvoxLibrary();
  *         console.log ( helpers.get_last_child_of_array(array) );
  *         console.log ( helpers.get_visitor_ip() );
- *         console.log ( helpers.telegramMessage("hello world", "1234567890", "BOTKEY123:456789") );
+ *         console.log ( helpers.telegram_send("hello world", "1234567890", "BOTKEY123:456789") );
  *       ... etc
  *
 */
@@ -355,7 +355,7 @@ declare class PuvoxLibrary {
     backToTopBind(el: any): void;
     enable_jquery_errors(): void;
     encode_chars(str: any, chars?: any[]): any;
-    telegramMessage(textOriginal: any, chat_id: any, bot_key: any, extra_opts?: {}): Promise<any>;
+    telegram_send(textOriginal: any, chat_id: any, bot_key: any, extra_opts?: {}): any;
     telegram_interval_ms: number | undefined;
     telegram_last_sent_timestamp: number | undefined;
     openUrlInBrowser(url: any): void;

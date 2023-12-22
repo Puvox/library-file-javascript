@@ -10,7 +10,7 @@
  *  const helpers = new PuvoxLibrary();
  *         console.log ( helpers.get_last_child_of_array(array) );
  *         console.log ( helpers.get_visitor_ip() );
- *         console.log ( helpers.telegramMessage("hello world", "1234567890", "BOTKEY123:456789") );
+ *         console.log ( helpers.telegram_send("hello world", "1234567890", "BOTKEY123:456789") );
  *       ... etc
  *
 */
@@ -2699,7 +2699,7 @@ class PuvoxLibrary {
 
 
 	// region ### TELEGRAM FUNCTIONS ###
-	async telegramMessage(textOriginal, chat_id, bot_key, extra_opts={}){ 
+	async telegram_send(textOriginal, chat_id, bot_key, extra_opts={}){ 
 		if (!extra_opts) extra_opts = {};
 		if (! ('parse_mode' in extra_opts)){
 			extra_opts['parse_mode'] = 'html';
@@ -2740,7 +2740,7 @@ class PuvoxLibrary {
 			const opt_cache_id = extra_opts['cache_id'];
 			delete extra_opts['cache_id'];
 			const cacheId = opt_cache_id ? opt_cache_id : this.cache.file.idForContent( text +'_'+ chat_id +'_'+ bot_key +'_'+ JSON.stringify(extra_opts) );
-			if (!this.cache.file.addIdIfNotExists('function_telegram_message', cacheId) ){
+			if (!this.cache.file.addIdIfNotExists('function_telegram_send', cacheId) ){
 				return {'ok': true, 'cached':true};
 			}
 		}
@@ -2771,7 +2771,7 @@ class PuvoxLibrary {
 					if ( ! is_repeated_call ){
 						text = "[SecondSend with stipped tags] \r\n" + this.encode_html_entities (this.stripTags(text));
 						extra_opts['is_repeated_call'] = true;
-						return await this.telegram_message(text, chat_id, bot_key, extra_opts);
+						return await this.telegram_send(text, chat_id, bot_key, extra_opts);
 					}
 				}
 				return responseJson;
