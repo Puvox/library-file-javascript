@@ -1334,7 +1334,7 @@ class PuvoxLibrary {
 	}
 	
 	// https://stackoverflow.com/questions/9621825/escape-a-variable-within-a-regular-expression
-	preg_quote(str, delimiter) {
+	preg_quote(str, delimiter = null) {
 		return (str + '').replace(new RegExp('[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\' + (delimiter || '') + '-]', 'g'), '\\$&');
 	}
 	escapeRegex(string) {
