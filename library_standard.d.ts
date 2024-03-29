@@ -17,7 +17,7 @@ export = PuvoxLibrary;
 */
 declare class PuvoxLibrary {
     constructor(appName: any);
-    selfMain: PuvoxLibrary;
+    selfMain: this;
     arrayValue(obj_arr: any, key: any, default_: any): any;
     arrayValueLower(obj_arr: any, key: any, default_: any): any;
     arrayValueUpper(obj_arr: any, key: any, default_: any): any;
@@ -220,7 +220,7 @@ declare class PuvoxLibrary {
     splitByEqualNotInsideDoubleQuotesAndDoubleEquals(str: any): any;
     splitByNotInside2(str: any, splitChar: any, notInsideCharStart: any, notInsideCharEnd: any): void;
     getFromX_tillY_ExcudingQuotes(content: any, from: any, till: any, regex_index: any): string;
-    preg_quote(str: any, delimiter: any): string;
+    preg_quote(str: any, delimiter?: null): string;
     escapeRegex(string: any): any;
     escapeRegExp2(string: any): any;
     splitStringIntoChars(str: any): any;
@@ -262,12 +262,9 @@ declare class PuvoxLibrary {
     executeAfterTry(el: any, func: any, num: any): void;
     waitExecute(el: any, func: any): void;
     consoleLogColor(text: any, backgroundColor?: null, foregroundColor?: null): void;
-    toggleWindowsMessages_WindowConfirm(): ((message?: string | undefined) => boolean) & typeof confirm;
-    toggleWindowsMessages_WindowAlert(): ((message?: any) => void) & typeof alert;
-    toggleWindowsMessages(enable: any): void;
     suspressMessagesExecution(func: any): void;
     in_array(needle: any, haystack: any): boolean;
-    CreateFrameIn(targetEl: any, frameContent: any, MakeItfullWH: any): HTMLIFrameElement;
+    CreateFrameIn(targetEl: any, frameContent: any, MakeItfullWH: any): any;
     makeAllATargetBlank(el: any): void;
     createDropdownFrom(arr: any, elementId: any, jqueriUi: any, appendToElement: any): string;
     b64EncodeUnicode(str: any): string;

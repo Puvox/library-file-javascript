@@ -1705,20 +1705,6 @@ class PuvoxLibrary {
 		console.log (backColorString + foreColorString + "%s" + prefix + objectTree.types.reset + suffix, text);
 	}
 	
-	toggleWindowsMessages_WindowConfirm() { return window.confirm }
-	toggleWindowsMessages_WindowAlert() { return window.alert }
-	toggleWindowsMessages(enable){
-		if (enable)
-		{
-			window.confirm = this.toggleWindowsMessages_WindowConfirm();
-			window.alert   = this.toggleWindowsMessages_WindowAlert();
-		}
-		else
-		{
-			window.confirm = function() { return true; };
-			window.alert   = function() {};
-		}
-	}
 	suspressMessagesExecution(func){
 		var alert_	= window.alert;
 		var confirm_= window.confirm;
@@ -1771,7 +1757,7 @@ class PuvoxLibrary {
 		if(MakeItfullWH){
 			this.MakeIframeFullHeight(iframe);
 		}
-		return iframe;
+		return ifram || null; //leave this to avoid TS method type of HTMLIFrameElement;
 	}
 
 	makeAllATargetBlank(el){
