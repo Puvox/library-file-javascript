@@ -232,7 +232,7 @@ declare class PuvoxLibrary {
     insertRedErrorLine(array_: any): void;
     stripTags(input: any, allowed: any): any;
     br2nl(content: any): any;
-    popup(text: any): void;
+    popup(content: any): void;
     loaderImage(circleColor: any): string;
     Loader(ShowOrHide: any, style: any, content_To_show: any): void;
     jquery_popup(element: any, isModal: any, params: any): any;

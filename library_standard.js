@@ -1424,13 +1424,13 @@ class PuvoxLibrary {
 
 	
 	// ======== simple POPUP  ======== https://github.com/ttodua/useful-javascript/ ==============
-	popup(text) {
+	popup(content) {
 		const popupId = 'myPopup_' +  Math.floor((Math.random() * 10000));
 		let popupDiv = document.createElement('div');
 		popupDiv.id = popupId;  
 		popupDiv.style = "display: block; position: fixed; width: 400px; height: 200px; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; border: 1px solid gray; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); z-index: 1000; padding:5px;";
 		document.body.appendChild(popupDiv);
-		popupDiv.textContent = text; 
+		popupDiv.innerHTML = content; 
 		// 2) close button
 		let closeButton = document.createElement('button');
 		closeButton.textContent = 'X';
