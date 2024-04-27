@@ -1419,6 +1419,60 @@ class PuvoxLibrary {
 
 	br2nl(content) { return content.replace('/\<br(\s*)?\/?\>/i', "\n"); }
 
+
+
+
+	
+	// ======== simple POPUP  ======== https://github.com/ttodua/useful-javascript/ ==============
+	popup(text) {
+		const popupId = 'myPopup_' +  Math.floor((Math.random() * 10000));
+		let popupDiv = document.createElement('div');
+		popupDiv.id = popupId;  
+		popupDiv.style = "display: block; position: fixed; width: 400px; height: 200px; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; border: 1px solid gray; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); z-index: 1000; padding:5px;";
+		document.body.appendChild(popupDiv);
+		popupDiv.textContent = text; 
+		// 2) close button
+		let closeButton = document.createElement('button');
+		closeButton.textContent = 'X';
+		closeButton.style = "position: absolute; top: -10px; right: -10px;"; 
+		popupDiv.appendChild(closeButton);
+		// 3. Add background shade
+		let backgroundDiv = document.createElement('div');
+		backgroundDiv.id = 'popupBackground'; // Optional ID for targeting
+		backgroundDiv.style = "position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: black; opacity: 0.5; z-index: 999;";
+		popupDiv.insertAdjacentElement('beforebegin', backgroundDiv); 
+	   	document.body.appendChild(backgroundDiv);
+		closeButton.onclick = () =>{
+			backgroundDiv.parentNode.removeChild(backgroundDiv);
+			popupDiv.parentNode.removeChild(popupDiv); 
+		};
+	}
+	// ========== "PLEASE WAIT" popup   =
+	loaderImage(circleColor){
+		var circlecolor=circleColor || '#ffffff';
+		return '<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="90px" height="90px" viewBox="0 0 128 128" xml:space="preserve"><g><circle cx="16" cy="64" r="16" fill="'+circlecolor+'" fill-opacity="1"/><circle cx="16" cy="64" r="16" fill="'+circlecolor+'" fill-opacity="0.67" transform="rotate(45,64,64)"/><circle cx="16" cy="64" r="16" fill="#ffffff" fill-opacity="0.42" transform="rotate(90,64,64)"/><circle cx="16" cy="64" r="16" fill="'+circlecolor+'" fill-opacity="0.2" transform="rotate(135,64,64)"/><circle cx="16" cy="64" r="16" fill="'+circlecolor+'" fill-opacity="0.12" transform="rotate(180,64,64)"/><circle cx="16" cy="64" r="16" fill="'+circlecolor+'" fill-opacity="0.12" transform="rotate(225,64,64)"/><circle cx="16" cy="64" r="16" fill="'+circlecolor+'" fill-opacity="0.12" transform="rotate(270,64,64)"/><circle cx="16" cy="64" r="16" fill="'+circlecolor+'" fill-opacity="0.12" transform="rotate(315,64,64)"/><animateTransform attributeName="transform" type="rotate" values="0 64 64;315 64 64;270 64 64;225 64 64;180 64 64;135 64 64;90 64 64;45 64 64" calcMode="discrete" dur="720ms" repeatCount="indefinite"></animateTransform></g></svg>';
+	}
+	Loader(ShowOrHide, style, content_To_show)
+	{
+		var elementID = 'waiter_box_p';
+		if (ShowOrHide)
+		{
+			var b=document.body;
+			var content_To_show= (content_To_show || "") + '<br/>' +this.loaderImage();
+			var x = document.createElement('div'); x.id = elementID;    x.setAttribute("style","height:120%; width:120%; position:fixed; top:-10%; left:-10%; z-index:9900; overflow:hidden;");
+
+			x.innerHTML = 
+			'<div id="'+elementID+'_background" style="background-color: black; height: 100%; position: absolute; opacity: 0.9; width: 100%;' + (style || '') + '">'+
+				'<div id="'+elementID+'_content" style="height: 100%;">'+
+					'<div align="center" style="text-align:center;position:relative;top:50%;transform:translateY(-50%);color:#adb109;font-size:1.2em;"> '+ content_To_show + '</div>' + 
+				'</div>'+
+			'</div>';
+			b.insertBefore(x, b.childNodes[0]);
+		}
+		else{
+			var x =document.getElementById(elementID); if (x) x.parentNode.removeChild(x); 
+		}
+	}
 	jquery_popup(element, isModal, params){
 		var isModal = isModal || true;
 		var params = params || {};
@@ -1480,7 +1534,6 @@ class PuvoxLibrary {
 	{
 		this.Cookies.setOption(cookiename, "popup_checkbox_"+key, (event.target.checked ? "false" : "true") ); 
 	}
-	
 	dialogClose(){
 		window.parent.$('.ui-dialog-content:visible').dialog('close');
 	}
@@ -1814,72 +1867,6 @@ class PuvoxLibrary {
 	// ============================= get basename of url ============================
 	basename(path) {   return path.split('/').reverse()[0];	}
 
-
-	// ======== simple POPUP  ======== https://github.com/ttodua/useful-javascript/ ==============
-	show_my_popup(TEXTorID, AdditionalStyles ){
-			TEXTorID=TEXTorID.trim(); var FirstChar= TEXTorID.charAt(0); var eName = TEXTorID.substr(1); if ('#'==FirstChar || '.'==FirstChar){	if('#'==FirstChar){var x=document.getElementById(eName);} else{var x=document.getElementsByClassName(eName)[0];}} else { var x=document.createElement('div');x.innerHTML=TEXTorID;} var randm_id=Math.floor((Math.random()*100000000));
-		var DivAA = document.createElement('div');    DivAA.id = "blkBackgr_"+randm_id;  DivAA.className = "MyJsBackg";   DivAA.setAttribute("style", 'background:black; height:5000px; left:0px; opacity:0.9; position:fixed; top:0px; width:100%; z-index:99995;'); document.body.appendChild(DivAA);      AdditionalStyles= AdditionalStyles || '';
-		var DivBB = document.createElement('div');    DivBB.id = 'popupp_'+randm_id;     DivBB.className = "MyJsPopup";   DivBB.setAttribute("style",'background-color:white; border:6px solid white; border-radius:10px; display:block; min-height:1%; min-width:350px; width:auto; overflow:auto; max-height:80%; max-width:800px; padding:15px; position:fixed; text-align:left; top:10%; z-index:99995; left:0px; right:0px; margin-left:auto; margin-right:auto; width:80%;'+ AdditionalStyles); 	DivBB.innerHTML = '<div style="background-color:#C0BCBF; border-radius:55px; padding:5px; font-family:arial; float:right; font-weight:700; margin:-15px -10px 0px 0px; z-index: 88; "  class="CloseButtn" ><a href="javascript:my_popup_closee('+randm_id+');" style="display:block;margin:-5px 0 0 0;font-size:1.6em;">x</a></div>'; document.body.appendChild(DivBB);const z=x.cloneNode(true);DivBB.appendChild(z); if(z.style.display=="none"){z.style.display="block";}    
-	}
-	my_popup_closee(RandomIDD) { var x=document.getElementById("blkBackgr_"+RandomIDD); x.parentNode.removeChild(x);      var x=document.getElementById('popupp_'+RandomIDD); x.parentNode.removeChild(x);
-	}
-	// ========================================================== //
-
-
-
-		
-	// ===================== "PLEASE WAIT" popup   =============== https://github.com/ttodua/useful-javascript/ ===============
-	loaderImage(circleColor){
-		var circlecolor=circleColor || '#ffffff';
-		return '<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="90px" height="90px" viewBox="0 0 128 128" xml:space="preserve"><g><circle cx="16" cy="64" r="16" fill="'+circlecolor+'" fill-opacity="1"/><circle cx="16" cy="64" r="16" fill="'+circlecolor+'" fill-opacity="0.67" transform="rotate(45,64,64)"/><circle cx="16" cy="64" r="16" fill="#ffffff" fill-opacity="0.42" transform="rotate(90,64,64)"/><circle cx="16" cy="64" r="16" fill="'+circlecolor+'" fill-opacity="0.2" transform="rotate(135,64,64)"/><circle cx="16" cy="64" r="16" fill="'+circlecolor+'" fill-opacity="0.12" transform="rotate(180,64,64)"/><circle cx="16" cy="64" r="16" fill="'+circlecolor+'" fill-opacity="0.12" transform="rotate(225,64,64)"/><circle cx="16" cy="64" r="16" fill="'+circlecolor+'" fill-opacity="0.12" transform="rotate(270,64,64)"/><circle cx="16" cy="64" r="16" fill="'+circlecolor+'" fill-opacity="0.12" transform="rotate(315,64,64)"/><animateTransform attributeName="transform" type="rotate" values="0 64 64;315 64 64;270 64 64;225 64 64;180 64 64;135 64 64;90 64 64;45 64 64" calcMode="discrete" dur="720ms" repeatCount="indefinite"></animateTransform></g></svg>';
-	}
-	Loader(ShowOrHide, style, content_To_show)
-	{
-		var elementID = 'waiter_box_p';
-		if (ShowOrHide)
-		{
-			var b=document.body;
-			var content_To_show= (content_To_show || "") + '<br/>' +this.loaderImage();
-			var x = document.createElement('div'); x.id = elementID;    x.setAttribute("style","height:120%; width:120%; position:fixed; top:-10%; left:-10%; z-index:9900; overflow:hidden;");
-
-			x.innerHTML = 
-			'<div id="'+elementID+'_background" style="background-color: black; height: 100%; position: absolute; opacity: 0.9; width: 100%;' + (style || '') + '">'+
-				'<div id="'+elementID+'_content" style="height: 100%;">'+
-					'<div align="center" style="text-align:center;position:relative;top:50%;transform:translateY(-50%);color:#adb109;font-size:1.2em;"> '+ content_To_show + '</div>' + 
-				'</div>'+
-			'</div>';
-			b.insertBefore(x, b.childNodes[0]);
-		}
-		else{
-			var x =document.getElementById(elementID); if (x) x.parentNode.removeChild(x); 
-		}
-	}
-	// ========================================================== //
-
-
-
-	// ============================= AJAX EXAMPLES  =============== https://github.com/ttodua/useful-javascript/ ===============
-	myyAjaxRequest(parameters, url, method, func, ShowBlackground){ ShowBlackground= ShowBlackground || false;
-		method = method.toLowerCase() || "post"; if (method  == "get") {url=url+'?'+parameters+'&MakeRandomValuedLinkToAvoidCache=' + Math.random();}
-		if(ShowBlackground) {Loader(true);}	try{try{var xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");} catch( e ){var xmlhttp=new ActiveXObject("Msxml2.XMLHTTP");}}catch(e){var xmlhttp = new XMLHttpRequest();}
-		xmlhttp.onreadystatechange=function(){ if (xmlhttp.readyState==4){ if(ShowBlackground) {Loader(false);}  responseee = xmlhttp.responseText; //xmlhttp.readyState + xmlhttp.status//
-			func(); //execute any codes
-		}}; 
-		xmlhttp.open(method,url, true); 
-		if (method  == "post"){xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");xmlhttp.send(parameters);}
-		else if (method  == "get"){xmlhttp.send(null);}
-	}
-	// ========================================================== //
-
-
-	//all divs, which has a classname "My_TARGET_Hiddens", will be automatically hidden on page load...
-	hide_popuping_divs(classnameee){
-		var elmnts = document.getElementsByClassName(classnameee); var index;
-		for (index = 0; index < elmnts.length; ++index) {
-			elmnts[index].style.display= "none";	//elmnts[index].className = elmnts[index].className + " my_css_hide_class";
-		}
-	}
-	//window.onload = function(){ if(typeof MyTargetHideClass ==='String') hide_popuping_divs(MyTargetHideClass); };
 
 	get(url, parameters) {
 	  // Return a new promise.

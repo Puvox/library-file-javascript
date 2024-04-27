@@ -232,6 +232,9 @@ declare class PuvoxLibrary {
     insertRedErrorLine(array_: any): void;
     stripTags(input: any, allowed: any): any;
     br2nl(content: any): any;
+    popup(text: any): void;
+    loaderImage(circleColor: any): string;
+    Loader(ShowOrHide: any, style: any, content_To_show: any): void;
     jquery_popup(element: any, isModal: any, params: any): any;
     jquery_popup_once(cookiename: any, key: any, text: any, duration: any, onComplete: any): void;
     jquery_popup_one_time_checkbox(cookiename: any, key: any, text: any, callable_func: any, defaultCheckboxTxt: any): void;
@@ -271,12 +274,6 @@ declare class PuvoxLibrary {
     b64DecodeUnicode(str: any): string;
     round(num: any, decimals: any): number;
     basename(path: any): any;
-    show_my_popup(TEXTorID: any, AdditionalStyles: any): void;
-    my_popup_closee(RandomIDD: any): void;
-    loaderImage(circleColor: any): string;
-    Loader(ShowOrHide: any, style: any, content_To_show: any): void;
-    myyAjaxRequest(parameters: any, url: any, method: any, func: any, ShowBlackground: any): void;
-    hide_popuping_divs(classnameee: any): void;
     get(url: any, parameters: any): Promise<any>;
     getJSON(url: any, parameters: any): Promise<any>;
     post(url: any, params: any, callback_1: any, callback_2: any): Promise<void>;
