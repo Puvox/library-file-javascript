@@ -3017,8 +3017,11 @@ class PuvoxLibrary {
 					return defaultValue;
 				} else {
 					const val = storage.getItem(appName + '_' + optName);
+					if (val===null || val === undefined) {
+						return defaultValue;
+					}
 					if (decode) { try { return JSON.parse(val) } catch(e) {} }
-					return (val!==null && val !== undefined) ? val : defaultValue;
+					return val;
 				}
 			}
 			set(optName, content){
