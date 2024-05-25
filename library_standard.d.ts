@@ -240,6 +240,7 @@ declare class PuvoxLibrary {
     jquery_popup_one_time_checkbox(cookiename: any, key: any, text: any, callable_func: any, defaultCheckboxTxt: any): void;
     dialog_dont_show_again(event: any, key: any, cookiename: any): void;
     dialogClose(): void;
+    injectButton(text: any, onClickCallback: any, style: any): void;
     mergeObjects(obj1: any, obj2: any): any;
     objectMap(obj: any, fn: any): any;
     fancyTimeFormat(time: any): string;

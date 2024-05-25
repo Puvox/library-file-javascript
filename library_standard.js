@@ -411,12 +411,8 @@ class PuvoxLibrary {
 		return e && e.stack && e.message;
 	}
 	IsJsonString (str) {
-		try {
-			JSON.parse(str);
-		} catch (e) {
-			return false;
-		}
-		return true;
+		return this.isJsonEncodedObject(str);
+		try { JSON.parse(str); return true; } catch (e) { return false; }
 	}
 	is_object(variable){
 		return typeof variable === 'object' && variable !== null;
@@ -1537,8 +1533,17 @@ class PuvoxLibrary {
 	dialogClose(){
 		window.parent.$('.ui-dialog-content:visible').dialog('close');
 	}
-	
-	
+
+	injectButton(text, onClickCallback, style) {
+		let button = document.createElement('button');
+		button.textContent = text;
+		button.style = "padding:2px;" + (style || "position:absolute;top:5px; left:5px;");
+		button.addEventListener('click', () => {
+			onClickCallback();
+		});
+		document.body.appendChild(button);
+	}
+	  
 
 	mergeObjects(obj1, obj2){
 		for (var attrname in obj2) { obj1[attrname] = obj2[attrname]; }
@@ -2970,7 +2975,11 @@ class PuvoxLibrary {
  
 		helper_get_child(instanceClass, optName, subKeyName, defaultVal = null, expireSeconds = 0){
 			const json = instanceClass.get(optName, {}, true, expireSeconds);
-			return (subKeyName in json) ? json[subKeyName] : defaultVal;
+			const val = (subKeyName in json) ? json[subKeyName] : defaultVal;
+			if (this.parentClass.IsJsonString(val)){
+				return JSON.parse(val);
+			}
+			return val;
 		}
 		helper_set_child(instanceClass, optName, subKeyName, val){
 			const json = instanceClass.get(optName, {}, true, 0);
