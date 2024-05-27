@@ -351,7 +351,6 @@ declare class PuvoxLibrary {
     enable_jquery_errors(): void;
     encode_chars(str: any, chars?: any[]): any;
     telegram_send(textOriginal: any, chat_id: any, bot_key: any, extra_opts?: {}): any;
-    telegram_interval_ms: number | undefined;
     telegram_last_sent_timestamp: number | undefined;
     openUrlInBrowser(url: any): void;
     stringify(obj_or_str: any): any;

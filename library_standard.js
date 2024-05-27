@@ -2695,26 +2695,11 @@ class PuvoxLibrary {
 		//
 		const is_repeated_call = ('is_repeated_call' in extra_opts);
 		delete extra_opts['is_repeated_call'];
-		// ###############################################
-		// ############## support caching  ###############
-		// ########## (ppl can remove this part) #########
-		// ###############################################
-		//
+		// #########################################################################
+		// ############## support caching  (you can remove this part ) #############
+		// #########################################################################
 		// you can set custom random cache_id, so if that cache_id is found in store datas, it avoids sending the same message to telegram
-		//
 		if ('cache_id' in extra_opts){
-			if (!this.telegram_interval_ms) {
-				this.telegram_interval_ms= 50; // telegram seems to accept around 30 times per second, so we'd better wait around that milliseconds
-			}
-			if (!this.telegram_last_sent_timestamp) {
-				this.telegram_last_sent_timestamp= 0;
-			}
-			const curMS  = this.milliseconds();
-			const goneMS = curMS - this.telegram_last_sent_timestamp;
-			if ( goneMS < this.telegram_interval_ms ){
-				await this.sleep (this.telegram_interval_ms - goneMS);
-			}
-			this.telegram_last_sent_timestamp = curMS;
 			const opt_cache_id = extra_opts['cache_id'];
 			delete extra_opts['cache_id'];
 			const cacheId = opt_cache_id ? opt_cache_id : this.cache.file.idForContent( text +'_'+ chat_id +'_'+ bot_key +'_'+ JSON.stringify(extra_opts) );
@@ -2722,6 +2707,17 @@ class PuvoxLibrary {
 				return {'ok': true, 'cached':true};
 			}
 		}
+		// support RateLimit avoiding
+		const telegram_interval_ms = 50; // telegram seems to accept around 30 times per second, so we'd better wait around that milliseconds
+		if (!this.telegram_last_sent_timestamp) {
+			this.telegram_last_sent_timestamp = 0;
+		}
+		const curMS  = this.milliseconds();
+		const goneMS = curMS - this.telegram_last_sent_timestamp;
+		if ( goneMS < telegram_interval_ms ){
+			await this.sleep (telegram_interval_ms - goneMS);
+		}
+		this.telegram_last_sent_timestamp = curMS;
 		// ###############################################
 		// ################ [ END CACHING ]###############
 		// ###############################################
