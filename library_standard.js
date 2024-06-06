@@ -417,8 +417,16 @@ class PuvoxLibrary {
 	is_object(variable){
 		return typeof variable === 'object' && variable !== null;
 	}
-	formItemsToJson(FormElement){    
-		let formDataEntries = new FormData(FormElement).entries();
+
+	formItemsToJson(FormElement){
+		let formData = undefined;
+		try { formData = new FormData(FormElement);}
+		catch (e) { 
+			formData = new FormData();
+			const formElements = FormElement.querySelectorAll('input, select, textarea'); 
+			formElements.forEach(input => {  formData.append(input.name, input.value); });
+		}
+		const formDataEntries = formData.entries();
 		const handleChild = function (obj,keysArr,value){
 			let firstK = keysArr.shift();
 			firstK=firstK.replace(']','');
