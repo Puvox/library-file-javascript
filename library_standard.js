@@ -421,10 +421,10 @@ class PuvoxLibrary {
 	formItemsToJson(FormElement){
 		let formData = undefined;
 		try { formData = new FormData(FormElement);}
-		catch (e) { 
-			formData = new FormData();
-			const formElements = FormElement.querySelectorAll('input, select, textarea'); 
-			formElements.forEach(input => {  formData.append(input.name, input.value); });
+		catch (e) {
+            const newForm = document.createElement('form'); 
+            newForm.appendChild(FormElement.cloneNode(true));
+			formData = new FormData(newForm);
 		}
 		const formDataEntries = formData.entries();
 		const handleChild = function (obj,keysArr,value){
@@ -2738,29 +2738,33 @@ class PuvoxLibrary {
 			requestOpts['caption'] = requestOpts['text'].substring(0, 1023);
 			responseText = await this.getRemoteData('https://api.telegram.org/bot'+ bot_key +'/sendPhoto', requestOpts);  // pastebin_com/u0J1Cph3 //'sendMessage?'.http_build_query(opts, ''); 
 		}
-		try {
-			const responseJson = JSON.parse(responseText);
-			if (responseJson.ok){
-				return responseJson;
-			} 
-			// for some reason, if still unsupported format submitted, resubmit the plain format
-			//i.e. {"ok":false,"error_code":400,"description":"Bad Request: can't parse entities: Unsupported start tag \"br/\" at byte offset 43"} 
-			else {
-				if (!responseJson.description) {
-					throw new Error('No description in response');
+		const responseJson = JSON.parse(responseText);
+		if (!responseJson.ok){
+			let retry = false;
+			let sleepMs = extra_opts["sleepOnRetry"] || 1000; // 1 second
+			if (!responseJson.description) {
+				throw new Error('No description in response');
+			}
+			if (responseJson.error_code === 429) { // {"ok":false,"error_code":429,"description":"Too Many Requests: retry after 453","parameters":{"retry_after":453}}
+				retry = true;
+				await this.sleep (sleepMs);
+			}
+			if (responseJson.error_code === 504) { // {"ok":false,"error_code":504,"description":"Gateway Timeout"}
+				retry = true;
+				await this.sleep (sleepMs);
+			}
+			if( responseJson.description.indexOf ('Bad Request: can\'t parse entities')> -1 ){ // if unsupported format was submitted, resubmit the plain format // {"ok":false,"error_code":400,"description":"Bad Request: can't parse entities: Unsupported start tag \"br/\" at byte offset 43"} 
+				retry = true;
+				text = "[Resent with stipped tags] \r\n" + this.encode_html_entities (this.stripTags(text));
+			}
+			if (retry){
+				if ( ! is_repeated_call ){
+					extra_opts['is_repeated_call'] = true;
+					return await this.telegram_send(text, chat_id, bot_key, extra_opts);
 				}
-				if( responseJson.description.indexOf ('Bad Request: can\'t parse entities')> -1 ){
-					if ( ! is_repeated_call ){
-						text = "[SecondSend with stipped tags] \r\n" + this.encode_html_entities (this.stripTags(text));
-						extra_opts['is_repeated_call'] = true;
-						return await this.telegram_send(text, chat_id, bot_key, extra_opts);
-					}
-				}
-				return responseJson;
-			} 
-		} catch (ex) {
-			return {'ok': false, 'description': ex.message + ':::' + responseText };
+			}
 		}
+		return responseJson;
 	}
 
 	openUrlInBrowser(url)
