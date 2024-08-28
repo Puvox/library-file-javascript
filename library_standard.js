@@ -912,9 +912,9 @@ class PuvoxLibrary {
 			return withMS ? finalStr : finalStr.split('.')[0]; //2022-07-09 19:25:00.276
 		}
 		// in some langs, the date object has distinctions, so the two below needs separated methods. However, the "date" object returned from them, are same, just the representation can be local or UTC depending user.
-		StringToDatetimeUtc(str, format, culture) { return new Date(str); }
-		StringToDatetimeLocal(str, format, culture) { return new Date(str); } 
-		StringToTimestamUtc(str, format, culture) { return new Date(str).getTime(); } 
+		StringToDatetimeUtc(str, format=null, culture=null) { return new Date(str).getTime(); }
+		StringToDatetimeLocal(str, format=null, culture=null) { return new Date(str); } 
+		StringToTimestampUtc(str, format=null, culture=null) { return new Date(str).getTime(); } 
 		DatetimeUtc() {  
 			var now = new Date();
 			var utc = new Date(now.getTime()); // + now.getTimezoneOffset() * 60000 is not needed !!!!!!

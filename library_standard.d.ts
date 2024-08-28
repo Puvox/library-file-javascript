@@ -69,11 +69,11 @@ declare class PuvoxLibrary {
     isBoolean(x: any): boolean;
     isBooleanReal(x: any): boolean;
     isString(x: any): boolean;
-    isString(s: any): boolean;
+    isString(s: any): s is string;
     isObject(x: any): boolean;
     isObject(o: any): boolean;
     isJsonObject(data: any): boolean;
-    isArray: (x: any) => boolean;
+    isArray: (x: any) => x is any[];
     isSimpleVariableType(obj: any): boolean;
     isSimpleVariableTypeName(typeName_: any): boolean;
     isNumericVariableType(obj: any): boolean;
@@ -149,9 +149,9 @@ declare class PuvoxLibrary {
         addNumberToHMS(hhmmss: any, added_or_subtracted: any): void;
         DatetimeToStringUtc(dt: any, withMS?: boolean, withTZ?: boolean): string;
         DatetimeToStringLocal(dt: any, withMS?: boolean, withT?: boolean): any;
-        StringToDatetimeUtc(str: any, format: any, culture: any): Date;
-        StringToDatetimeLocal(str: any, format: any, culture: any): Date;
-        StringToTimestamUtc(str: any, format: any, culture: any): number;
+        StringToDatetimeUtc(str: any, format?: null, culture?: null): number;
+        StringToDatetimeLocal(str: any, format?: null, culture?: null): Date;
+        StringToTimestampUtc(str: any, format?: null, culture?: null): number;
         DatetimeUtc(): Date;
         UtcDatetime(): Date;
         TimestampUtc(): number;
@@ -475,7 +475,7 @@ declare class PuvoxLibrary {
     deepExtend(...xs: any[]): any;
     isNumber: (number: unknown) => boolean;
     hasProps(o: any): boolean;
-    isRegExp(o: any): boolean;
+    isRegExp(o: any): o is RegExp;
     isDictionary(o: any): boolean;
     isStringCoercible(x: any): any;
     prop(o: any, k: any): any;
