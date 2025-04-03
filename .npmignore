@@ -1,0 +1,5 @@
+.npmignore
+npm_publish.bat
+.github
+.git
+package-lock.json

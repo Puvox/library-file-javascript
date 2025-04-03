@@ -1,0 +1,39 @@
+name: Build and Publish
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+      
+      - name: Install dependencies
+        run: npm i
+      
+      - name: Run TypeScript compilation
+        run: |
+          npm install typescript 
+          npx tsc
+      
+      - name: Update version (patch)
+        run: |
+          git config user.email "you@example.com"
+          git config user.name "you"
+          git stash
+          npm version patch
+          git stash pop
+      
+      - name: Publish to NPM
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_API_TOKEN }}
