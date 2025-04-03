@@ -93,7 +93,7 @@ class PuvoxLibrary {
 	arrayIntersect(source, comparedTo){
 		return source.filter(x => comparedTo.includes(x));
 	}
-	arrayDiffFull(o1,o2) {
+	arrayDiffFull(o1,o2) { // never version: https://pastebin_com/VFnY1Xnb
 		const selfFunc = this;
 		const typeObject = function(o){
 			return typeof o === 'object';
@@ -148,6 +148,7 @@ class PuvoxLibrary {
 			diff(o2,o1),
 		];
 	}
+
 	sortKeys (x, out = {}) {
         for (const k of Object.keys (x).sort ()) {
             out[k] = x[k]
@@ -482,6 +483,33 @@ class PuvoxLibrary {
 	filterObject(obj, callback) {
 		return Object.fromEntries(Object.entries(obj).
 		  filter(([key, val]) => callback(val, key)));
+	}
+
+
+	// 
+	filterReduceToKeys(inputObj, keysArray, level = 1) {
+		if (level < 1) {
+			throw new Error('level must be 1 or greater');
+		}
+		const result = {};
+		if (level === 1) {
+			for (const key of keysArray) {
+				if (Object.prototype.hasOwnProperty.call(inputObj, key)) {
+					result[key] = inputObj[key];
+				}
+			}
+			return result;
+		}
+		// level 2
+		if (level !== 1) {
+			for (const outerKey in inputObj) {
+				if (Object.prototype.hasOwnProperty.call(inputObj, outerKey)) {
+					const innerObj = inputObj[outerKey];
+					result[outerKey] = this.filterReduceToKeys(innerObj, keysArray, level - 1);
+				}
+			}
+		}
+		return result;
 	}
 	// #####################################$$$$$################
 	
@@ -901,8 +929,13 @@ class PuvoxLibrary {
 		// ZZ incorrect, need LOCAL/UTC: DatetimeToHMSstring(dt) { }, // DateTime
 		// HMSToTimeSpan(hhmmss) { }, // int
 		addNumberToHMS(hhmmss, added_or_subtracted) { } // int, int
+		DatetimeToTimestampUtc(dt) { 
+			// todo simplify just
+			let offset = this.getOffsetFromUtc();
+			return ((((new Date( dt )).getTime()) / 1000) + 14400 - offset * 60* 60) * 1000; 
+		}
 		DatetimeToStringUtc(dt, withMS = true, withTZ = true) {
-			var str = (new Date( dt || new Date() )).toISOString();
+			var str = (dt || new Date()).toISOString();
 			let finalStr = (withTZ ? str : str.replace("T", " ").replace("Z", ""));
 			return withMS ? finalStr : finalStr.split('.')[0]; //2022-07-09 15:25:00.276
 		}
@@ -911,30 +944,17 @@ class PuvoxLibrary {
 			let finalStr = (withT ? str.replace(' ', 'T') : str);
 			return withMS ? finalStr : finalStr.split('.')[0]; //2022-07-09 19:25:00.276
 		}
-		// in some langs, the date object has distinctions, so the two below needs separated methods. However, the "date" object returned from them, are same, just the representation can be local or UTC depending user.
-		StringToDatetimeUtc(str, format=null, culture=null) { return new Date(str).getTime(); }
-		StringToDatetimeLocal(str, format=null, culture=null) { return new Date(str); } 
-		StringToTimestampUtc(str, format=null, culture=null) { return new Date(str).getTime(); } 
-		DatetimeUtc() {  
-			var now = new Date();
-			var utc = new Date(now.getTime()); // + now.getTimezoneOffset() * 60000 is not needed !!!!!!
-			return utc;
-		} UtcDatetime() { return this.DatetimeUtc(); }
-		// UTC
+		DatetimeUtc() {
+			// placeholder method in JS
+			return new Date(); // now + now.getTimezoneOffset() * 60000 is not needed !!!!!!
+		}
 		TimestampUtc() { 
 			return Math.floor(new Date().getTime()); 
-		} UtcTimestamp() { return this.TimestampUtc(); }
-		//i.e. input:  "2021-03-08 11:59:00"      |  output : 1650000000000 (milliseconds)  
-		// [DONT CHANGE THIS FUNC, I'VE REVISED]
-		DatetimeToTimestampUtc(dt) { 
-			let offset = this.getOffsetFromUtc();
-			return ((((new Date( dt )).getTime()) / 1000) + 14400 - offset * 60* 60) * 1000; 
-		} UtcTimestampFrom(dt) { return this.DatetimeToTimestampUtc(dt); }
-		TimestampUtcToDatetimeUtc(ts) {
-			var d = new Date(ts);
-			d.setHours(d.getHours());
-			return d;
-		} UtcTimestampToUtcDatetime(ts) { return this.TimestampUtcToDatetimeUtc(ts); }
+		}
+		// in c# the datetimes can be different objects, in JS it's one object (that can be represented with UTC or LOCAL string), so we just keep placeholder methods
+		StringToDatetimeUtc(str, format=null, culture=null) { return new Date(str); }
+		StringToDatetimeLocal(str, format=null, culture=null) { return new Date(str); } 
+		StringToTimestamp(str, format=null, culture=null) { return new Date(str).getTime(); } 
 		// shorthands
 		MaxDate(d1, d2, d3=null) {}
 		MinDate(d1, d2, d3=null) {}
@@ -958,15 +978,8 @@ class PuvoxLibrary {
 			// var nd = new Date(utc + (3600000*offset));    
 			// return nd; return nd.toLocaleString();
 		}
-		//i.e. input:  1650000000000 (milliseconds)   |  output : "2021-07-14T21:08:00.000Z"
-		// [DONT CHANGE THIS FUNC, I'VE REVISED]
-		UtcTimestampToUtcDatetimeString_OLD_CORRECT(epochtime, withTZ){
+		TimestampToStringUtc(epochtime, withTZ){
 			let d = new Date(epochtime);
-			let str =d.toISOString();
-			return (withTZ ? str : str.replace("T", " ").replace("Z", ""));
-		}
-		UtcTimestampToUtcDatetimeString(epochtime, withTZ){
-			let d = this.UtcTimestampToUtcDatetime(epochtime);
 			return this.DatetimeToStringUtc(d, true, withTZ);
 		}
 		getOffsetFromUtc(){
@@ -1752,7 +1765,8 @@ class PuvoxLibrary {
 	}
 	
 	// https://stackoverflow.com/a/41407246/2377343
-	consoleLogColor (text, backgroundColor=null, foregroundColor=null) {
+	
+	consoleLogColor (text, foreColor = undefined, backColor = undefined, type = 'reset') {
 		const prefix = '\x1b[';
 		const suffix = 'm';
 		const objectTree = {
@@ -1762,13 +1776,14 @@ class PuvoxLibrary {
 		};
 		let backColorString = '';
 		let foreColorString = '';
-		if (backgroundColor) {
-			backColorString = prefix + objectTree['background'][backgroundColor] + suffix;
+		if (backColor) {
+			backColorString = prefix + objectTree.background[backColor] + suffix;
 		}
-		if (foregroundColor) {
-			foreColorString = prefix + objectTree['foreground'][foregroundColor] + suffix;
+		if (foreColor) {
+			foreColorString = prefix + objectTree.foreground[foreColor] + suffix;
 		}
-		console.log (backColorString + foreColorString + "%s" + prefix + objectTree.types.reset + suffix, text);
+		const typeString = prefix + objectTree.types[type || 'reset'] + suffix;
+		console.log (backColorString + foreColorString + "%s" + typeString, text.toString ());
 	}
 	
 	suspressMessagesExecution(func){
@@ -3071,7 +3086,7 @@ class PuvoxLibrary {
 			// ###################
 			custom_cache_dir = null;
 			get_cache_temp_dir(){
-				if (!this.customCacheDir){ 
+				if (!this.custom_cache_dir){ 
 					this.custom_cache_dir = this.mainClass().file.tempDir() + this.mainClass().getAppName() + '/';
 				}
 				return this.custom_cache_dir;
@@ -3102,13 +3117,10 @@ class PuvoxLibrary {
 			}
 			// #############################################
 
-			// old 
-			customCacheDir = null; 
-
 			set_dir(dir, auto_clear_seconds=null){ 
-				if(dir) this.customCacheDir = dir;
-				const res = this.mainClass().file.createDirectory(this.customCacheDir);
-				if( !is_null(auto_clear_seconds))
+				if(dir) this.custom_cache_dir = dir;
+				const res = this.mainClass().file.createDirectory(this.custom_cache_dir);
+				if(auto_clear_seconds !== null)
 				{
 					throw new Error("Not implemented yet! 345346");
 					//$this->clearCacheDir($auto_clear_seconds); 
@@ -3498,6 +3510,17 @@ class PuvoxLibrary {
 		return timestamp - offset + ((direction === ROUND_UP) ? ms : 0);
 	}
 	json(data, params = undefined) { return JSON.stringify (data); }
+	jsonParse (str) {
+		if (this.isJsonEncodedObject (str)) {
+			str = this.sanitizeJsonString (str);
+			try {
+				return JSON.parse (str);
+			} catch (e) {
+				return undefined;
+			}
+		}
+		return undefined;
+	}
 	isJsonEncodedObject (object) {
 		return (
 			(typeof object === 'string') &&
@@ -3505,6 +3528,13 @@ class PuvoxLibrary {
 			((object[0] === '{') || (object[0] === '['))
 		);
 	}
+	sanitizeJsonString (string) {
+		if (this.isString (string)) {
+			return string.replace (/[\u0000-\u001F\u007F-\u009F]/g, '');
+		}
+		return string;
+	}
+
 	//htmlentities
     encode_html_entities (content) {
         return content.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
