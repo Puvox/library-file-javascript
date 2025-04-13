@@ -3,8 +3,7 @@
   "version": "1.1.44",
   "description": "library-class-javascript",
   "main": "library_standard.js",
-  "scripts": {
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Puvox/library-file-javascript.git"
@@ -16,6 +15,6 @@
   },
   "homepage": "https://github.com/Puvox/library-file-javascript#readme",
   "devDependencies": {
-    "typescript": "latest"
+    "typescript": "^5.8.3"
   }
 }
