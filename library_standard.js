@@ -491,28 +491,39 @@ class PuvoxLibrary {
 		if (level < 1) {
 			throw new Error('level must be 1 or greater');
 		}
-		const result = {};
 		if (level === 1) {
+			const result = {};
 			for (const key of keysArray) {
 				if (key in inputObj) {
 					result[key] = inputObj[key];
 				}
 			}
+			return result;
 		} else {
-			for (const key in inputObj) {
-				const val = inputObj[key];
-				if (this.isObject(val)) {
-					const res1 = this.removeAllKeysExcept(val, keysArray, level - 1);
-					const keysAmount = Object.keys(res1).length;
-					if (keysAmount > 0) {
-						result[key] = res1;
+			if (Array.isArray (inputObj)) {
+				const result = [];
+				for (const key in inputObj) {
+					const val = inputObj[key];
+					if (this.isObject(val)) {
+						result.push(this.removeAllKeysExcept(val, keysArray, level - 1));
+					} else {
+						result.push(val);;
 					}
-				} else {
-					result[key] = val;
 				}
+				return result;
+			} else {
+				const result = {};
+				for (const key in inputObj) {
+					const val = inputObj[key];
+					if (this.isObject(val)) {
+						result[key] = this.removeAllKeysExcept(val, keysArray, level - 1);
+					} else {
+						result[key] = val;
+					}
+				}
+				return result;
 			}
 		}
-		return result;
 	}
 
 	// filterReduceToKeys2(inputObj, keysArray, level = 1, stripUnmatchedLevels = false, getAllIfNoneFound = true) {
