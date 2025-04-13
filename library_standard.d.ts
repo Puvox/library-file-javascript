@@ -87,7 +87,7 @@ declare class PuvoxLibrary {
     renameSubKey(obj: any, keyFrom: any, keyTo: any, strict?: boolean): any;
     hasEmptyChild(obj: any): boolean;
     filterObject(obj: any, callback: any): any;
-    removeAllKeysExcept(inputObj: any, keysArray: any, level?: number, getAllIfNoneFound?: boolean): {};
+    removeAllKeysExcept(inputObj: any, keysArray: any, level?: number, getAllIfNoneFound?: boolean): any;
     isBetween(a: any, b: any, c: any): boolean;
     isBetweenEq(a: any, b: any, c: any): boolean;
     startsWithWhiteSpace(content: any): boolean;

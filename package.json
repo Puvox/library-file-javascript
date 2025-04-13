@@ -16,8 +16,5 @@
   "homepage": "https://github.com/Puvox/library-file-javascript#readme",
   "devDependencies": {
     "typescript": "latest"
-  },
-  "dependencies": {
-    "puvox-library": "^1.1.45"
   }
 }

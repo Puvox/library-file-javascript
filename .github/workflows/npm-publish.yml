@@ -25,7 +25,6 @@ jobs:
       
       - name: Run TypeScript compilation
         run: |
-          npm install typescript 
           npx tsc
       
       - name: Update version (patch)
