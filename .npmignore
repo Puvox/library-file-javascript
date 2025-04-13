@@ -1,5 +1,7 @@
 .npmignore
-npm_publish.bat
+.gitignore
 .github
 .git
+npm_publish.bat
 package-lock.json
+node_modules
