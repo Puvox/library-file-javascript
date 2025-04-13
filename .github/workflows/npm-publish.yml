@@ -9,8 +9,11 @@ jobs:
   build-and-publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -29,8 +32,12 @@ jobs:
         run: |
           git config user.email "you@example.com"
           git config user.name "you"
-          git stash
+          git add .
+          git commit -m "chore: update build" || echo "nothing to commit"
           npm version patch
+          git add .
+          git commit -m "chore: update build" || echo "nothing to commit"
+          git push origin HEAD:main || echo "nothing to push, no new changes"
       
       - name: Publish to NPM
         run: npm publish
