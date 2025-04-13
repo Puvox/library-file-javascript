@@ -1,10 +1,9 @@
 {
   "name": "puvox-library",
-  "version": "1.1.44",
+  "version": "1.1.45",
   "description": "library-class-javascript",
   "main": "library_standard.js",
-  "scripts": {
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Puvox/library-file-javascript.git"
@@ -17,5 +16,8 @@
   "homepage": "https://github.com/Puvox/library-file-javascript#readme",
   "devDependencies": {
     "typescript": "latest"
+  },
+  "dependencies": {
+    "puvox-library": "^1.1.45"
   }
 }
