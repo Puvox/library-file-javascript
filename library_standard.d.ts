@@ -119,7 +119,6 @@ declare class PuvoxLibrary {
     invertDictionary(obj: any): {};
     isElementInViewport(el: any): boolean;
     MakeIframeFullHeight(iframeElement: any, cycling: any, overwrite_margin: any): void;
-    MakeIframeFullHeight(iframeElement: any, cycling: any, overwrite_margin: any): void;
     getYtIdFromURL(URLL: any): any;
     getYtIdFromURL(URL_or_ID: any): any;
     autoSizeTextareas(className: any): void;
@@ -281,6 +280,7 @@ declare class PuvoxLibrary {
     inKeys(key: any, obj: any): boolean;
     partialObject(object_: any, array_: any): {};
     array_column_with_keys(object_: any, keyName_: any): {};
+    objectFromArray(arr: any, defaultValue?: number): any;
     GetQueryParams(url: any): {};
     URLParser(url: any): {
         getHost: () => string;
