@@ -3369,6 +3369,13 @@ class PuvoxLibrary {
 	
 
 
+    clone(x){
+		try {
+			return structuredClone(x);
+		} catch (e) {
+			return JSON.parse(JSON.stringify(x)); // this.isArray (x) ? Array.from (x) : this.extend (x);  
+		}
+	}
 
 
 
@@ -3385,7 +3392,6 @@ class PuvoxLibrary {
 	keys= Object.keys;
     values(x) { return ((!this.isArray (x)) ? Object.values (x) : x);}
     extend(...args) { return Object.assign ({}, ...args) ;} // NB: side-effect free
-    clone(x){ return structuredClone(x); }
     index(x) { return new Set (this.values (x));}
     ordered(x) { return x;} // a stub to keep assoc keys in order (in JS it does nothing, it's mostly for Python)
     unique(x) { return Array.from (this.index (x));}
@@ -3582,14 +3588,14 @@ class PuvoxLibrary {
 		return (lowerCase) ? val.map((x)=>x.toLowerCase()) : val;
     }
 
-	stringsToArray (str, splitBy = '\n', splitEachLine = undefined) {
+	stringsToArray (str, splitBy = '\n', splitEachLine = '', toLowerCase = true) {
 		let arr = [];
 		// split each line and add to array
 		for (const line of str.split(splitBy)) {
 			const splitted = splitEachLine ? line.split(splitEachLine) : [line];
 			arr = arr.concat(splitted);
 		}
-		const res = arr.map((x)=>x.trim()).filter((x)=>x.length).map((x)=> x.toLowerCase());
+		const res = arr.map((x)=>x.trim()).filter((x)=>x.length).map((x)=> toLowerCase ? x.toLowerCase() : x);
 		return res;
 	}
 
