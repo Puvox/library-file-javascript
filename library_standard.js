@@ -1844,28 +1844,6 @@ class PuvoxLibrary {
 	}
 			
 			
-	MakeIframeFullHeight (iframeElement, cycling, overwrite_margin){
-		cycling= cycling || false;
-		overwrite_margin= overwrite_margin || false;
-		iframeElement.style.width	= "100%";
-		var ifrD = iframeElement.contentDocument || iframeElement.contentWindow.document;
-		var mHeight = parseInt( window.getComputedStyle( ifrD.documentElement).height );  // Math.max( ifrD.body.scrollHeight, .. offsetHeight, ....clientHeight,
-		var margins = ifrD.body.style.margin + ifrD.body.style.padding + ifrD.documentElement.style.margin + ifrD.documentElement.style.padding;
-		if(overwrite_margin) { if(margins=="") { margins=0;  ifrD.body.style.margin="0px"; } }
-		(function(){
-		   var interval = setInterval(function(){
-			if(ifrD.readyState  == 'complete' ){
-				setTimeout( function(){ 
-					if(!cycling) { setTimeout( function(){ clearInterval(interval);}, 500); }
-					iframeElement.style.height	= (parseInt(window.getComputedStyle( ifrD.documentElement).height) + parseInt(margins)+1) +"px"; 
-				}, 200 );
-			} 
-		   },200)
-		})();
-			//var funcname= arguments.callee.name;
-			//window.setTimeout( function(){ console.log(funcname); console.log(cycling); window[funcname](iframeElement, cycling); }, 500 );	
-	}
-
 	in_array(needle, haystack) {
 		for(var i in haystack) {
 			if(haystack[i] == needle) return true;
@@ -2012,16 +1990,17 @@ class PuvoxLibrary {
 	  }
 	  return null;												// if no match found
 	}
-	// ========================================================== //
 
+	// ========================================================== //
 
 	inArray(needle, haystack) {
 		return haystack.indexOf(needle) > -1;
 	}
+
 	inKeys(key, obj){
 		return key in obj;
 	}
-	
+
 	partialObject(object_, array_) {
 		let newObj ={};
 		for (let [key, value] of Object.entries(object_)) {
@@ -2032,7 +2011,6 @@ class PuvoxLibrary {
 		return newObj;
 	}
 
-
 	array_column_with_keys(object_, keyName_) {
 		let new_ ={};
 		for (let [key_, value_] of Object.entries(object_)) {
@@ -2041,7 +2019,10 @@ class PuvoxLibrary {
 		}
 		return new_;
 	}
-	
+
+	objectFromArray(arr, defaultValue = 1) {
+		return Object.fromEntries(arr.map(key => [key, defaultValue]));
+	}
 
 	// ============================= URL parameters  ============================= //
 	// executed below
