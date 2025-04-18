@@ -443,13 +443,13 @@ declare class PuvoxLibrary {
         getFilesListFromDir(dir: any): any[];
     };
     catchUnhandledExceptions(callback: any): void;
+    clone(x: any): any;
     keys: {
         (o: object): string[];
         (o: {}): string[];
     };
     values(x: any): any;
     extend(...args: any[]): any;
-    clone(x: any): any;
     index(x: any): Set<any>;
     ordered(x: any): any;
     unique(x: any): any[];
@@ -482,7 +482,7 @@ declare class PuvoxLibrary {
     jsonParse(str: any): any;
     parseIfJson(val: any): any;
     stringArrayClean(arr: any, lowerCase?: boolean): any;
-    stringsToArray(str: any, splitBy?: string, splitEachLine?: undefined): any[];
+    stringsToArray(str: any, splitBy?: string, splitEachLine?: string, toLowerCase?: boolean): any[];
     isJsonEncodedObject(object: any): boolean;
     sanitizeJsonString(string: any): any;
     encode_html_entities(content: any): any;
