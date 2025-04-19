@@ -93,59 +93,53 @@ class PuvoxLibrary {
 	arrayIntersect(source, comparedTo){
 		return source.filter(x => comparedTo.includes(x));
 	}
-	arrayDiffFull(o1,o2) { // never version: https://pastebin_com/VFnY1Xnb
-		const selfFunc = this;
-		const typeObject = function(o){
-			return typeof o === 'object';
-		};
-		const bothAreObjects = (o1,o2) =>{
-			return (typeObject(o1) && typeObject(o2));
-		};
-		const bothAreArrays = (o1,o2) =>{
-			return (this.isArray(o1) && this.isArray(o2));
-		};
-		const diff = function (o1, o2) {
+	object_diff_deep(old_obj, new_obj) {
+		const isObject = o => typeof o ==='object';
+		const diff = (o1, o2) => {
 			const result = {};
+			// if they are arrays
+			if (this.isArray(o1) && this.isArray(o2)){
+				return this.arrayDiff(o1,o2); // non recursive, todo fix
+			}
 			// if first is item is not object
-			if (!typeObject(o1) && typeObject(o2)) {
+			else if (!isObject(o1) && isObject(o2)) {
 				return o2;
 			}
 			// if second is item is not object
-			else if (typeObject(o1) && !typeObject(o2)) {
+			else if (isObject(o1) && !isObject(o2)) {
 				return undefined;
 			}
 			// if they are equal
 			else if (Object.is(o1, o2)) {
 				return undefined;
-			} else if (bothAreArrays(o1,o2)){
-				return selfFunc.arrayDiff(o1,o2);
 			}
-			const keys = Object.keys(o2);
-			for (let i=0; i<keys.length; i++) {
-				const key = keys[i];
-				// if both are objects
-				if ( bothAreObjects(o1[key],o2[key])) {
-					// if equal, return nothing
-					if ( Object.is(o1[key], o2[key]) ) {
-						// do nothing
-					} else if (o1[key] === o2[key]) {
-						// do nothing
-					} else {
+			// else both objects, but different
+			else {
+				for (const key in o2) {
+					// if both are objects
+					if ( isObject(o1[key]) && isObject(o2[key])) {
+						// if equal, return nothing
+						if ( Object.is(o1[key], o2[key]) ) {
+							// do nothing
+						} else if (o1[key] === o2[key]) {
+							// do nothing
+						} else {
+							result[key] = diff(o1[key],o2[key]);
+						}
+					} else if (this.isArray(o1[key]) && this.isArray(o2[key])) {
 						result[key] = diff(o1[key],o2[key]);
+					} else if (o1[key] !== o2[key]) {
+						result[key] = o2[key];
+					} else {
+						// do nothing
 					}
-				} else if (bothAreArrays(o1[key],o2[key])) {
-					result[key] = diff(o1[key],o2[key]);
-				} else if (o1[key] !== o2[key]) {
-					result[key] = o2[key];
-				} else {
-					// do nothing
 				}
+				return result;
 			}
-			return result;
 		};
 		return [
-			diff(o1,o2),
-			diff(o2,o1),
+			diff(old_obj, new_obj),
+			diff(new_obj, old_obj),
 		];
 	}
 
