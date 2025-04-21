@@ -93,9 +93,42 @@ class PuvoxLibrary {
 	arrayIntersect(source, comparedTo){
 		return source.filter(x => comparedTo.includes(x));
 	}
-	object_diff_deep(old_obj, new_obj) {
+
+	// todo fix
+	objects_equal (o1, o2) {
+		if (
+			(!this.isObject(o1) && this.isObject(o2))
+			 ||
+			(this.isObject(o1) && !this.isObject(o2))
+		) {
+			return Object.is (o1, o2) || o1 === o2;
+		}
+		const objKeys1 = Object.keys(o1);
+		const objKeys2 = Object.keys(o2);
+		if (objKeys1.length !== objKeys2.length) return false;
+		for (var key of objKeys1) {
+		  const value1 = o1[key];
+		  const value2 = o2[key];
+		  const isObjects = this.isObject(value1) && this.isObject(value2);
+		  if ((isObjects && !this.objects_equal(value1, value2)) ||
+			(!isObjects && value1 !== value2)
+		  ) {
+			return false;
+		  }
+		}
+		return true;
+	}
+
+	object_keys_diff (old_obj, new_obj) {
+		const keys1 = Object.keys(old_obj);
+		const keys2 = Object.keys(new_obj);
+		const diffKeys = keys1.filter(key => !keys2.includes(key));
+		return diffKeys;
+	}
+
+	objects_diff(old_obj, new_obj, deep = true) {
 		const isObject = o => typeof o ==='object';
-		const diff = (o1, o2) => {
+		const diff = (o1, o2, deep) => {
 			const result = {};
 			// if they are arrays
 			if (this.isArray(o1) && this.isArray(o2)){
@@ -113,33 +146,32 @@ class PuvoxLibrary {
 			else if (Object.is(o1, o2)) {
 				return undefined;
 			}
+			// if scalars
+			else if (!isObject(o1) && !isObject(o2)) {
+                return Object.is (o1, o2) || o1 === o2 ? o2 : undefined;
+            }
 			// else both objects, but different
 			else {
-				for (const key in o2) {
-					// if both are objects
-					if ( isObject(o1[key]) && isObject(o2[key])) {
-						// if equal, return nothing
-						if ( Object.is(o1[key], o2[key]) ) {
-							// do nothing
-						} else if (o1[key] === o2[key]) {
-							// do nothing
-						} else {
-							result[key] = diff(o1[key],o2[key]);
+				if (deep) {
+					for (const key in o2) {
+						const value = diff(o1[key], o2[key], deep);
+						if (value) {
+							result[key] = value; 
+						} 
+					}
+				} else {
+					for (const key in o2) {
+						if (o1[key] !== o2[key]) {
+							result[key] = o2[key];
 						}
-					} else if (this.isArray(o1[key]) && this.isArray(o2[key])) {
-						result[key] = diff(o1[key],o2[key]);
-					} else if (o1[key] !== o2[key]) {
-						result[key] = o2[key];
-					} else {
-						// do nothing
 					}
 				}
 				return result;
 			}
 		};
 		return [
-			diff(old_obj, new_obj),
-			diff(new_obj, old_obj),
+			diff(old_obj, new_obj, deep),
+			diff(new_obj, old_obj, deep),
 		];
 	}
 
@@ -752,6 +784,14 @@ class PuvoxLibrary {
 	invertDictionary(obj) {
 		const newObj = {}; 
 		Object.keys(obj).map (k=>newObj[obj[k]]=k);
+		return newObj;
+	}
+
+	arrayInvertToDictionary(arr){
+		const newObj = {}; 
+		arr.forEach((value, key) => {
+			newObj[value] = 1;
+		});
 		return newObj;
 	}
 
