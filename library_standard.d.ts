@@ -34,7 +34,7 @@ declare class PuvoxLibrary {
     removeKeysExcept(obj: any, keysArr: any): {};
     arrayDiff(source: any, comparedTo: any): any;
     arrayIntersect(source: any, comparedTo: any): any;
-    arrayDiffFull(o1: any, o2: any): any[];
+    object_diff_deep(old_obj: any, new_obj: any): any[];
     sortKeys(x: any, out?: {}): {};
     sortByValuesIntoArray(obj: any, ascending?: boolean): any;
     stringArrayToNumeric(arr: any): number[];
