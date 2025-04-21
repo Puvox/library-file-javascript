@@ -34,7 +34,9 @@ declare class PuvoxLibrary {
     removeKeysExcept(obj: any, keysArr: any): {};
     arrayDiff(source: any, comparedTo: any): any;
     arrayIntersect(source: any, comparedTo: any): any;
-    object_diff_deep(old_obj: any, new_obj: any): any[];
+    objects_equal(o1: any, o2: any): boolean;
+    object_keys_diff(old_obj: any, new_obj: any): string[];
+    objects_diff(old_obj: any, new_obj: any, deep?: boolean): any[];
     sortKeys(x: any, out?: {}): {};
     sortByValuesIntoArray(obj: any, ascending?: boolean): any;
     stringArrayToNumeric(arr: any): number[];
@@ -117,6 +119,7 @@ declare class PuvoxLibrary {
     argvIsSet(which: any): boolean;
     parseQuery(queryString: any): {};
     invertDictionary(obj: any): {};
+    arrayInvertToDictionary(arr: any): {};
     isElementInViewport(el: any): boolean;
     MakeIframeFullHeight(iframeElement: any, cycling: any, overwrite_margin: any): void;
     getYtIdFromURL(URLL: any): any;
