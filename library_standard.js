@@ -511,6 +511,15 @@ class PuvoxLibrary {
 		  filter(([key, val]) => callback(val, key)));
 	}
 
+	filter_object_by(obj, key, value) {
+		const newObj = {};
+		for (const [k, v] of Object.entries(obj)) {
+			if (v[key] === value) {
+				newObj[k] = v;
+			}
+		}
+		return newObj;
+	}
 
 	// filterReduceToKeys
 	removeAllKeysExcept(inputObj, keysArray, level = 1, getAllIfNoneFound = true) {
@@ -650,44 +659,19 @@ class PuvoxLibrary {
 		window.history.pushState( ( title ? {"pageTitle":title} : ""),"", urlPath);   //{"html":...,"pageTitle":....}
 	}
 	
-	requestUri(url){
-		var url = url || location.href;
-		return url.replace(origin,'');
-	}
 	// check if key exists in array
 	ArrayKeyExistss(keyname,array) {
 		return typeof array[keyname] !== 'undefined'; 
 	}
 
-	hashtageChangeOnClick(e) { 
-		function MyCallbackTemp (e)
-		{
-			var e = window.e || e; var t=e.target; 
-			if (t.tagName !== 'A') return;
-			else{
-				var link=t.href;
-				if( link.indexOf('#') >-1) {  //found hashtag
-					var hashtag= link.split('#')[1];  //var match = url.match(/#.*[?&]locale=([^&]+)(&|$)/);   return(match ? match[1] : "");(^|\s)(#[a-z\d-]+)
-					var sanitized_link= link.replace( location.href.split('#')[0] ,"");
-					if(link.indexOf(location.href) >-1 || sanitized_link.charAt(0)=='#') { //if conains current link, or starts with #
-						location.hash=hashtag;
-					}
-				}
-			}
-		}
-
-		if (document.addEventListener) document.addEventListener('click', MyCallbackTemp, false);
-		else document.attachEvent('onclick', MyCallbackTemp);	
-	}
-	
 	capitalizeFirstLetter(string) {
 		return string.charAt(0).toUpperCase() + string.slice(1);
 	}
 
-	addQueryArg(name,value, url)
+	addQueryArg(name, value, url)
 	{
 		var url = url || location.href;
-		return url + (url.indexOf("?")<0 ? "?":"&") +escape(name)+"="+escape(value);
+		return url + (url.indexOf("?")<0 ? "?":"&") + encodeURIComponent(name) + "="+encodeURIComponent(value);
 	}
 	buildQueryString(params){
 		if (!params)  return '';
@@ -2249,33 +2233,6 @@ class PuvoxLibrary {
 	}
 
 
-
-	// ===== in special occasions, i need to change share urls  =======
-	ChangeSocialShareUrls(elemnt, newurl,   title){
-		ShareUrlForCurrentSession= newurl;
-		TitleForCurrentSession	= title || false;
-		$(elemnt).each(function(e, elemnt ){
-			var el = $(this);
-			var current_share_url = el.attr("href");
-			var new_url = encodeURIComponent(ShareUrlForCurrentSession);
-			
-			var CurrentUrlReplaced =  current_share_url;
-			var queryParams = GetQueryParams(current_share_url);
-		
-			CurrentUrlReplaced = ReplaceParameterInQuery(CurrentUrlReplaced, 'u', new_url);
-			CurrentUrlReplaced = ReplaceParameterInQuery(CurrentUrlReplaced, 'url', new_url);
-				
-				if(title){
-			var new_title = encodeURIComponent(TitleForCurrentSession);
-			CurrentUrlReplaced = ReplaceParameterInQuery(CurrentUrlReplaced, 'text', new_title);
-			CurrentUrlReplaced = ReplaceParameterInQuery(CurrentUrlReplaced, 'title', new_title);
-				}
-			
-			el.attr("href", CurrentUrlReplaced);
-		});
-	}
-
-
 	//replace parameter in query string
 	ReplaceParameterInQuery(url, param_name, param_new_val){
 		var queryParams = GetQueryParams(url);
@@ -3591,7 +3548,7 @@ class PuvoxLibrary {
 	}
 	parseIfJson(val) {
 		try {
-			if (this.helpers.isJsonEncodedObject (val)) {
+			if (this.isJsonEncodedObject (val)) {
 				return JSON.parse(val);
 			}
 		} catch (e) { }
@@ -3630,9 +3587,10 @@ class PuvoxLibrary {
 
 	//htmlentities
     encode_html_entities (content) {
-        return content.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
+        const newStr = content.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
             return '&#'+i.charCodeAt(0)+';';
         });
+		return String(newStr).replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 	// number
 	precisionFromString (string) {
