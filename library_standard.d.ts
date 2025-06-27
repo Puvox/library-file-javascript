@@ -89,6 +89,7 @@ declare class PuvoxLibrary {
     renameSubKey(obj: any, keyFrom: any, keyTo: any, strict?: boolean): any;
     hasEmptyChild(obj: any): boolean;
     filterObject(obj: any, callback: any): any;
+    filter_object_by(obj: any, key: any, value: any): {};
     removeAllKeysExcept(inputObj: any, keysArray: any, level?: number, getAllIfNoneFound?: boolean): any;
     isBetween(a: any, b: any, c: any): boolean;
     isBetweenEq(a: any, b: any, c: any): boolean;
@@ -104,9 +105,7 @@ declare class PuvoxLibrary {
     when_element_is_loaded(Id_or_class: any, functionname: any): void;
     SetTitlee(title: any): void;
     setUrl(urlPath: any, title: any): void;
-    requestUri(url: any): any;
     ArrayKeyExistss(keyname: any, array: any): boolean;
-    hashtageChangeOnClick(e: any): void;
     capitalizeFirstLetter(string: any): any;
     addQueryArg(name: any, value: any, url: any): string;
     buildQueryString(params: any): any;
@@ -299,7 +298,6 @@ declare class PuvoxLibrary {
         removeParam: (name: any) => string;
     };
     parsePOST(request: any, callback: any): void;
-    ChangeSocialShareUrls(elemnt: any, newurl: any, title: any): void;
     ReplaceParameterInQuery(url: any, param_name: any, param_new_val: any): any;
     refferer_is_same_domain(): boolean;
     DoPrevent(e: any): void;
@@ -488,7 +486,7 @@ declare class PuvoxLibrary {
     stringsToArray(str: any, splitBy?: string, splitEachLine?: string, toLowerCase?: boolean): any[];
     isJsonEncodedObject(object: any): boolean;
     sanitizeJsonString(string: any): any;
-    encode_html_entities(content: any): any;
+    encode_html_entities(content: any): string;
     precisionFromString(string: any): any;
     numberToString(x: any): any;
     isBrowser: boolean;
